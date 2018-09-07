@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuTimetableParser", "NpuTimetableParser\NpuTimetableParser.csproj", "{989C7C87-FDEA-4D54-917A-23E677F251D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuTimeTableParserTest", "NpuTimeTableParserTest\NpuTimeTableParserTest.csproj", "{CC15456C-1340-4212-8EF9-6DE9350EE50C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{989C7C87-FDEA-4D54-917A-23E677F251D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989C7C87-FDEA-4D54-917A-23E677F251D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989C7C87-FDEA-4D54-917A-23E677F251D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC15456C-1340-4212-8EF9-6DE9350EE50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC15456C-1340-4212-8EF9-6DE9350EE50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC15456C-1340-4212-8EF9-6DE9350EE50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC15456C-1340-4212-8EF9-6DE9350EE50C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

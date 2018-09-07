@@ -1,4 +1,5 @@
 ﻿using System;
+using RestSharp;
 
 namespace NpuTimetableParser
 {
@@ -53,6 +54,19 @@ namespace NpuTimetableParser
 
     }
 
+    public class NpuParser
+    {
+        private IRestClient _client;
+        public NpuParser(IRestClient client)
+        {
+            _client = client;
+        }
+
+        public NpuParser()
+        {
+            _client = new RestClient("http://ei.npu.edu.ua/Server.php");//TODO: extract string
+        }
 
 
+    }
 }
