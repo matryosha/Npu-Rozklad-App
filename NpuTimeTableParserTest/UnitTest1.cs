@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NpuTimetableParser;
 
 namespace NpuTimeTableParserTest
 {
@@ -8,7 +9,9 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void ConstructorTest()
         {
-
+            NpuParser parser = new NpuParser();
+            var collection = parser.FillCalendarRawList();
+            
         }
     }
 }
