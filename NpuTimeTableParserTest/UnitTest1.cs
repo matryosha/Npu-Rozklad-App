@@ -3,11 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NpuTimeTableParserTest
 {
     [TestClass]
-    public class UnitTest1
+    public class NpuParserTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void ConstructorTest()
         {
+
         }
     }
 }
