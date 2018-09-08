@@ -10,8 +10,11 @@ namespace NpuTimeTableParserTest
         public void ConstructorTest()
         {
             NpuParser parser = new NpuParser();
-            var collection = parser.FillCalendarRawList();
-            
+            //var calendarRaw = parser.FillCalendarRawList();
+            //var groups = parser.FillGroupList();
+            //var lecturers = parser.FillLecturersList();
+            var classrooms = parser.FillClassroomsList();
+
         }
     }
 }
