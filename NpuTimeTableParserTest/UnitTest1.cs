@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NpuTimetableParser;
 
@@ -13,7 +14,8 @@ namespace NpuTimeTableParserTest
             //var calendarRaw = parser.FillCalendarRawList();
             //var groups = parser.FillGroupList();
             //var lecturers = parser.FillLecturersList();
-            var classrooms = parser.FillClassroomsList();
+            //var classrooms = parser.FillClassroomsList();
+            var lessons = parser.CreateLessonsList();
 
         }
     }

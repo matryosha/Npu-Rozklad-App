@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using RestSharp;
+using Decode = System.Text.RegularExpressions.Regex;
 
 namespace NpuTimetableParser
 {
@@ -31,20 +33,20 @@ namespace NpuTimetableParser
 
     public class Group
     {
-        public int Id { get; set; }
+        public int ExternalId { get; set; }
         public string FullName { get; set; }
         public string ShortName { get; set; }
     }
 
     public class Lecturer
     {
-        public int Id { get; set; }
+        public int ExternalId { get; set; }
         public string FullName { get; set; }
     }
 
     public class Classroom
     {
-        public int Id { get; set; }
+        public int ExternalId { get; set; }
         public string Name { get; set; }
     }
 
@@ -53,12 +55,13 @@ namespace NpuTimetableParser
         public Group Group { get; set; }
         public Subject Subject { get; set; }
         public Classroom Classroom { get; set; }
+        public Lecturer Lecturer { get; set; }
         public int LessonNumber { get; set; }
         public DateTime LessonDate { get; set; }
         public Fraction Fraction { get; set; }
+        public SubGroup SubGroup { get; set; }
         public int LessonCount { get; set; }
-
-    }
+}
 
     public class CalendarRawItem
     {
@@ -86,6 +89,11 @@ namespace NpuTimetableParser
     {
         private IRestClient _client;
         private RawStringParser _rawParser;
+        private List<Classroom> _classrooms;
+        private List<Group> _groups;
+        private List<Lecturer> _lecturers;
+        private List<CalendarRawItem> _calendarRawList;
+        private List<Lesson> _lessons;
 
         public NpuParser(IRestClient client)
         {
@@ -180,6 +188,77 @@ namespace NpuTimetableParser
             classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, response.Content);
 
             return classroomsList;
+        }
+
+        public List<Lesson> CreateLessonsList()
+        {
+            _calendarRawList = FillCalendarRawList();
+            _groups = FillGroupList();
+            _lecturers = FillLecturersList();
+            _classrooms = FillClassroomsList();
+            _lessons = new List<Lesson>();
+
+            foreach (var calendarRawItem in _calendarRawList)
+            {
+                var lesson = new Lesson();
+                //Set lesson date
+                if (!string.IsNullOrEmpty(calendarRawItem.LessonSetDate))
+                {
+                    try
+                    {
+                        lesson.LessonDate = DateTime.Parse(calendarRawItem.LessonSetDate);
+                    }
+                    catch (FormatException e)
+                    {
+                        //TODO: LOG
+                    }      
+                }
+                //Set subject
+                if (!string.IsNullOrEmpty(calendarRawItem.SubjectName))
+                {
+                    var subject = new Subject();
+                    subject.Name = calendarRawItem.SubjectName;
+                    lesson.Subject = subject;
+                }
+                //Set group
+                if (calendarRawItem.GroupId != -1)
+                {
+                    lesson.Group = _groups.FirstOrDefault(a => a.ExternalId == calendarRawItem.GroupId);
+                }
+                //Set lecture
+                if (calendarRawItem.LectureId != -1)
+                {
+                    lesson.Lecturer = _lecturers.FirstOrDefault(a => a.ExternalId == calendarRawItem.LectureId);
+                }
+                //Set classroom
+                if (calendarRawItem.ClassroomId != -1)
+                {
+                    lesson.Classroom = _classrooms.FirstOrDefault(a => a.ExternalId == calendarRawItem.ClassroomId);
+                }
+                //Set LessonCount
+                if (calendarRawItem.LessonCount != -1)
+                {
+                    lesson.LessonCount = calendarRawItem.LessonCount;
+                }
+                //Set LessonNumber
+                if (calendarRawItem.LessonNumber != -1)
+                {
+                    lesson.LessonNumber = calendarRawItem.LessonNumber;
+                }
+                //Set Fraction
+                if (calendarRawItem.Fraction != -1)
+                {
+                    lesson.Fraction = (Fraction) calendarRawItem.Fraction;
+                }
+                //Set Subgroup
+                if (calendarRawItem.SubGroup != -1)
+                {
+                    lesson.SubGroup = (SubGroup) calendarRawItem.SubGroup;
+                }
+                _lessons.Add(lesson);
+            }
+
+            return _lessons;
         }
 
     }
@@ -301,7 +380,7 @@ namespace NpuTimetableParser
                     item.GroupId = groupId;
                     try
                     {
-                        item.SubjectName = System.Net.WebUtility.HtmlDecode(valuesInBrackets[1]);
+                        item.SubjectName = Decode.Unescape(valuesInBrackets[1]);
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
@@ -369,8 +448,8 @@ namespace NpuTimetableParser
                         }
                     }
 
-                    item.Id = int.Parse(valuesInBrackets[0]);
-                    item.ShortName = valuesInBrackets[1];
+                    item.ExternalId = int.Parse(valuesInBrackets[0]);
+                    item.ShortName = Decode.Unescape(valuesInBrackets[1]);
 
                     collection.Add(item);
 
@@ -422,8 +501,8 @@ namespace NpuTimetableParser
                         }
                     }
 
-                    item.Id = int.Parse(valuesInBrackets[0]);
-                    item.FullName = valuesInBrackets[1];
+                    item.ExternalId = int.Parse(valuesInBrackets[0]);
+                    item.FullName = Decode.Unescape(valuesInBrackets[1]);
 
                     collection.Add(item);
 
@@ -474,8 +553,8 @@ namespace NpuTimetableParser
                         }
                     }
 
-                    item.Id = int.Parse(valuesInBrackets[0]);
-                    item.Name = valuesInBrackets[1];
+                    item.ExternalId = int.Parse(valuesInBrackets[0]);
+                    item.Name = Decode.Unescape(valuesInBrackets[1]);
 
                     collection.Add(item);
 
