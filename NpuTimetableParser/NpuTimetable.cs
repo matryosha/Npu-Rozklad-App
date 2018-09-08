@@ -191,7 +191,7 @@ namespace NpuTimetableParser
             return classroomsList;
         }
 
-        public List<Lesson> CreateLessonsList()
+        public void CreateLessonsList()
         {
             _calendarRawList = FillCalendarRawList();
             _groups = FillGroupList();
@@ -258,8 +258,32 @@ namespace NpuTimetableParser
                 }
                 _lessons.Add(lesson);
             }
+        }
 
-            return _lessons;
+        public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
+        {
+            if (_lessons == null) await Task.Run(() => CreateLessonsList());
+
+            var startPoint = date.AddDays(-56);
+            List<Lesson> lessonList = new List<Lesson>();
+
+            while (startPoint <= date)
+            {
+                var tempList = _lessons.Where(lesson => lesson.LessonDate == startPoint && lesson.Group.ExternalId == groupId);
+                if (tempList.Any())
+                {
+                    lessonList.Clear();
+                    foreach (var lesson in tempList) //TODO: to linq
+                    {
+                        lessonList.Add(lesson);
+                    }
+                }
+                    
+                startPoint = startPoint.AddDays(7);
+
+            }
+
+            return lessonList;
         }
 
     }

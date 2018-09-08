@@ -25,17 +25,13 @@ namespace NpuTimeTableParserTest
         {
             var mockClient = new MockRestClient();
             mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
+            //mockClient.CalendarRawContent = ReadMockContent("testcalendar.txt"); 
             mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
             mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
             NpuParser parser = new NpuParser(mockClient);
 
-            var lessons = parser.CreateLessonsList();
-
-            var lessonsSlice = from lesson in lessons
-                where lesson.LessonDate > new DateTime(2018, 8, 1)
-                      where  lesson.Group.ExternalId == 75
-                               select lesson;
+            var lessons = parser.GetLessonsOnDate(new DateTime(2018, 9, 11), 75);
 
         }
 
