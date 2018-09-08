@@ -98,6 +98,7 @@ namespace NpuTimetableParser
         public NpuParser(IRestClient client)
         {
             _client = client;
+            _rawParser = new RawStringParser();
         }
 
         public NpuParser()
@@ -447,6 +448,8 @@ namespace NpuTimetableParser
                             offset++;
                         }
                     }
+
+                    if(valuesInBrackets.Count == 0) continue;
 
                     item.ExternalId = int.Parse(valuesInBrackets[0]);
                     item.ShortName = Decode.Unescape(valuesInBrackets[1]);
