@@ -29,8 +29,9 @@ namespace NpuTimeTableParserTest
             mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
             mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
+            mockClient.FacultiesRawContent = ReadMockContent("FacultiesRawContent.txt");
             NpuParser parser = new NpuParser(mockClient);
-
+            var faculties = await parser.GetFaculties();
             //var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 8), 87);
             var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
             var count = lessons.Count;
@@ -84,7 +85,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_AllFractionTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionNone = new Lesson()
@@ -620,6 +620,7 @@ namespace NpuTimeTableParserTest
         public string GroupsRawContent { get; set; }
         public string LecturesRawContent { get; set; }
         public string ClassroomsRawContent { get; set; }
+        public string FacultiesRawContent { get; set; }
 
         public IRestResponse Execute(IRestRequest request)
         {
@@ -635,6 +636,8 @@ namespace NpuTimeTableParserTest
                     return new MockRestResonse(LecturesRawContent);
                 case "get auditories":
                     return new MockRestResonse(ClassroomsRawContent);
+                case "get faculties":
+                    return new MockRestResonse(FacultiesRawContent);
             }
             throw new Exception("There is no such a code");
         }

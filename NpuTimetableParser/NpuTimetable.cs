@@ -104,6 +104,16 @@ namespace NpuTimetableParser
         public int SubGroup { get; set; }
     }
 
+    public class Faculty
+    {
+        public string ShortName { get; set; }
+        public string FullName { get; set; }
+        public override string ToString()
+        {
+            return FullName + " " + ShortName;
+        }
+    }
+
     public class NpuParser
     {
         private IRestClient _client;
@@ -114,19 +124,20 @@ namespace NpuTimetableParser
         private List<Lecturer> _lecturers;
         private List<CalendarRawItem> _calendarRawList;
         private List<Lesson> _lessons = new List<Lesson>();
+        private List<Faculty> _faculties;
         private int _deltaGapInDays = -140;
         private string _siteUrl = "http://ei.npu.edu.ua";
 
-        public NpuParser(IRestClient client)
+        public NpuParser(IRestClient client, string faculty = "fi")
         {
             _client = client;
-            _helper = new NpuParserHelper(_client, _rawParser); //TODO IoC
+            _helper = new NpuParserHelper(_client, _rawParser, faculty); //TODO IoC
         }
 
-        public NpuParser()
+        public NpuParser(string faculty)
         {
             _client = new RestClient(_siteUrl);//TODO: extract string
-            _helper = new NpuParserHelper(_client, _rawParser);
+            _helper = new NpuParserHelper(_client, _rawParser,faculty);
         }
 
         /// <summary>
@@ -150,6 +161,11 @@ namespace NpuTimetableParser
         public void SetSiteUrl(string url)
         {
             _siteUrl = url;
+        }
+
+        public async Task<List<Faculty>> GetFaculties()
+        {
+            return await Task.Run(() => _faculties ?? (_faculties = _helper.GetFaculties()));
         }
 
         public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
@@ -205,6 +221,7 @@ namespace NpuTimetableParser
 
     public class RawStringParser
     {
+        //TODO make them more pure and rename
         public List<CalendarRawItem> ConvertCalendarRaw(List<CalendarRawItem> collection, string rawString)
         {
             for (int i = 13; i < rawString.Length; i++)
@@ -461,17 +478,60 @@ namespace NpuTimetableParser
             }
             return collection;
         }
+
+        public List<Faculty> ConvertFacultiesRaw(List<Faculty> collection, string rawString)
+        {
+            for (int i = 13; i < rawString.Length; i++)
+            {
+                if (rawString[i] == '[')
+                {
+                    if (rawString[i + 1] == '[') continue;
+                    //inside [ ]
+                    i++;
+
+                    Faculty item = new Faculty();
+                    StringBuilder currentText = new StringBuilder();
+                    List<string> valuesInBrackets = new List<string>();
+
+                    while (rawString[i] != ']')
+                    {
+                        while (rawString[i] == '"') i++;
+                        if (rawString[i] == ']') continue;
+                        while (rawString[i] != '"' && rawString[i] != ',')
+                        {
+                            currentText.Append(rawString[i]);
+                            i++;
+                        }
+
+                        valuesInBrackets.Add(currentText.ToString());
+                        currentText.Clear();
+
+                        if (rawString[i] == '"') i++;
+
+                        if (rawString[i] == ',') i++;
+                    }
+
+                    item.ShortName = Decode.Unescape(valuesInBrackets[0]);
+                    item.FullName = Decode.Unescape(valuesInBrackets[1]);
+
+                    collection.Add(item);
+                }
+            }
+            return collection;
+        }
     }
 
     public class NpuParserHelper
     {
         private IRestClient _client;
         private RawStringParser _rawParser;
+        private string _faculty;
 
-        public NpuParserHelper(IRestClient client, RawStringParser rawParser)
+        public NpuParserHelper(IRestClient client, RawStringParser rawParser, string faculty)
         {
             _client = client;
             _rawParser = rawParser;
+            _faculty = faculty;
         }
 
         public void CreateLessonsList(List<CalendarRawItem> calendarRawList, List<Group> groups, 
@@ -543,25 +603,67 @@ namespace NpuTimetableParser
             }
         }
 
-        public List<CalendarRawItem> FillCalendarRawList()
+        public string SiteRequest(string code, string faculty)
         {
-            var calendarRawList = new List<CalendarRawItem>();
             if (_client == null) throw new Exception("client is null");
 
             var request = new RestRequest("Server.php", Method.POST);
 
-            request.AddParameter("code", "get calendar");
+            request.AddParameter("code", code);
             request.AddParameter("params", "");
             request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
+            request.AddParameter("faculty", faculty);
 
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
             request.AddHeader("Accept", "application/json");
 
             IRestResponse response = _client.Execute(request);
-            calendarRawList = _rawParser.ConvertCalendarRaw(calendarRawList, response.Content);
+            return response.Content;
+        }
+
+        public List<CalendarRawItem> FillCalendarRawList()
+        {
+            var calendarRawList = new List<CalendarRawItem>();
+
+            var clientResponse = SiteRequest("get calendar", _faculty);
+            calendarRawList = _rawParser.ConvertCalendarRaw(calendarRawList, clientResponse);
 
             return calendarRawList;
+        }
+     
+        public List<Group> FillGroupList()
+        {
+            var groupList = new List<Group>();
+
+            var clientResponse = SiteRequest("get groups", _faculty);
+            groupList = _rawParser.ConvertGroupRaw(groupList, clientResponse);
+
+            return groupList;
+        }
+
+        public List<Lecturer> FillLecturersList()
+        {
+            var lecturesList = new List<Lecturer>();
+;
+            var clientResponse = SiteRequest("get lectors", _faculty);
+            lecturesList = _rawParser.ConvertLecturersRaw(lecturesList, clientResponse);
+
+            return lecturesList;
+        }
+
+        public List<Classroom> FillClassroomsList()
+        {
+            var classroomsList = new List<Classroom>();
+
+            var clientResponse = SiteRequest("get auditories", _faculty);
+            classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, clientResponse);
+
+            return classroomsList;
+        }
+
+        public List<Faculty> GetFaculties()
+        {
+            return _rawParser.ConvertFacultiesRaw(new List<Faculty>(), SiteRequest("get faculties", "fi"));
         }
 
         /// <summary>
@@ -620,69 +722,6 @@ namespace NpuTimetableParser
         {
             list.Remove(oldLesson);
             list.Add(newLesson);
-        }
-
-        public List<Group> FillGroupList()
-        {
-            var groupList = new List<Group>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get groups");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            groupList = _rawParser.ConvertGroupRaw(groupList, response.Content);
-
-            return groupList;
-        }
-
-        public List<Lecturer> FillLecturersList()
-        {
-            var lecturesList = new List<Lecturer>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get lectors");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            lecturesList = _rawParser.ConvertLecturersRaw(lecturesList, response.Content);
-
-            return lecturesList;
-        }
-
-        public List<Classroom> FillClassroomsList()
-        {
-            var classroomsList = new List<Classroom>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get auditories");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, response.Content);
-
-            return classroomsList;
         }
 
     }
