@@ -21,7 +21,7 @@ namespace NpuTimeTableParserTest
     [TestClass]
     public class NpuParserTest
     {
-        [TestMethod]
+
         public async Task ConstructorTest()
         {
             var mockClient = new MockRestClient();
@@ -32,11 +32,42 @@ namespace NpuTimeTableParserTest
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
             NpuParser parser = new NpuParser(mockClient);
 
-            var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 11), 73);
+            //var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 8), 87);
+            var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
             var count = lessons.Count;
 
         }
 
+        [TestMethod]
+        public async Task GetLessonsOnDateTest1()
+        {
+            //arrange
+            var mockClient = new MockRestClient();
+            mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
+            mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
+            mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
+            mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
+            NpuParser parser = new NpuParser(mockClient);
+
+            //act
+            List<Lesson> testLessonsList = await parser.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
+
+            //assert
+            Assert.AreEqual(4, testLessonsList.Count);
+
+            var assert1 = testLessonsList.Where(l => l.LessonNumber == 2).ToList();
+            Assert.AreEqual(1, assert1.Count);
+            Assert.AreEqual(111, assert1[0].Lecturer.ExternalId);
+
+            var assert2 = testLessonsList.Where(l => l.LessonNumber == 1).ToList();
+            Assert.AreEqual(1, assert2.Count);
+            Assert.AreEqual(83, assert2[0].Lecturer.ExternalId);
+
+            var assert3 = testLessonsList.Where(l => l.LessonNumber == 3).ToList();
+            Assert.AreEqual(2, assert3.Count);
+            Assert.AreEqual(true, assert3.Any( l => l.Subject.Name =="Комп'ютерна дискретна математика"));
+            Assert.AreEqual(true, assert3.Any( l => l.Subject.Name == "Фізика"));
+        }
         [TestMethod]
         public void ReplaceLessonTest()
         {
@@ -54,7 +85,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_AllFractionTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -91,7 +122,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_OldDenominator_NewNoneTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -128,7 +159,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_OldNumerator_NewNoneTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -165,7 +196,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_OldSubGroup_NewNoneTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -202,7 +233,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_OldSubGroupFirst_NewSubgroupFirstTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -239,7 +270,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_OldSubGroupAndFractionSet_NewSubGroupAndFractionNoneTest()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -278,7 +309,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_MultipleLessons_Test()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -354,7 +385,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_MultipleLessonsFraction_Test()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -478,7 +509,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_AddLesson_Test()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
@@ -536,7 +567,7 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void MergeLessonsList_NoOldLesson_2newSubGroupLessons_Test()
         {
-            //assert
+            //arrange
             var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();

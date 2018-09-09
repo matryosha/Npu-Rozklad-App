@@ -116,6 +116,7 @@ namespace NpuTimetableParser
         private List<Lecturer> _lecturers;
         private List<CalendarRawItem> _calendarRawList;
         private List<Lesson> _lessons;
+        private int _deltaGapInDays = -140;
 
         public NpuParser(IRestClient client)
         {
@@ -128,7 +129,18 @@ namespace NpuTimetableParser
             _client = new RestClient("http://ei.npu.edu.ua");//TODO: extract string
             _rawParser = new RawStringParser();
         }
-
+        /// <summary>
+        /// Change interval from which lessons search starts parsing.
+        /// Must be a multiple of 7
+        /// Default is -140
+        /// </summary>
+        /// <param name="days"></param>
+        public void GetDeltaIntervalInDays(int days)
+        {
+            if (days>=0) throw new Exception("Delta must be negative"); 
+            if (days % 7 != 0) throw new Exception("Delta must be multiple of 7");
+            _deltaGapInDays = days;
+        }
         public List<CalendarRawItem> FillCalendarRawList()
         {
             var calendarRawList = new List<CalendarRawItem>(); 
@@ -286,12 +298,14 @@ namespace NpuTimetableParser
         {
             if (_lessons == null) await Task.Run(() => CreateLessonsList());
 
-            var startPoint = date.AddDays(-56);
+            var startPoint = date.AddDays(_deltaGapInDays);
             List<Lesson> resultLessonsList = new List<Lesson>();
 
             while (startPoint <= date)
             {
-                var moreRecentLessonsList = _lessons.Where(lesson => lesson.LessonDate == startPoint && lesson.Group.ExternalId == groupId);
+                var moreRecentLessonsList = _lessons.Where(lesson => lesson.Group!= null &&
+                                                                     lesson.Group.ExternalId == groupId &&
+                                                                     lesson.LessonDate == startPoint);
                 if (moreRecentLessonsList.Any())
                 {
                     //Doing merging only if current lessonList isn't empty
@@ -306,7 +320,23 @@ namespace NpuTimetableParser
 
             }
 
-            return resultLessonsList;
+            var deleteOldLessons = new List<Lesson>(resultLessonsList);
+
+            foreach (var lesson in resultLessonsList)
+            {
+                int deltaDateTime;
+                if (lesson.Fraction == Fraction.None)
+                    deltaDateTime = (date - lesson.LessonDate).Days / 7;
+                else
+                {
+                    deltaDateTime = ((date - lesson.LessonDate).Days / 7) / 2; //There is might be a problem when number is odd
+                }
+
+                if (lesson.LessonCount - deltaDateTime <= 0) deleteOldLessons.Remove(lesson);
+
+            }
+         
+            return deleteOldLessons;
         }
 
         //TODO:All helper methods extract to another class
@@ -328,11 +358,11 @@ namespace NpuTimetableParser
                 }
                 foreach (var oldLessonWithSameNumber in sameLessonsNumber)
                 {
+                    if (resultLessonsList.Contains(newLesson)) continue;
                     if (newLesson.Fraction == Fraction.None &&
                         newLesson.SubGroup == SubGroup.None)
                     {
                         //Remove all lessons with that lesson number
-                        if(resultLessonsList.Contains(newLesson)) continue;
                         resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber);
                         resultLessonsList.Add(newLesson);
                         continue;
@@ -340,7 +370,6 @@ namespace NpuTimetableParser
                     if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
                         newLesson.SubGroup == SubGroup.None)
                     {
-                        if(resultLessonsList.Contains(newLesson)) continue;
                         resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber &&
                                                          l.Fraction == newLesson.Fraction);
                         resultLessonsList.Add(newLesson);
@@ -502,7 +531,6 @@ namespace NpuTimetableParser
                     item.LessonNumber = lessonnumber;
                     item.Fraction = fraction;
                     item.SubGroup = subgroup;
-
                     collection.Add(item);
 
                 }
