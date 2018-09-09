@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -71,13 +70,12 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public void ReplaceLessonTest()
         {
-            var parser = new NpuParser();
             var newLesson = new Lesson() {Subject = new Subject() {Name = "new"}};
             var oldLesson = new Lesson() {Subject = new Subject() {Name = "old"}};
             var list = new List<Lesson>();
             
             list.Add(oldLesson);
-            parser.ReplaceLesson(list, newLesson, oldLesson);
+            NpuParserHelper.ReplaceLesson(list, newLesson, oldLesson);
 
             Assert.AreEqual("new", list[0].Subject.Name);
         }
@@ -112,7 +110,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -123,7 +121,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_OldDenominator_NewNoneTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionDenominator = new Lesson()
@@ -149,7 +146,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -160,7 +157,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_OldNumerator_NewNoneTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionNumerator = new Lesson()
@@ -186,7 +182,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -197,7 +193,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_OldSubGroup_NewNoneTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionSubgroup = new Lesson()
@@ -223,7 +218,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -234,7 +229,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_OldSubGroupFirst_NewSubgroupFirstTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionSubgroup = new Lesson()
@@ -260,7 +254,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -271,7 +265,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_OldSubGroupAndFractionSet_NewSubGroupAndFractionNoneTest()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLessonFractionSubgroup = new Lesson()
@@ -299,7 +292,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -310,7 +303,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_MultipleLessons_Test()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLesson1 = new Lesson()
@@ -363,11 +355,9 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLesson3);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
-
-
             var assert1 = resultLessonsList.Where(l => l.LessonNumber == 1).ToList();
             Assert.AreEqual(1, assert1.Count);
             Assert.AreEqual("new1", assert1[0].Subject.Name);
@@ -386,7 +376,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_MultipleLessonsFraction_Test()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLesson1 = new Lesson()
@@ -490,7 +479,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLesson3);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
             var assertList1 = resultLessonsList.Where(l => l.LessonNumber == 1).ToList();
@@ -510,7 +499,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_AddLesson_Test()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLesson1 = new Lesson()
@@ -553,7 +541,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLessonFractionNone);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 
@@ -568,7 +556,6 @@ namespace NpuTimeTableParserTest
         public void MergeLessonsList_NoOldLesson_2newSubGroupLessons_Test()
         {
             //arrange
-            var parser = new NpuParser();
             var resultLessonsList = new List<Lesson>();
             var newLessonsList = new List<Lesson>();
             var oldLesson1 = new Lesson()
@@ -605,7 +592,7 @@ namespace NpuTimeTableParserTest
             newLessonsList.Add(newLesson2);
 
             //act
-            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+            NpuParserHelper.MergeLessonsList(resultLessonsList, newLessonsList);
 
             //assert
 

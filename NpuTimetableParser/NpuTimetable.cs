@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
-using System.Windows.Forms.Layout;
 using Newtonsoft.Json;
 using RestSharp;
 using Decode = System.Text.RegularExpressions.Regex;
@@ -110,207 +107,73 @@ namespace NpuTimetableParser
     public class NpuParser
     {
         private IRestClient _client;
-        private RawStringParser _rawParser;
+        private RawStringParser _rawParser = new RawStringParser();
+        private NpuParserHelper _helper;
         private List<Classroom> _classrooms;
         private List<Group> _groups;
         private List<Lecturer> _lecturers;
         private List<CalendarRawItem> _calendarRawList;
-        private List<Lesson> _lessons;
+        private List<Lesson> _lessons = new List<Lesson>();
         private int _deltaGapInDays = -140;
+        private string _siteUrl = "http://ei.npu.edu.ua";
 
         public NpuParser(IRestClient client)
         {
             _client = client;
-            _rawParser = new RawStringParser();
+            _helper = new NpuParserHelper(_client, _rawParser); //TODO IoC
         }
 
         public NpuParser()
         {
-            _client = new RestClient("http://ei.npu.edu.ua");//TODO: extract string
-            _rawParser = new RawStringParser();
+            _client = new RestClient(_siteUrl);//TODO: extract string
+            _helper = new NpuParserHelper(_client, _rawParser);
         }
+
         /// <summary>
         /// Change interval from which lessons search starts parsing.
         /// Must be a multiple of 7
         /// Default is -140
         /// </summary>
         /// <param name="days"></param>
-        public void GetDeltaIntervalInDays(int days)
+        public void SetDeltaIntervalInDays(int days)
         {
             if (days>=0) throw new Exception("Delta must be negative"); 
             if (days % 7 != 0) throw new Exception("Delta must be multiple of 7");
             _deltaGapInDays = days;
         }
-        public List<CalendarRawItem> FillCalendarRawList()
+
+        public List<Lesson> GetAllLessons()
         {
-            var calendarRawList = new List<CalendarRawItem>(); 
-            if(_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get calendar");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
- 
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-            
-            IRestResponse response = _client.Execute(request);
-            calendarRawList = _rawParser.ConvertCalendarRaw(calendarRawList, response.Content);  
-
-            return calendarRawList;
+            return new List<Lesson>(_lessons);
         }
 
-        public List<Group> FillGroupList()
+        public void SetSiteUrl(string url)
         {
-            var groupList = new List<Group>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get groups");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            groupList = _rawParser.ConvertGroupRaw(groupList, response.Content);
-
-            return groupList;
-        }
-
-        public List<Lecturer> FillLecturersList()
-        {
-            var lecturesList = new List<Lecturer>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get lectors");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            lecturesList = _rawParser.ConvertLecturersRaw(lecturesList, response.Content);
-
-            return lecturesList;
-        }
-
-        public List<Classroom> FillClassroomsList()
-        {
-            var classroomsList = new List<Classroom>();
-            if (_client == null) throw new Exception("client is null");
-
-            var request = new RestRequest("Server.php", Method.POST);
-
-            request.AddParameter("code", "get auditories");
-            request.AddParameter("params", "");
-            request.AddParameter("loginpass", "");
-            request.AddParameter("faculty", "fi");
-
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Accept", "application/json");
-
-            IRestResponse response = _client.Execute(request);
-            classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, response.Content);
-
-            return classroomsList;
-        }
-
-        public void CreateLessonsList()
-        {
-            _calendarRawList = FillCalendarRawList();
-            _groups = FillGroupList();
-            _lecturers = FillLecturersList();
-            _classrooms = FillClassroomsList();
-            _lessons = new List<Lesson>();
-
-            foreach (var calendarRawItem in _calendarRawList)
-            {
-                var lesson = new Lesson();
-                //Set lesson date
-                if (!string.IsNullOrEmpty(calendarRawItem.LessonSetDate))
-                {
-                    try
-                    {
-                        lesson.LessonDate = DateTime.Parse(calendarRawItem.LessonSetDate);
-                    }
-                    catch (FormatException e)
-                    {
-                        //TODO: LOG
-                    }      
-                }
-                //Set subject
-                if (!string.IsNullOrEmpty(calendarRawItem.SubjectName))
-                {
-                    var subject = new Subject();
-                    subject.Name = calendarRawItem.SubjectName;
-                    lesson.Subject = subject;
-                }
-                //Set group
-                if (calendarRawItem.GroupId != -1)
-                {
-                    lesson.Group = _groups.FirstOrDefault(a => a.ExternalId == calendarRawItem.GroupId);
-                }
-                //Set lecture
-                if (calendarRawItem.LectureId != -1)
-                {
-                    lesson.Lecturer = _lecturers.FirstOrDefault(a => a.ExternalId == calendarRawItem.LectureId);
-                }
-                //Set classroom
-                if (calendarRawItem.ClassroomId != -1)
-                {
-                    lesson.Classroom = _classrooms.FirstOrDefault(a => a.ExternalId == calendarRawItem.ClassroomId);
-                }
-                //Set LessonCount
-                if (calendarRawItem.LessonCount != -1)
-                {
-                    lesson.LessonCount = calendarRawItem.LessonCount;
-                }
-                //Set LessonNumber
-                if (calendarRawItem.LessonNumber != -1)
-                {
-                    lesson.LessonNumber = calendarRawItem.LessonNumber;
-                }
-                //Set Fraction
-                if (calendarRawItem.Fraction != -1)
-                {
-                    lesson.Fraction = (Fraction) calendarRawItem.Fraction;
-                }
-                //Set Subgroup
-                if (calendarRawItem.SubGroup != -1)
-                {
-                    lesson.SubGroup = (SubGroup) calendarRawItem.SubGroup;
-                }
-                _lessons.Add(lesson);
-            }
+            _siteUrl = url;
         }
 
         public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
         {
-            if (_lessons == null) await Task.Run(() => CreateLessonsList());
+            if (_lessons == null || _lessons.Count == 0)
+                await Task.Run(() =>
+                    _helper.CreateLessonsList(_calendarRawList,_groups,_lecturers,_classrooms,_lessons));
 
             var startPoint = date.AddDays(_deltaGapInDays);
             List<Lesson> resultLessonsList = new List<Lesson>();
 
             while (startPoint <= date)
             {
-                var moreRecentLessonsList = _lessons.Where(lesson => lesson.Group!= null &&
-                                                                     lesson.Group.ExternalId == groupId &&
-                                                                     lesson.LessonDate == startPoint);
+                IEnumerable<Lesson> moreRecentLessonsList = new List<Lesson>();
+
+                moreRecentLessonsList = _lessons.Where(lesson => lesson.Group != null &&
+                                                                 lesson.Group.ExternalId == groupId &&
+                                                                 lesson.LessonDate == startPoint);
+
                 if (moreRecentLessonsList.Any())
                 {
                     //Doing merging only if current lessonList isn't empty
                     if (resultLessonsList.Any())
-                        MergeLessonsList(resultLessonsList, moreRecentLessonsList);
+                        NpuParserHelper.MergeLessonsList(resultLessonsList, moreRecentLessonsList);
                     else
                         foreach (var lesson in moreRecentLessonsList) //TODO: to linq
                             resultLessonsList.Add(lesson);
@@ -338,66 +201,6 @@ namespace NpuTimetableParser
          
             return deleteOldLessons;
         }
-
-        //TODO:All helper methods extract to another class
-        /// <summary>
-        /// Resolve all conflicts and put new lesson in right place
-        /// </summary>
-        /// <param name="resultLessonsList"></param>
-        /// <param name="moreRecentLessonsList"></param>
-        public void MergeLessonsList(List<Lesson> resultLessonsList, IEnumerable<Lesson> moreRecentLessonsList)
-        {
-            foreach (var newLesson in moreRecentLessonsList)
-            {
-                //Check if there is a lesson with the same lesson number
-                var sameLessonsNumber = resultLessonsList.Where(l => l.LessonNumber == newLesson.LessonNumber).ToList();
-                if (!sameLessonsNumber.Any())
-                {
-                    resultLessonsList.Add(newLesson);
-                    continue;
-                }
-                foreach (var oldLessonWithSameNumber in sameLessonsNumber)
-                {
-                    if (resultLessonsList.Contains(newLesson)) continue;
-                    if (newLesson.Fraction == Fraction.None &&
-                        newLesson.SubGroup == SubGroup.None)
-                    {
-                        //Remove all lessons with that lesson number
-                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber);
-                        resultLessonsList.Add(newLesson);
-                        continue;
-                    }
-                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
-                        newLesson.SubGroup == SubGroup.None)
-                    {
-                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber &&
-                                                         l.Fraction == newLesson.Fraction);
-                        resultLessonsList.Add(newLesson);
-                        continue;
-                    }
-                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
-                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup &&
-                        oldLessonWithSameNumber.SubGroup != SubGroup.None)
-                    {
-                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
-                        continue;
-                    }
-                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction&&
-                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup)
-                    {
-                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
-                        continue;
-                    }
-                    resultLessonsList.Add(newLesson);
-                }
-            }
-        }
-
-        public void ReplaceLesson(List<Lesson> list, Lesson newLesson, Lesson oldLesson)
-        {
-            list.Remove(oldLesson);
-            list.Add(newLesson);
-        }
     }
 
     public class RawStringParser
@@ -411,7 +214,6 @@ namespace NpuTimetableParser
                     if(rawString[i+1] == '[') continue;
                     //inside [ ]
                     i++;
-                    int offset = 1; //TODO: safe to remove
 
                     CalendarRawItem item = new CalendarRawItem();
                     StringBuilder currentText = new StringBuilder();
@@ -420,28 +222,19 @@ namespace NpuTimetableParser
                     while (rawString[i] != ']')
                     {
                         while (rawString[i] == '"') i++;
-                        if(rawString[i] == ']') continue;
+                        if (rawString[i] == ']') continue;
                         while (rawString[i] != '"' && rawString[i] != ',')
                         {
                             currentText.Append(rawString[i]);
                             i++;
-                            offset++; 
                         }
 
                         valuesInBrackets.Add(currentText.ToString());
                         currentText.Clear();
 
-                        if (rawString[i] == '"')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == '"') i++;
 
-                        if (rawString[i] == ',')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == ',') i++;
                     }
 
                     if( valuesInBrackets.Count < 1) continue;
@@ -510,7 +303,6 @@ namespace NpuTimetableParser
                     {
                     }
 
-
                     item.GroupId = groupId;
                     try
                     {
@@ -519,6 +311,7 @@ namespace NpuTimetableParser
                     catch (ArgumentOutOfRangeException e)
                     {
                     }
+
                     item.LectureId = lectureId;
                     item.ClassroomId = classroomId;
                     try
@@ -526,7 +319,9 @@ namespace NpuTimetableParser
                         item.LessonSetDate = valuesInBrackets[4];
                     }
                     catch (ArgumentOutOfRangeException e)
-                    { }
+                    {
+                    }
+
                     item.LessonCount = lessoncount;
                     item.LessonNumber = lessonnumber;
                     item.Fraction = fraction;
@@ -548,7 +343,6 @@ namespace NpuTimetableParser
                     if (rawString[i + 1] == '[') continue;
                     //inside [ ]
                     i++;
-                    int offset = 1; //TODO: safe to remove
 
                     Group item = new Group();
                     StringBuilder currentText = new StringBuilder();
@@ -562,23 +356,14 @@ namespace NpuTimetableParser
                         {
                             currentText.Append(rawString[i]);
                             i++;
-                            offset++;
                         }
 
                         valuesInBrackets.Add(currentText.ToString());
                         currentText.Clear();
 
-                        if (rawString[i] == '"')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == '"') i++;
 
-                        if (rawString[i] == ',')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == ',') i++;
                     }
 
                     if(valuesInBrackets.Count == 0) continue;
@@ -603,7 +388,6 @@ namespace NpuTimetableParser
                     if (rawString[i + 1] == '[') continue;
                     //inside [ ]
                     i++;
-                    int offset = 1; //TODO: safe to remove
 
                     Lecturer item = new Lecturer();
                     StringBuilder currentText = new StringBuilder();
@@ -617,23 +401,14 @@ namespace NpuTimetableParser
                         {
                             currentText.Append(rawString[i]);
                             i++;
-                            offset++;
                         }
 
                         valuesInBrackets.Add(currentText.ToString());
                         currentText.Clear();
 
-                        if (rawString[i] == '"')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == '"') i++;
 
-                        if (rawString[i] == ',')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == ',') i++;
                     }
 
                     item.ExternalId = int.Parse(valuesInBrackets[0]);
@@ -655,7 +430,6 @@ namespace NpuTimetableParser
                     if (rawString[i + 1] == '[') continue;
                     //inside [ ]
                     i++;
-                    int offset = 1; //TODO: safe to remove
 
                     Classroom item = new Classroom();
                     StringBuilder currentText = new StringBuilder();
@@ -669,33 +443,247 @@ namespace NpuTimetableParser
                         {
                             currentText.Append(rawString[i]);
                             i++;
-                            offset++;
                         }
 
                         valuesInBrackets.Add(currentText.ToString());
                         currentText.Clear();
 
-                        if (rawString[i] == '"')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == '"') i++;
 
-                        if (rawString[i] == ',')
-                        {
-                            i++;
-                            offset++;
-                        }
+                        if (rawString[i] == ',') i++;
                     }
 
                     item.ExternalId = int.Parse(valuesInBrackets[0]);
                     item.Name = Decode.Unescape(valuesInBrackets[1]);
 
                     collection.Add(item);
-
                 }
             }
             return collection;
         }
+    }
+
+    public class NpuParserHelper
+    {
+        private IRestClient _client;
+        private RawStringParser _rawParser;
+
+        public NpuParserHelper(IRestClient client, RawStringParser rawParser)
+        {
+            _client = client;
+            _rawParser = rawParser;
+        }
+
+        public void CreateLessonsList(List<CalendarRawItem> calendarRawList, List<Group> groups, 
+            List<Lecturer> lecturers, List<Classroom> classrooms, List<Lesson> lessons)
+        {
+            calendarRawList = FillCalendarRawList();
+            groups = FillGroupList();
+            lecturers = FillLecturersList();
+            classrooms = FillClassroomsList();
+
+            foreach (var calendarRawItem in calendarRawList)
+            {
+                var lesson = new Lesson();
+                //Set lesson date
+                if (!string.IsNullOrEmpty(calendarRawItem.LessonSetDate))
+                {
+                    try
+                    {
+                        lesson.LessonDate = DateTime.Parse(calendarRawItem.LessonSetDate);
+                    }
+                    catch (FormatException e)
+                    {
+                        //TODO: LOG
+                    }
+                }
+                //Set subject
+                if (!string.IsNullOrEmpty(calendarRawItem.SubjectName))
+                {
+                    var subject = new Subject();
+                    subject.Name = calendarRawItem.SubjectName;
+                    lesson.Subject = subject;
+                }
+                //Set group
+                if (calendarRawItem.GroupId != -1)
+                {
+                    lesson.Group = groups.FirstOrDefault(a => a.ExternalId == calendarRawItem.GroupId);
+                }
+                //Set lecture
+                if (calendarRawItem.LectureId != -1)
+                {
+                    lesson.Lecturer = lecturers.FirstOrDefault(a => a.ExternalId == calendarRawItem.LectureId);
+                }
+                //Set classroom
+                if (calendarRawItem.ClassroomId != -1)
+                {
+                    lesson.Classroom = classrooms.FirstOrDefault(a => a.ExternalId == calendarRawItem.ClassroomId);
+                }
+                //Set LessonCount
+                if (calendarRawItem.LessonCount != -1)
+                {
+                    lesson.LessonCount = calendarRawItem.LessonCount;
+                }
+                //Set LessonNumber
+                if (calendarRawItem.LessonNumber != -1)
+                {
+                    lesson.LessonNumber = calendarRawItem.LessonNumber;
+                }
+                //Set Fraction
+                if (calendarRawItem.Fraction != -1)
+                {
+                    lesson.Fraction = (Fraction)calendarRawItem.Fraction;
+                }
+                //Set Subgroup
+                if (calendarRawItem.SubGroup != -1)
+                {
+                    lesson.SubGroup = (SubGroup)calendarRawItem.SubGroup;
+                }
+                lessons.Add(lesson);
+            }
+        }
+
+        public List<CalendarRawItem> FillCalendarRawList()
+        {
+            var calendarRawList = new List<CalendarRawItem>();
+            if (_client == null) throw new Exception("client is null");
+
+            var request = new RestRequest("Server.php", Method.POST);
+
+            request.AddParameter("code", "get calendar");
+            request.AddParameter("params", "");
+            request.AddParameter("loginpass", "");
+            request.AddParameter("faculty", "fi");
+
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Accept", "application/json");
+
+            IRestResponse response = _client.Execute(request);
+            calendarRawList = _rawParser.ConvertCalendarRaw(calendarRawList, response.Content);
+
+            return calendarRawList;
+        }
+
+        /// <summary>
+        /// Resolve all conflicts and put new lesson in right place
+        /// </summary>
+        /// <param name="resultLessonsList"></param>
+        /// <param name="moreRecentLessonsList"></param>
+        public static void MergeLessonsList(List<Lesson> resultLessonsList, IEnumerable<Lesson> moreRecentLessonsList)
+        {
+            foreach (var newLesson in moreRecentLessonsList)
+            {
+                //Check if there is a lesson with the same lesson number
+                var sameLessonsNumber = resultLessonsList.Where(l => l.LessonNumber == newLesson.LessonNumber).ToList();
+                if (!sameLessonsNumber.Any())
+                {
+                    resultLessonsList.Add(newLesson);
+                    continue;
+                }
+                foreach (var oldLessonWithSameNumber in sameLessonsNumber)
+                {
+                    if (resultLessonsList.Contains(newLesson)) continue;
+                    if (newLesson.Fraction == Fraction.None &&
+                        newLesson.SubGroup == SubGroup.None)
+                    {
+                        //Remove all lessons with that lesson number
+                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber);
+                        resultLessonsList.Add(newLesson);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
+                        newLesson.SubGroup == SubGroup.None)
+                    {
+                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber &&
+                                                         l.Fraction == newLesson.Fraction);
+                        resultLessonsList.Add(newLesson);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
+                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup &&
+                        oldLessonWithSameNumber.SubGroup != SubGroup.None)
+                    {
+                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
+                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup)
+                    {
+                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
+                        continue;
+                    }
+                    resultLessonsList.Add(newLesson);
+                }
+            }
+        }
+        public static void ReplaceLesson(List<Lesson> list, Lesson newLesson, Lesson oldLesson)
+        {
+            list.Remove(oldLesson);
+            list.Add(newLesson);
+        }
+
+        public List<Group> FillGroupList()
+        {
+            var groupList = new List<Group>();
+            if (_client == null) throw new Exception("client is null");
+
+            var request = new RestRequest("Server.php", Method.POST);
+
+            request.AddParameter("code", "get groups");
+            request.AddParameter("params", "");
+            request.AddParameter("loginpass", "");
+            request.AddParameter("faculty", "fi");
+
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Accept", "application/json");
+
+            IRestResponse response = _client.Execute(request);
+            groupList = _rawParser.ConvertGroupRaw(groupList, response.Content);
+
+            return groupList;
+        }
+
+        public List<Lecturer> FillLecturersList()
+        {
+            var lecturesList = new List<Lecturer>();
+            if (_client == null) throw new Exception("client is null");
+
+            var request = new RestRequest("Server.php", Method.POST);
+
+            request.AddParameter("code", "get lectors");
+            request.AddParameter("params", "");
+            request.AddParameter("loginpass", "");
+            request.AddParameter("faculty", "fi");
+
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Accept", "application/json");
+
+            IRestResponse response = _client.Execute(request);
+            lecturesList = _rawParser.ConvertLecturersRaw(lecturesList, response.Content);
+
+            return lecturesList;
+        }
+
+        public List<Classroom> FillClassroomsList()
+        {
+            var classroomsList = new List<Classroom>();
+            if (_client == null) throw new Exception("client is null");
+
+            var request = new RestRequest("Server.php", Method.POST);
+
+            request.AddParameter("code", "get auditories");
+            request.AddParameter("params", "");
+            request.AddParameter("loginpass", "");
+            request.AddParameter("faculty", "fi");
+
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Accept", "application/json");
+
+            IRestResponse response = _client.Execute(request);
+            classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, response.Content);
+
+            return classroomsList;
+        }
+
     }
 }
