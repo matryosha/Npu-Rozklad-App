@@ -316,7 +316,11 @@ namespace NpuTimetableParser
             {
                 //Check if there is a lesson with the same lesson number
                 var sameLessonsNumber = resultLessonsList.Where(l => l.LessonNumber == newLesson.LessonNumber).ToList();
-                if (!sameLessonsNumber.Any()) continue;
+                if (!sameLessonsNumber.Any())
+                {
+                    resultLessonsList.Add(newLesson);
+                    continue;
+                }
                 foreach (var oldLessonWithSameNumber in sameLessonsNumber)
                 {
                     if (newLesson.Fraction == Fraction.None)
@@ -348,7 +352,6 @@ namespace NpuTimetableParser
                         ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
                         continue;
                     }
-                    resultLessonsList.Add(newLesson);
                 }
             }
         }

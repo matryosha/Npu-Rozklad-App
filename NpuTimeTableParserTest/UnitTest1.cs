@@ -472,7 +472,62 @@ namespace NpuTimeTableParserTest
             var assertList3 = resultLessonsList.Where(l => l.LessonNumber == 3).ToList();
             Assert.AreEqual(1, assertList3.Count);
             Assert.AreEqual("new3", assertList3[0].Subject.Name);
+        }
 
+        [TestMethod]
+        public void MergeLessonsList_AddLesson_Test()
+        {
+            //assert
+            var parser = new NpuParser();
+            var resultLessonsList = new List<Lesson>();
+            var newLessonsList = new List<Lesson>();
+            var oldLesson1 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "old1"
+                },
+                LessonNumber = 1
+            };
+            var oldLesson2 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "old2"
+                },
+                LessonNumber = 2
+            };
+            var oldLesson3 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "old3"
+                },
+                LessonNumber = 3
+            };
+            var newLessonFractionNone = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "new4"
+                },
+                SubGroup = SubGroup.None,
+                LessonNumber = 4
+            };
+
+            resultLessonsList.Add(oldLesson1);
+            resultLessonsList.Add(oldLesson2);
+            resultLessonsList.Add(oldLesson3);
+            newLessonsList.Add(newLessonFractionNone);
+
+            //act
+            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+
+            //assert
+
+            var assertList = resultLessonsList.Where(l => l.LessonNumber == 4).ToList();
+            Assert.AreEqual(1, assertList.Count);
+            Assert.AreEqual("new4", assertList[0].Subject.Name);
         }
 
         public string ReadMockContent(string fileName)
