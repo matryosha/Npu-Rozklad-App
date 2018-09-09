@@ -21,7 +21,7 @@ namespace NpuTimeTableParserTest
     [TestClass]
     public class NpuParserTest
     {
-        
+        [TestMethod]
         public async Task ConstructorTest()
         {
             var mockClient = new MockRestClient();
@@ -32,7 +32,8 @@ namespace NpuTimeTableParserTest
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
             NpuParser parser = new NpuParser(mockClient);
 
-            var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 25), 411);
+            var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 11), 73);
+            var count = lessons.Count;
 
         }
 
@@ -529,12 +530,71 @@ namespace NpuTimeTableParserTest
             Assert.AreEqual(1, assertList.Count);
             Assert.AreEqual("new4", assertList[0].Subject.Name);
         }
+        /// <summary>
+        /// Test case when trying to add 2 new lesson with the same lesson number but different group when early this lesson number was empty
+        /// </summary>
+        [TestMethod]
+        public void MergeLessonsList_NoOldLesson_2newSubGroupLessons_Test()
+        {
+            //assert
+            var parser = new NpuParser();
+            var resultLessonsList = new List<Lesson>();
+            var newLessonsList = new List<Lesson>();
+            var oldLesson1 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "old1"
+                },
+                LessonNumber = 1
+            };
+
+            var newLesson1 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "new2_0_1"
+                },
+                SubGroup = SubGroup.First,
+                LessonNumber = 2
+            };
+
+            var newLesson2 = new Lesson()
+            {
+                Subject = new Subject()
+                {
+                    Name = "new2_0_2"
+                },
+                SubGroup = SubGroup.Second,
+                LessonNumber = 2
+            };
+
+            resultLessonsList.Add(oldLesson1);
+            newLessonsList.Add(newLesson1);
+            newLessonsList.Add(newLesson2);
+
+            //act
+            parser.MergeLessonsList(resultLessonsList, newLessonsList);
+
+            //assert
+
+            var assertList1 = resultLessonsList.Where(l => l.LessonNumber == 1).ToList();
+            Assert.AreEqual(1, assertList1.Count);
+            Assert.AreEqual("old1", assertList1[0].Subject.Name);
+
+            var assertList = resultLessonsList.Where(l => l.LessonNumber == 2).ToList();
+            Assert.AreEqual(2, assertList.Count);
+            Assert.AreEqual("new2_0_1", assertList.FirstOrDefault( l => l.SubGroup == SubGroup.First).Subject.Name);
+            Assert.AreEqual("new2_0_2", assertList.FirstOrDefault( l => l.SubGroup == SubGroup.Second).Subject.Name);
+        }
 
         public string ReadMockContent(string fileName)
         {
             return File.ReadAllText($"{fileName}");
         }
     }
+
+
 
     public class MockRestClient : IRestClient
     {

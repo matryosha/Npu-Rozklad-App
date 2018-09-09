@@ -78,7 +78,12 @@ namespace NpuTimetableParser
         public Fraction Fraction { get; set; }
         public SubGroup SubGroup { get; set; }
         public int LessonCount { get; set; }
-}
+
+        public override string ToString()
+        {
+            return LessonNumber + " " + Subject.Name + " F:" + (int) Fraction + " S:" + (int) SubGroup;
+        }
+    }
 
     public class CalendarRawItem
     {
@@ -323,7 +328,8 @@ namespace NpuTimetableParser
                 }
                 foreach (var oldLessonWithSameNumber in sameLessonsNumber)
                 {
-                    if (newLesson.Fraction == Fraction.None)
+                    if (newLesson.Fraction == Fraction.None &&
+                        newLesson.SubGroup == SubGroup.None)
                     {
                         //Remove all lessons with that lesson number
                         if(resultLessonsList.Contains(newLesson)) continue;
@@ -347,11 +353,13 @@ namespace NpuTimetableParser
                         ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
                         continue;
                     }
-                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction)
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction&&
+                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup)
                     {
                         ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
                         continue;
                     }
+                    resultLessonsList.Add(newLesson);
                 }
             }
         }
@@ -391,11 +399,8 @@ namespace NpuTimetableParser
                             offset++; 
                         }
 
-//                        if (!String.IsNullOrEmpty(currentText.ToString()))
-//                        {
-                            valuesInBrackets.Add(currentText.ToString());
-                            currentText.Clear();
-//                        }
+                        valuesInBrackets.Add(currentText.ToString());
+                        currentText.Clear();
 
                         if (rawString[i] == '"')
                         {
