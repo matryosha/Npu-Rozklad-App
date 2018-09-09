@@ -629,15 +629,15 @@ namespace NpuTimeTableParserTest
             switch (codeParameter.Value.ToString())
             {
                 case "get calendar":
-                    return new MockRestResonse(CalendarRawContent);
+                    return new MockRestResponse(CalendarRawContent);
                 case "get groups":
-                    return new MockRestResonse(GroupsRawContent);
+                    return new MockRestResponse(GroupsRawContent);
                 case "get lectors":
-                    return new MockRestResonse(LecturesRawContent);
+                    return new MockRestResponse(LecturesRawContent);
                 case "get auditories":
-                    return new MockRestResonse(ClassroomsRawContent);
+                    return new MockRestResponse(ClassroomsRawContent);
                 case "get faculties":
-                    return new MockRestResonse(FacultiesRawContent);
+                    return new MockRestResponse(FacultiesRawContent);
             }
             throw new Exception("There is no such a code");
         }
@@ -823,9 +823,9 @@ namespace NpuTimeTableParserTest
         public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
     }
 
-    public class MockRestResonse : IRestResponse
+    public class MockRestResponse : IRestResponse
     {
-        public MockRestResonse(string mockResponse)
+        public MockRestResponse(string mockResponse)
         {
             Content = mockResponse;
 
