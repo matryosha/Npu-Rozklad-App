@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Windows.Forms.Layout;
 using Newtonsoft.Json;
 using RestSharp;
 using Decode = System.Text.RegularExpressions.Regex;
@@ -29,6 +30,10 @@ namespace NpuTimetableParser
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class Group
@@ -36,18 +41,30 @@ namespace NpuTimetableParser
         public int ExternalId { get; set; }
         public string FullName { get; set; }
         public string ShortName { get; set; }
+        public override string ToString()
+        {
+            return ShortName;
+        }
     }
 
     public class Lecturer
     {
         public int ExternalId { get; set; }
         public string FullName { get; set; }
+        public override string ToString()
+        {
+            return FullName;
+        }
     }
 
     public class Classroom
     {
         public int ExternalId { get; set; }
         public string Name { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class Lesson
@@ -265,27 +282,82 @@ namespace NpuTimetableParser
             if (_lessons == null) await Task.Run(() => CreateLessonsList());
 
             var startPoint = date.AddDays(-56);
-            List<Lesson> lessonList = new List<Lesson>();
+            List<Lesson> resultLessonsList = new List<Lesson>();
 
             while (startPoint <= date)
             {
-                var tempList = _lessons.Where(lesson => lesson.LessonDate == startPoint && lesson.Group.ExternalId == groupId);
-                if (tempList.Any())
+                var moreRecentLessonsList = _lessons.Where(lesson => lesson.LessonDate == startPoint && lesson.Group.ExternalId == groupId);
+                if (moreRecentLessonsList.Any())
                 {
-                    lessonList.Clear();
-                    foreach (var lesson in tempList) //TODO: to linq
-                    {
-                        lessonList.Add(lesson);
-                    }
+                    //Doing merging only if current lessonList isn't empty
+                    if (resultLessonsList.Any())
+                        MergeLessonsList(resultLessonsList, moreRecentLessonsList);
+                    else
+                        foreach (var lesson in moreRecentLessonsList) //TODO: to linq
+                            resultLessonsList.Add(lesson);
                 }
                     
                 startPoint = startPoint.AddDays(7);
 
             }
 
-            return lessonList;
+            return resultLessonsList;
         }
 
+        //TODO:All helper methods extract to another class
+        /// <summary>
+        /// Resolve all conflicts and put new lesson in right place
+        /// </summary>
+        /// <param name="resultLessonsList"></param>
+        /// <param name="moreRecentLessonsList"></param>
+        public void MergeLessonsList(List<Lesson> resultLessonsList, IEnumerable<Lesson> moreRecentLessonsList)
+        {
+            foreach (var newLesson in moreRecentLessonsList)
+            {
+                //Check if there is a lesson with the same lesson number
+                var sameLessonsNumber = resultLessonsList.Where(l => l.LessonNumber == newLesson.LessonNumber).ToList();
+                if (!sameLessonsNumber.Any()) continue;
+                foreach (var oldLessonWithSameNumber in sameLessonsNumber)
+                {
+                    if (newLesson.Fraction == Fraction.None)
+                    {
+                        //Remove all lessons with that lesson number
+                        if(resultLessonsList.Contains(newLesson)) continue;
+                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber);
+                        resultLessonsList.Add(newLesson);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
+                        newLesson.SubGroup == SubGroup.None)
+                    {
+                        if(resultLessonsList.Contains(newLesson)) continue;
+                        resultLessonsList.RemoveAll(l => l.LessonNumber == newLesson.LessonNumber &&
+                                                         l.Fraction == newLesson.Fraction);
+                        resultLessonsList.Add(newLesson);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction &&
+                        oldLessonWithSameNumber.SubGroup == newLesson.SubGroup &&
+                        oldLessonWithSameNumber.SubGroup != SubGroup.None)
+                    {
+                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
+                        continue;
+                    }
+                    if (oldLessonWithSameNumber.Fraction == newLesson.Fraction)
+                    {
+                        ReplaceLesson(resultLessonsList, newLesson, oldLessonWithSameNumber);
+                        continue;
+                    }
+                    resultLessonsList.Add(newLesson);
+                }
+            }
+        }
+
+        public void ReplaceLesson(List<Lesson> list, Lesson newLesson, Lesson oldLesson)
+        {
+            list.Remove(oldLesson);
+            list.Add(newLesson);
+        }
     }
 
     public class RawStringParser
