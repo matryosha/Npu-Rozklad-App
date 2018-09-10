@@ -221,138 +221,183 @@ namespace NpuTimetableParser
 
     public class RawStringParser
     {
-        //TODO make them more pure and rename
-        public List<CalendarRawItem> ConvertCalendarRaw(List<CalendarRawItem> collection, string rawString)
+        public List<CalendarRawItem> DeserializeCalendar(string rawString)
         {
-            for (int i = 13; i < rawString.Length; i++)
+            var result = new List<CalendarRawItem>();
+            var rawValues = GetValues(rawString);
+
+            foreach (var rawValue in rawValues)
             {
-                if (rawString[i] == '[')
+                if (rawValue.Count < 1) continue;
+
+                var item = new CalendarRawItem();
+
+                var groupId = -1;
+                var lectureId = -1;
+                var classroomId = -1;
+                var lessonCount = -1;
+                var lessonNumber = -1;
+                var fraction = -1;
+                var subgroup = -1;
+
+                try
                 {
-                    if(rawString[i+1] == '[') continue;
-                    //inside [ ]
-                    i++;
-
-                    CalendarRawItem item = new CalendarRawItem();
-                    StringBuilder currentText = new StringBuilder();
-                    List<string> valuesInBrackets = new List<string>();
-
-                    while (rawString[i] != ']')
-                    {
-                        while (rawString[i] == '"') i++;
-                        if (rawString[i] == ']') continue;
-                        while (rawString[i] != '"' && rawString[i] != ',')
-                        {
-                            currentText.Append(rawString[i]);
-                            i++;
-                        }
-
-                        valuesInBrackets.Add(currentText.ToString());
-                        currentText.Clear();
-
-                        if (rawString[i] == '"') i++;
-
-                        if (rawString[i] == ',') i++;
-                    }
-
-                    if( valuesInBrackets.Count < 1) continue;
-
-                    int groupId = -1;
-                    int lectureId = -1;
-                    int classroomId = -1;
-                    int lessoncount = -1;
-                    int lessonnumber = -1;
-                    int fraction = -1;
-                    int subgroup = -1;
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[0], out groupId);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[2], out lectureId);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[3], out classroomId);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[5], out lessoncount);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[6], out lessonnumber);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[7], out fraction);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    try
-                    {
-                        int.TryParse(valuesInBrackets[8], out subgroup);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    item.GroupId = groupId;
-                    try
-                    {
-                        item.SubjectName = Decode.Unescape(valuesInBrackets[1]);
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    item.LectureId = lectureId;
-                    item.ClassroomId = classroomId;
-                    try
-                    {
-                        item.LessonSetDate = valuesInBrackets[4];
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                    }
-
-                    item.LessonCount = lessoncount;
-                    item.LessonNumber = lessonnumber;
-                    item.Fraction = fraction;
-                    item.SubGroup = subgroup;
-                    collection.Add(item);
-
+                    int.TryParse(rawValue[0], out groupId);
                 }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[2], out lectureId);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[3], out classroomId);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[5], out lessonCount);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[6], out lessonNumber);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[7], out fraction);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                try
+                {
+                    int.TryParse(rawValue[8], out subgroup);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                item.GroupId = groupId;
+                try
+                {
+                    item.SubjectName = Decode.Unescape(rawValue[1]);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                item.LectureId = lectureId;
+                item.ClassroomId = classroomId;
+                try
+                {
+                    item.LessonSetDate = rawValue[4];
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                }
+
+                item.LessonCount = lessonCount;
+                item.LessonNumber = lessonNumber;
+                item.Fraction = fraction;
+                item.SubGroup = subgroup;
+
+                result.Add(item);
             }
 
-            return collection;
+            return result;
         }
 
-        public List<Group> ConvertGroupRaw(List<Group> collection, string rawString)
+        public List<Group> DeserializeGroups(string rawString)
         {
+            var result = new List<Group>();
+            var rawValues = GetValues(rawString);
+
+            foreach (var rawValue in rawValues)
+            {
+                var item = new Group
+                {
+                    ExternalId = int.Parse(rawValue[0]),
+                    ShortName = Decode.Unescape(rawValue[1])
+                };  
+                result.Add(item);
+            }
+            return result;
+        }
+
+        public List<Lecturer> DeserializeLecturers(string rawString)
+        {
+            var result = new List<Lecturer>();
+            var rawValues = GetValues(rawString);
+
+            foreach (var rawValue in rawValues)
+            {
+                var item = new Lecturer
+                {
+                    ExternalId = int.Parse(rawValue[0]),
+                    FullName = Decode.Unescape(rawValue[1])
+                };
+                result.Add(item);
+            }
+            return result;
+        }
+
+        public List<Classroom> DeserializeClassrooms(string rawString)
+        {
+            var result = new List<Classroom>();
+            var rawValues = GetValues(rawString);
+
+            foreach (var rawValue in rawValues)
+            {
+                var item = new Classroom
+                {
+                    ExternalId = int.Parse(rawValue[0]),
+                    Name = Decode.Unescape(rawValue[1])
+                };
+                result.Add(item);
+            }
+            return result;
+        }
+
+        public List<Faculty> DeserializeFaculties(string rawString)
+        {
+            var result = new List<Faculty>();
+            var rawValues = GetValues(rawString);
+
+            foreach (var rawValue in rawValues)
+            {
+                var item = new Faculty
+                {
+                    ShortName = Decode.Unescape(rawValue[0]),
+                    FullName = Decode.Unescape(rawValue[1])
+                };
+                result.Add(item);
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<List<string>> GetValues(string rawString)
+        {
+            var values = new List<List<string>>();
             for (int i = 13; i < rawString.Length; i++)
             {
                 if (rawString[i] == '[')
@@ -361,7 +406,6 @@ namespace NpuTimetableParser
                     //inside [ ]
                     i++;
 
-                    Group item = new Group();
                     StringBuilder currentText = new StringBuilder();
                     List<string> valuesInBrackets = new List<string>();
 
@@ -383,141 +427,10 @@ namespace NpuTimetableParser
                         if (rawString[i] == ',') i++;
                     }
 
-                    if(valuesInBrackets.Count == 0) continue;
-
-                    item.ExternalId = int.Parse(valuesInBrackets[0]);
-                    item.ShortName = Decode.Unescape(valuesInBrackets[1]);
-
-                    collection.Add(item);
-
+                    values.Add(valuesInBrackets);
                 }
             }
-
-            return collection;
-        }
-
-        public List<Lecturer> ConvertLecturersRaw(List<Lecturer> collection, string rawString)
-        {
-            for (int i = 13; i < rawString.Length; i++)
-            {
-                if (rawString[i] == '[')
-                {
-                    if (rawString[i + 1] == '[') continue;
-                    //inside [ ]
-                    i++;
-
-                    Lecturer item = new Lecturer();
-                    StringBuilder currentText = new StringBuilder();
-                    List<string> valuesInBrackets = new List<string>();
-
-                    while (rawString[i] != ']')
-                    {
-                        while (rawString[i] == '"') i++;
-                        if (rawString[i] == ']') continue;
-                        while (rawString[i] != '"' && rawString[i] != ',')
-                        {
-                            currentText.Append(rawString[i]);
-                            i++;
-                        }
-
-                        valuesInBrackets.Add(currentText.ToString());
-                        currentText.Clear();
-
-                        if (rawString[i] == '"') i++;
-
-                        if (rawString[i] == ',') i++;
-                    }
-
-                    item.ExternalId = int.Parse(valuesInBrackets[0]);
-                    item.FullName = Decode.Unescape(valuesInBrackets[1]);
-
-                    collection.Add(item);
-
-                }
-            }
-            return collection;
-        }
-
-        public List<Classroom> ConvertClassroomsRaw(List<Classroom> collection, string rawString)
-        {
-            for (int i = 13; i < rawString.Length; i++)
-            {
-                if (rawString[i] == '[')
-                {
-                    if (rawString[i + 1] == '[') continue;
-                    //inside [ ]
-                    i++;
-
-                    Classroom item = new Classroom();
-                    StringBuilder currentText = new StringBuilder();
-                    List<string> valuesInBrackets = new List<string>();
-
-                    while (rawString[i] != ']')
-                    {
-                        while (rawString[i] == '"') i++;
-                        if (rawString[i] == ']') continue;
-                        while (rawString[i] != '"' && rawString[i] != ',')
-                        {
-                            currentText.Append(rawString[i]);
-                            i++;
-                        }
-
-                        valuesInBrackets.Add(currentText.ToString());
-                        currentText.Clear();
-
-                        if (rawString[i] == '"') i++;
-
-                        if (rawString[i] == ',') i++;
-                    }
-
-                    item.ExternalId = int.Parse(valuesInBrackets[0]);
-                    item.Name = Decode.Unescape(valuesInBrackets[1]);
-
-                    collection.Add(item);
-                }
-            }
-            return collection;
-        }
-
-        public List<Faculty> ConvertFacultiesRaw(List<Faculty> collection, string rawString)
-        {
-            for (int i = 13; i < rawString.Length; i++)
-            {
-                if (rawString[i] == '[')
-                {
-                    if (rawString[i + 1] == '[') continue;
-                    //inside [ ]
-                    i++;
-
-                    Faculty item = new Faculty();
-                    StringBuilder currentText = new StringBuilder();
-                    List<string> valuesInBrackets = new List<string>();
-
-                    while (rawString[i] != ']')
-                    {
-                        while (rawString[i] == '"') i++;
-                        if (rawString[i] == ']') continue;
-                        while (rawString[i] != '"' && rawString[i] != ',')
-                        {
-                            currentText.Append(rawString[i]);
-                            i++;
-                        }
-
-                        valuesInBrackets.Add(currentText.ToString());
-                        currentText.Clear();
-
-                        if (rawString[i] == '"') i++;
-
-                        if (rawString[i] == ',') i++;
-                    }
-
-                    item.ShortName = Decode.Unescape(valuesInBrackets[0]);
-                    item.FullName = Decode.Unescape(valuesInBrackets[1]);
-
-                    collection.Add(item);
-                }
-            }
-            return collection;
+            return values;
         }
     }
 
@@ -626,7 +539,7 @@ namespace NpuTimetableParser
             var calendarRawList = new List<CalendarRawItem>();
 
             var clientResponse = SiteRequest("get calendar", _faculty);
-            calendarRawList = _rawParser.ConvertCalendarRaw(calendarRawList, clientResponse);
+            calendarRawList = _rawParser.DeserializeCalendar(clientResponse);
 
             return calendarRawList;
         }
@@ -636,7 +549,7 @@ namespace NpuTimetableParser
             var groupList = new List<Group>();
 
             var clientResponse = SiteRequest("get groups", _faculty);
-            groupList = _rawParser.ConvertGroupRaw(groupList, clientResponse);
+            groupList = _rawParser.DeserializeGroups(clientResponse);
 
             return groupList;
         }
@@ -646,7 +559,7 @@ namespace NpuTimetableParser
             var lecturesList = new List<Lecturer>();
 ;
             var clientResponse = SiteRequest("get lectors", _faculty);
-            lecturesList = _rawParser.ConvertLecturersRaw(lecturesList, clientResponse);
+            lecturesList = _rawParser.DeserializeLecturers(clientResponse);
 
             return lecturesList;
         }
@@ -656,14 +569,14 @@ namespace NpuTimetableParser
             var classroomsList = new List<Classroom>();
 
             var clientResponse = SiteRequest("get auditories", _faculty);
-            classroomsList = _rawParser.ConvertClassroomsRaw(classroomsList, clientResponse);
+            classroomsList = _rawParser.DeserializeClassrooms(clientResponse);
 
             return classroomsList;
         }
 
         public List<Faculty> GetFaculties()
         {
-            return _rawParser.ConvertFacultiesRaw(new List<Faculty>(), SiteRequest("get faculties", "fi"));
+            return _rawParser.DeserializeFaculties(SiteRequest("get faculties", "fi"));
         }
 
         /// <summary>
