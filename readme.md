@@ -3,6 +3,7 @@
 1. [Download](https://github.com/matryosha/NPU-Timetables-grabber/releases/download/v0.1-beta/NpuTimetableParser.dll) latest version
 2. Place dll somewhere
 3. [Add dependency to your project](https://stackoverflow.com/questions/7348675/how-do-i-put-a-dll-into-my-project-visual-studio-c-sharp-2010)
+4. Add RestClient to your project
 ## Usage Examples:
 ### 1:
 ```c#
