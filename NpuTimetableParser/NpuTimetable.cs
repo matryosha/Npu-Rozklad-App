@@ -20,6 +20,7 @@ namespace NpuTimetableParser
         private List<CalendarRawItem> _calendarRawList;
         private List<Faculty> _faculties;
         private int _deltaGapInDays = -140;
+        private readonly string _faculty;
         private string _siteUrl = "http://ei.npu.edu.ua";
 
         public NpuParser(IRestClient client, string faculty = "fi")
@@ -31,7 +32,8 @@ namespace NpuTimetableParser
         public NpuParser(string faculty)
         {
             _client = new RestClient(_siteUrl);//TODO: extract string
-            _helper = new NpuParserHelper(_client, _rawParser,faculty);
+            _faculty = faculty;
+            _helper = new NpuParserHelper(_client, _rawParser,_faculty);
         }
 
         /// <summary>
@@ -52,6 +54,11 @@ namespace NpuTimetableParser
             return new List<Lesson>(_lessons);
         }
 
+        public string GetCurrentFaculty()
+        {
+            return _faculty;
+        }
+
         public void SetSiteUrl(string url)
         {
             _siteUrl = url;
@@ -60,6 +67,11 @@ namespace NpuTimetableParser
         public async Task<List<Faculty>> GetFaculties()
         {
             return await Task.Run(() => _faculties ?? (_faculties = _helper.GetFaculties()));
+        }
+
+        public async Task<List<Group>> GetGroups()
+        {
+            return await Task.Run(() => _groups ?? (_groups = _helper.GetGroups(_faculty))); 
         }
 
         public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
@@ -473,6 +485,11 @@ namespace NpuTimetableParser
             return _rawParser.DeserializeFaculties(SiteRequest("get faculties", "fi"));
         }
 
+        public List<Group> GetGroups(string faculty)
+        {
+            return _rawParser.DeserializeGroups(SiteRequest("get groups", faculty));
+        }
+
         /// <summary>
         /// Resolve all conflicts and put new lesson in right place
         /// </summary>
@@ -530,6 +547,5 @@ namespace NpuTimetableParser
             list.Remove(oldLesson);
             list.Add(newLesson);
         }
-
     }
 }
