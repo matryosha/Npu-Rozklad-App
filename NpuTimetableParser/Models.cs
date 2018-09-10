@@ -64,9 +64,15 @@ namespace NpuTimetableParser
         public Classroom Classroom { get; set; }
         public Lecturer Lecturer { get; set; }
         public int LessonNumber { get; set; }
+        /// <summary>
+        /// Contains date when lesson has been set up. Not actual date
+        /// </summary>
         public DateTime LessonDate { get; set; }
         public Fraction Fraction { get; set; }
         public SubGroup SubGroup { get; set; }
+        /// <summary>
+        /// Indicates how many times lesson must appear in timetable
+        /// </summary>
         public int LessonCount { get; set; }
 
         public override string ToString()

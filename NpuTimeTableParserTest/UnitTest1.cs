@@ -20,8 +20,8 @@ namespace NpuTimeTableParserTest
     [TestClass]
     public class NpuParserTest
     {
-
-        public async Task ConstructorTest()
+        [TestMethod]
+        public async Task TestPolygon()
         {
             var mockClient = new MockRestClient();
             mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
@@ -606,6 +606,23 @@ namespace NpuTimeTableParserTest
             Assert.AreEqual("new2_0_2", assertList.FirstOrDefault( l => l.SubGroup == SubGroup.Second).Subject.Name);
         }
 
+        public async Task NpuParser_Example()
+        {
+            //Create instance
+            var npuParser = new NpuParser();
+            //Get all faculties
+            var faculties = await npuParser.GetFaculties();
+            //Select certain faculty
+            var fi = faculties.First(f => f.ShortName == "fi");
+            //Set faculty sending faculty object
+            npuParser.SetFaculty(fi);
+            //Or just using short name
+            npuParser.SetFaculty(fi.ShortName);
+            //Get faculty's groups
+            var groups = await npuParser.GetGroups();
+            //Get lesson list by passing date and group id
+            var lessons = await npuParser.GetLessonsOnDate(new DateTime(2018, 10, 29), groups[1].ExternalId);
+        }
         public string ReadMockContent(string fileName)
         {
             return File.ReadAllText($"{fileName}");
@@ -828,6 +845,7 @@ namespace NpuTimeTableParserTest
         public MockRestResponse(string mockResponse)
         {
             Content = mockResponse;
+            ContentLength = 1;
 
         }
         public IRestRequest Request { get; set; }
