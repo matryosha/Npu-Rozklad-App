@@ -3,127 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RestSharp;
 using Decode = System.Text.RegularExpressions.Regex;
 
 namespace NpuTimetableParser
 {
-    public enum Fraction
-    {
-        None,
-        Numerator,
-        Denominator 
-    }
-
-    public enum SubGroup
-    {
-        None,
-        First,
-        Second 
-    }
-
-    public class Subject
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class Group
-    {
-        public int ExternalId { get; set; }
-        public string FullName { get; set; }
-        public string ShortName { get; set; }
-        public override string ToString()
-        {
-            return ShortName;
-        }
-    }
-
-    public class Lecturer
-    {
-        public int ExternalId { get; set; }
-        public string FullName { get; set; }
-        public override string ToString()
-        {
-            return FullName;
-        }
-    }
-
-    public class Classroom
-    {
-        public int ExternalId { get; set; }
-        public string Name { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class Lesson
-    {
-        public Group Group { get; set; }
-        public Subject Subject { get; set; }
-        public Classroom Classroom { get; set; }
-        public Lecturer Lecturer { get; set; }
-        public int LessonNumber { get; set; }
-        public DateTime LessonDate { get; set; }
-        public Fraction Fraction { get; set; }
-        public SubGroup SubGroup { get; set; }
-        public int LessonCount { get; set; }
-
-        public override string ToString()
-        {
-            return LessonNumber + " " + Subject.Name + " F:" + (int) Fraction + " S:" + (int) SubGroup;
-        }
-    }
-
-    public class CalendarRawItem
-    {
-        [JsonProperty("0")]
-        public int GroupId { get; set; }
-        [JsonProperty("1")]
-        public string SubjectName { get; set; }
-        [JsonProperty("2")]
-        public int LectureId { get; set; }
-        [JsonProperty("3")]
-        public int ClassroomId { get; set; }
-        [JsonProperty("4")]
-        public int LessonCount { get; set; }
-        [JsonProperty("5")]
-        public string LessonSetDate { get; set; } //TODO: Deserialize into DateTime at once
-        [JsonProperty("6")]
-        public int LessonNumber { get; set; }
-        [JsonProperty("7")]
-        public int Fraction { get; set; }
-        [JsonProperty("8")]
-        public int SubGroup { get; set; }
-    }
-
-    public class Faculty
-    {
-        public string ShortName { get; set; }
-        public string FullName { get; set; }
-        public override string ToString()
-        {
-            return FullName + " " + ShortName;
-        }
-    }
-
     public class NpuParser
     {
-        private IRestClient _client;
-        private RawStringParser _rawParser = new RawStringParser();
-        private NpuParserHelper _helper;
-        private List<Classroom> _classrooms;
+        private readonly IRestClient _client;
+        private readonly RawStringParser _rawParser = new RawStringParser();
+        private readonly NpuParserHelper _helper;
+        private readonly List<Classroom> _classrooms;
+        private readonly List<Lesson> _lessons = new List<Lesson>();
         private List<Group> _groups;
         private List<Lecturer> _lecturers;
         private List<CalendarRawItem> _calendarRawList;
-        private List<Lesson> _lessons = new List<Lesson>();
         private List<Faculty> _faculties;
         private int _deltaGapInDays = -140;
         private string _siteUrl = "http://ei.npu.edu.ua";
