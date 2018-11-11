@@ -154,7 +154,7 @@ namespace NpuTimetableParser
             return classroomsList;
         }
 
-        public List<Faculty> GetFaculties()
+        public List<Faculty>  GetFaculties()
         {
             return _rawParser.DeserializeFaculties(SiteRequest("get faculties", "fi"));
         }

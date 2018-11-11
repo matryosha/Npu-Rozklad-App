@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
 
@@ -8,146 +9,59 @@ namespace NpuTimetableParser
 {
     public class NpuParser
     {
-        private readonly IRestClient _client;
-        private readonly RawStringParser _rawParser = new RawStringParser();
+        private readonly RestClient _client;
+        //private NpuParserInstance _testInstance;
         private readonly NpuParserHelper _helper;
-        private readonly List<Classroom> _classrooms;
-        private readonly List<Lesson> _lessons = new List<Lesson>();
-        private List<Group> _groups;
-        private List<Lecturer> _lecturers;
-        private List<CalendarRawItem> _calendarRawList;
+        private readonly Dictionary<string, NpuParserInstance> _npuInstances;
         private List<Faculty> _faculties;
-        private int _deltaGapInDays = -140;
-        private string _faculty;
-        private string _siteUrl = "http://ei.npu.edu.ua";
-
-        public NpuParser(IRestClient client, string faculty = "fi")
-        {
-            _client = client;
-            _helper = new NpuParserHelper(_client, _rawParser, faculty); //TODO IoC
-        }
-
-        public NpuParser(string faculty)
-        {
-            _client = new RestClient(_siteUrl);
-            _faculty = faculty;
-            _helper = new NpuParserHelper(_client, _rawParser,_faculty);
-        }
 
         public NpuParser()
         {
-            _client = new RestClient(_siteUrl);
-            _helper = new NpuParserHelper(_client, _rawParser);
+            _client = new RestClient("http://ei.npu.edu.ua");
+            //_testInstance = new NpuParserInstance();
+            _helper = new NpuParserHelper(_client, new RawStringParser());
+            _npuInstances = new Dictionary<string, NpuParserInstance>();
+            _faculties = _helper.GetFaculties();
         }
 
-        /// <summary>
-        /// Change interval from which lessons search starts parsing.
-        /// Must be a multiple of 7
-        /// Default is -140
-        /// </summary>
-        /// <param name="days"></param>
-        public void SetDeltaIntervalInDays(int days)
-        {
-            if (days>=0) throw new Exception("Delta must be negative"); 
-            if (days % 7 != 0) throw new Exception("Delta must be multiple of 7");
-            _deltaGapInDays = days;
-        }
+        public List<Faculty> GetFaculties() => _faculties ?? (_faculties = _helper.GetFaculties());
 
-        public List<Lesson> GetAllLessons()
+        public Task<List<Group>> GetGroups(string facultyShortName)
         {
-            return new List<Lesson>(_lessons);
-        }
-
-        public string GetCurrentFaculty()
-        {
-            return _faculty;
-        }
-
-        public void SetSiteUrl(string url)
-        {
-            _siteUrl = url;
-        }
-
-        public void SetFaculty(string faculty)
-        {
-            if (_faculties != null)
+            if (!_npuInstances.ContainsKey(facultyShortName))
             {
-                if(!_faculties.Any(f => f.ShortName == faculty)) throw new Exception($"There is not such a faculty: {faculty}");
-            }
-
-            _faculty = faculty;
-            _helper.SetFaculty(faculty);
-        }
-
-        public void SetFaculty(Faculty faculty)
-        {
-            if (_faculties != null)
-            {
-                if (!_faculties.Any(f => f.ShortName == faculty.ShortName)) throw new Exception($"There is not such a faculty: {faculty}");
-            }
-
-            _faculty = faculty.ShortName;
-            _helper.SetFaculty(faculty.ShortName);
-        }
-
-        public async Task<List<Faculty>> GetFaculties()
-        {
-            return await Task.Run(() => _faculties ?? (_faculties = _helper.GetFaculties()));
-        }
-
-        public async Task<List<Group>> GetGroups()
-        {
-            return await Task.Run(() => _groups ?? (_groups = _helper.GetGroups(_faculty))); 
-        }
-
-        public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
-        {
-            if (_lessons == null || _lessons.Count == 0)
-                await Task.Run(() =>
-                    _helper.CreateLessonsList(_calendarRawList,_groups,_lecturers,_classrooms,_lessons));
-
-            var startPoint = date.AddDays(_deltaGapInDays);
-            List<Lesson> resultLessonsList = new List<Lesson>();
-
-            while (startPoint <= date)
-            {
-                IEnumerable<Lesson> moreRecentLessonsList = new List<Lesson>();
-
-                moreRecentLessonsList = _lessons.Where(lesson => lesson.Group != null &&
-                                                                 lesson.Group.ExternalId == groupId &&
-                                                                 lesson.LessonDate == startPoint);
-
-                if (moreRecentLessonsList.Any())
+                if (_faculties.Any(f => f.ShortName == facultyShortName))
                 {
-                    //Doing merging only if current lessonList isn't empty
-                    if (resultLessonsList.Any())
-                        NpuParserHelper.MergeLessonsList(resultLessonsList, moreRecentLessonsList);
-                    else
-                        foreach (var lesson in moreRecentLessonsList) //TODO: to linq
-                            resultLessonsList.Add(lesson);
+                    var npuInstance = new NpuParserInstance(_client, facultyShortName);
+                    _npuInstances.Add(facultyShortName, npuInstance);
                 }
-                    
-                startPoint = startPoint.AddDays(7);
-
-            }
-
-            var deleteOldLessons = new List<Lesson>(resultLessonsList);
-
-            foreach (var lesson in resultLessonsList)
-            {
-                int deltaDateTime;
-                if (lesson.Fraction == Fraction.None)
-                    deltaDateTime = (date - lesson.LessonDate).Days / 7;
                 else
                 {
-                    deltaDateTime = ((date - lesson.LessonDate).Days / 7) / 2; //There is might be a problem when number is odd
+                    return null;
                 }
-
-                if (lesson.LessonCount - deltaDateTime <= 0) deleteOldLessons.Remove(lesson);
-
             }
-         
-            return deleteOldLessons;
+
+            return _npuInstances[facultyShortName].GetGroups();
+        }
+
+        public Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, string groupShortName, DateTime date)
+        {
+            if (!_npuInstances.ContainsKey(facultyShortName))
+            {
+                if (_faculties.Any(f => f.ShortName == facultyShortName))
+                {
+                    var npuInstance = new NpuParserInstance(_client, facultyShortName);
+                    _npuInstances.Add(facultyShortName, npuInstance);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            var groups = _npuInstances[facultyShortName].GetGroups().Result;
+            var groupId = groups.FirstOrDefault(g => g.ShortName == groupShortName).ExternalId;
+            return _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
         }
     }
 }

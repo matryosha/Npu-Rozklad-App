@@ -23,18 +23,22 @@ namespace NpuTimeTableParserTest
         [TestMethod]
         public async Task TestPolygon()
         {
-            var mockClient = new MockRestClient();
-            mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
-            //mockClient.CalendarRawContent = ReadMockContent("testcalendar.txt"); 
-            mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
-            mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
-            mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
-            mockClient.FacultiesRawContent = ReadMockContent("FacultiesRawContent.txt");
-            NpuParser parser = new NpuParser(mockClient);
-            var faculties = await parser.GetFaculties();
-            //var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 9, 8), 87);
-            var lessons = await parser.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
-            var count = lessons.Count;
+            //var mockClient = new MockRestClient();
+            //mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
+            ////mockClient.CalendarRawContent = ReadMockContent("testcalendar.txt"); 
+            //mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
+            //mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
+            //mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
+            //mockClient.FacultiesRawContent = ReadMockContent("FacultiesRawContent.txt");
+            //NpuParserInstance parserInstance = new NpuParserInstance(mockClient);
+            //var faculties = await parserInstance.GetFaculties();
+            ////var lessons = await parserInstance.GetLessonsOnDate(new DateTime(2017, 9, 8), 87);
+            //var lessons = await parserInstance.GetLessonsOnDate(DateTime.Today.AddDays(1), 87);
+            //var count = lessons.Count;
+
+            var parser = new NpuParser();
+            var a = parser.GetGroups("fi").Result;
+
 
         }
 
@@ -47,10 +51,10 @@ namespace NpuTimeTableParserTest
             mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
             mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
-            NpuParser parser = new NpuParser(mockClient);
+            NpuParserInstance parserInstance = new NpuParserInstance(mockClient);
 
             //act
-            List<Lesson> testLessonsList = await parser.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
+            List<Lesson> testLessonsList = await parserInstance.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
 
             //assert
             Assert.AreEqual(4, testLessonsList.Count);
@@ -609,7 +613,7 @@ namespace NpuTimeTableParserTest
         public async Task NpuParser_Example()
         {
             //Create instance
-            var npuParser = new NpuParser();
+            var npuParser = new NpuParserInstance();
             //Get all faculties
             var faculties = await npuParser.GetFaculties();
             //Select certain faculty
