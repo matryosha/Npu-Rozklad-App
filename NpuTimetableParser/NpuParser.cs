@@ -44,7 +44,7 @@ namespace NpuTimetableParser
             return _npuInstances[facultyShortName].GetGroups();
         }
 
-        public Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, string groupShortName, DateTime date)
+        public Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, int groupId, DateTime date)
         {
             if (!_npuInstances.ContainsKey(facultyShortName))
             {
@@ -60,7 +60,6 @@ namespace NpuTimetableParser
             }
 
             var groups = _npuInstances[facultyShortName].GetGroups().Result;
-            var groupId = groups.FirstOrDefault(g => g.ShortName == groupShortName).ExternalId;
             return _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
         }
     }
