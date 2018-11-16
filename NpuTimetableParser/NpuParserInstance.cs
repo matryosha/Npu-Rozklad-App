@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using RestSharp;
@@ -133,6 +134,16 @@ namespace NpuTimetableParser
             }
 
             var deleteOldLessons = new List<Lesson>(resultLessonsList);
+            var currentWeekInt = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Today,CalendarWeekRule.FirstDay, DayOfWeek.Monday) % 2;
+            var currentWeek = Fraction.None;
+            if (currentWeekInt == 0)
+            {
+                currentWeek = Fraction.Numerator;
+            }
+            else
+            {
+                currentWeek = Fraction.Denominator;
+            }
 
             foreach (var lesson in resultLessonsList)
             {
@@ -147,7 +158,18 @@ namespace NpuTimetableParser
                 if (lesson.LessonCount - deltaDateTime <= 0) deleteOldLessons.Remove(lesson);
 
             }
-         
+
+            if (currentWeek == Fraction.Numerator)
+            {
+                return deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
+                    .OrderBy(l => l.LessonNumber).ToList();
+            } else if (currentWeek == Fraction.Denominator)
+            {
+                return deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
+                    .OrderBy(l => l.LessonNumber).ToList();
+            }
+
+
             return deleteOldLessons;
         }
     }
