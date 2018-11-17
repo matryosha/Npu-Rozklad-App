@@ -27,5 +27,28 @@ namespace RozkladNpuBot.Utils
                 default: return number.ToString();
             }
         }
+
+        public static string ConvertDayOfWeekToText(DayOfWeek dayOfWeek)
+        {
+            switch (dayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    return "Понедельник";
+                case DayOfWeek.Tuesday:
+                    return "Вторник";
+                case DayOfWeek.Wednesday:
+                    return "Среду";
+                case DayOfWeek.Thursday:
+                    return "Четверг";
+                case DayOfWeek.Friday:
+                    return "Пятницу";
+                case DayOfWeek.Saturday:
+                    return "Субботу";
+                case DayOfWeek.Sunday:
+                    return "Воскресение";
+            }
+
+            return "??";
+        }
     }
 }

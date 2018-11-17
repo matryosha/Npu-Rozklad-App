@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RozkladNpuBot", "RozkladNpuBot\RozkladNpuBot.csproj", "{CB68E514-E3BC-41A7-AD13-3CB48C716ED2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RozkladNpuAspNetCore", "RozkladNpuAspNetCore\RozkladNpuAspNetCore.csproj", "{2C66FE86-E958-4509-A435-C92B60C8A055}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CB68E514-E3BC-41A7-AD13-3CB48C716ED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB68E514-E3BC-41A7-AD13-3CB48C716ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB68E514-E3BC-41A7-AD13-3CB48C716ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB68E514-E3BC-41A7-AD13-3CB48C716ED2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C66FE86-E958-4509-A435-C92B60C8A055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C66FE86-E958-4509-A435-C92B60C8A055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C66FE86-E958-4509-A435-C92B60C8A055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C66FE86-E958-4509-A435-C92B60C8A055}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {87C86292-EF74-4643-BEA1-3A5A7458D91F}
+		SolutionGuid = {06BBC9F5-7529-48F9-ADAA-6D6BD6000FD9}
 	EndGlobalSection
 EndGlobal
