@@ -10,7 +10,7 @@ namespace NpuTimetableParser
     public class NpuParserInstance
     {
         private readonly IRestClient _client;
-        private readonly RawStringParser _rawParser = new RawStringParser();
+        private readonly RawStringParser _rawParser;
         private readonly NpuParserHelper _helper;
         private readonly List<Classroom> _classrooms;
         private readonly List<Lesson> _lessons = new List<Lesson>();
@@ -22,22 +22,25 @@ namespace NpuTimetableParser
         private string _faculty;
         private string _siteUrl = "http://ei.npu.edu.ua";
 
-        public NpuParserInstance(IRestClient client, string faculty = "fi")
+        public NpuParserInstance(IRestClient client, RawStringParser rawParser, string faculty = "fi")
         {
             _client = client;
+            _rawParser = rawParser;
             _helper = new NpuParserHelper(_client, _rawParser, faculty); //TODO IoC
             _faculty = faculty;
         }
 
-        public NpuParserInstance(string faculty)
+        public NpuParserInstance(string faculty, RawStringParser rawParser)
         {
             _client = new RestClient(_siteUrl);
             _faculty = faculty;
+            _rawParser = rawParser;
             _helper = new NpuParserHelper(_client, _rawParser,_faculty);
         }
 
-        public NpuParserInstance()
+        public NpuParserInstance(RawStringParser rawParser)
         {
+            _rawParser = rawParser;
             _client = new RestClient(_siteUrl);
             _helper = new NpuParserHelper(_client, _rawParser);
         }

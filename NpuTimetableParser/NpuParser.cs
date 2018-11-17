@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using RestSharp;
 
@@ -10,6 +11,10 @@ namespace NpuTimetableParser
     public class NpuParser
     {
         private readonly RestClient _client;
+        private ReaderWriterLockSlim _groupsLock = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim _lessonsLock = new ReaderWriterLockSlim();
+
+        private RawStringParser _parser;
         //private NpuParserInstance _testInstance;
         private readonly NpuParserHelper _helper;
         private readonly Dictionary<string, NpuParserInstance> _npuInstances;
@@ -18,13 +23,13 @@ namespace NpuTimetableParser
         public NpuParser()
         {
             _client = new RestClient("http://ei.npu.edu.ua");
-            //_testInstance = new NpuParserInstance();
-            _helper = new NpuParserHelper(_client, new RawStringParser());
+            _parser = new RawStringParser();
+            _helper = new NpuParserHelper(_client, _parser);
             _npuInstances = new Dictionary<string, NpuParserInstance>();
             _faculties = _helper.GetFaculties();
         }
 
-        public List<Faculty> GetFaculties() => _faculties ?? (_faculties = _helper.GetFaculties());
+        public List<Faculty> GetFaculties() => _faculties;
 
         public Task<List<Group>> GetGroups(string facultyShortName)
         {
@@ -32,8 +37,13 @@ namespace NpuTimetableParser
             {
                 if (_faculties.Any(f => f.ShortName == facultyShortName))
                 {
-                    var npuInstance = new NpuParserInstance(_client, facultyShortName);
-                    _npuInstances.Add(facultyShortName, npuInstance);
+                    _groupsLock.EnterWriteLock();
+                    if (!_npuInstances.ContainsKey(facultyShortName))
+                    {
+                        var npuInstance = new NpuParserInstance(_client, _parser, facultyShortName);
+                        _npuInstances.Add(facultyShortName, npuInstance);
+                    }
+                    _groupsLock.ExitWriteLock();
                 }
                 else
                 {
@@ -44,14 +54,19 @@ namespace NpuTimetableParser
             return _npuInstances[facultyShortName].GetGroups();
         }
 
-        public Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, int groupId, DateTime date)
+        public async Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, int groupId, DateTime date)
         {
             if (!_npuInstances.ContainsKey(facultyShortName))
             {
                 if (_faculties.Any(f => f.ShortName == facultyShortName))
                 {
-                    var npuInstance = new NpuParserInstance(_client, facultyShortName);
-                    _npuInstances.Add(facultyShortName, npuInstance);
+                    _lessonsLock.EnterWriteLock();
+                    if(!_npuInstances.ContainsKey(facultyShortName))
+                    {
+                        var npuInstance = new NpuParserInstance(_client, _parser,facultyShortName);
+                        _npuInstances.Add(facultyShortName, npuInstance);
+                    }
+                    _lessonsLock.ExitWriteLock();
                 }
                 else
                 {
@@ -59,8 +74,8 @@ namespace NpuTimetableParser
                 }
             }
 
-            var groups = _npuInstances[facultyShortName].GetGroups().Result;
-            return _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
+            var groups = await _npuInstances[facultyShortName].GetGroups();
+            return await _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
         }
     }
 }
