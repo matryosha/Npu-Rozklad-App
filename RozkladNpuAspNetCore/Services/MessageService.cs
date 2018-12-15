@@ -297,24 +297,8 @@ namespace RozkladNpuAspNetCore.Services
                     continue;
                 }
 
-                var oneDayMessage = $@"Пары на {LessonsUtils.ConvertDayOfWeekToText(currentDate.DayOfWeek)} {currentDate:dd/MM}:
-";
-
-                foreach (var lesson in lessons)
-                {
-                    var subgroupInfo = lesson.SubGroup == SubGroup.First ? "1 группа" :
-                        lesson.SubGroup == SubGroup.Second ? "2 группа" : "";
-                    oneDayMessage += $@"
-{lesson.LessonNumber} пара:
-{lesson.Subject.Name}
-{lesson.Lecturer.FullName ?? ""}
-{lesson.Classroom.Name ?? ""}
-{subgroupInfo}
-";
-                }
-
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                    oneDayMessage);
+                    LessonMessagesFormat.CreateOneDayWeekLessonsMessage(lessons, currentDate), parseMode:ParseMode.Markdown);
             }
 
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "жж", replyMarkup: GetCommonActionsKeyboard());
@@ -323,7 +307,7 @@ namespace RozkladNpuAspNetCore.Services
         private async Task PrintOneDayLessons(DateTime time, RozkladUser user, Message userMessage)
         {
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                $"Пары на {LessonsUtils.ConvertDayOfWeekToText(time.DayOfWeek)}");
+                $"Пары на *{LessonsUtils.ConvertDayOfWeekToText(time.DayOfWeek)}* `{time:dd/MM}`", ParseMode.Markdown);
             await _bot.Client.SendChatActionAsync(userMessage.Chat.Id, ChatAction.Typing);
             var lessons = await _parser.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, time);
             if (!lessons.Any())
@@ -332,15 +316,8 @@ namespace RozkladNpuAspNetCore.Services
             }
             foreach (var lesson in lessons)
             {
-                var subgroupInfo = lesson.SubGroup == SubGroup.First ? "1 группа" :
-                    lesson.SubGroup == SubGroup.Second ? "2 группа" : "";
-                var message = $@"{LessonsUtils.ConvertLessonNumberToText(lesson.LessonNumber)}
-{lesson.Subject.Name}
-{lesson.Lecturer.FullName ?? ""}
-{lesson.Classroom.Name ?? ""}
-{subgroupInfo}";
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                    message);
+                    LessonMessagesFormat.CreateOneDayLessonMessage(lesson), ParseMode.Markdown);
             }
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "пум-пум", replyMarkup: GetCommonActionsKeyboard());
         }

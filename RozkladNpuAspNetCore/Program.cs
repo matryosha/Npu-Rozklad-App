@@ -22,7 +22,7 @@ namespace RozkladNpuAspNetCore
                 .ConfigureAppConfiguration((hosting, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "Properties/secret.json"), false);
+                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "Properties/secret.json"), optional: false, reloadOnChange: true);
                 })
                 .UseUrls("http://*:1616")
                 .UseStartup<Startup>();

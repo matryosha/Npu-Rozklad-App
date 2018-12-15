@@ -36,7 +36,7 @@ namespace RozkladNpuAspNetCore
             services.AddSingleton<NpuParser>();
             services.AddTransient<MessageService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
+            services.Configure<BotConfiguration>(options => Configuration.GetSection("BotConfiguration").Bind(options));
             services.Configure<IdkStickers>(Configuration.GetSection("Stickers"));
         }
 
