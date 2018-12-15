@@ -31,10 +31,7 @@ namespace RozkladNpuAspNetCore.Services
         public async Task TakeMessage(Message message)
         {
             var user = message.From;
-            if (message.Sticker != null)
-            {
-                await _bot.Client.SendTextMessageAsync(message.Chat.Id, message.Sticker.FileId);
-            }
+
             var currentRozkladUser = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == user.Id);
             if (currentRozkladUser == null)
             {
