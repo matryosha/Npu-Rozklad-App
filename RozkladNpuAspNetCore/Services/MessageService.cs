@@ -122,7 +122,7 @@ namespace RozkladNpuAspNetCore.Services
                     await _context.SaveChangesAsync();
 
                     ReplyKeyboardMarkup commonActionsKeyboard = GetCommonActionsKeyboard();
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"Готово. Что хочешь, а?:",
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"Готово. Выбери действие:",
                         replyMarkup: commonActionsKeyboard);
 
 
