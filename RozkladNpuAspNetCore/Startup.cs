@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -51,6 +52,19 @@ namespace RozkladNpuAspNetCore
                
             }
             context.Database.Migrate();
+            app.Use(async (httpContext, next) =>
+            {
+                await next();
+                var path = httpContext.Request.Path.Value;
+
+                if (!path.StartsWith("/api") && !Path.HasExtension(path))
+                {
+                    httpContext.Request.Path = "/index.html";
+                    await next();
+                }
+            });
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
         }
 
