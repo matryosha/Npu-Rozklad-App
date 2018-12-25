@@ -29,6 +29,8 @@ namespace RozkladNpuAspNetCore.Models
         public string LastName { get; set; }
         public string FacultyShortName { get; set; }
         public int ExternalGroupId { get; set; }
+        public bool IsDeleted { get; set; }
+        public int QueryCount { get; set; }
         public LastActionType LastAction { get; set; }
     }
 }

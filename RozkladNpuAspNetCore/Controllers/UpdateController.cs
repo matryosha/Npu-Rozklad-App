@@ -31,26 +31,10 @@ namespace RozkladNpuAspNetCore.Controllers
 
             if (message.Type == MessageType.Text)
             {
-                // Echo each Message
-                //_botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
                 await _messageServices.TakeMessage(message);
 
             }
-            else if (message.Type == MessageType.Photo)
-            {
-                //// Download Photo
-                //var fileId = message.Photo.LastOrDefault()?.FileId;
-                //var file =  _botService.Client.GetFileAsync(fileId);
-
-                //var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-
-                //using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
-                //{
-                //     _botService.Client.DownloadFileAsync(file.FilePath, saveImageStream);
-                //}
-
-                // _botService.Client.SendTextMessageAsync(message.Chat.Id, "Thx for the Pics");
-            }else if (message.Type == MessageType.Sticker)
+            else if (message.Type == MessageType.Sticker)
             {
                 await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Sticker.FileId);
             }

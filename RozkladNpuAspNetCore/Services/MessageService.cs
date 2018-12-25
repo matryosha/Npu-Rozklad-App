@@ -33,7 +33,7 @@ namespace RozkladNpuAspNetCore.Services
             var user = message.From;
 
             var currentRozkladUser = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == user.Id);
-            if (currentRozkladUser == null)
+            if (currentRozkladUser == null || currentRozkladUser?.IsDeleted == true)
             {
                 if (message.Text != "/start")
                 {
@@ -41,31 +41,46 @@ namespace RozkladNpuAspNetCore.Services
                     return;
                 }
 
-                var rozkladUser = new RozkladUser
+                if (currentRozkladUser == null)
                 {
-                    TelegramId = user.Id,
-                    Name = user.Username,
-                    LastAction = RozkladUser.LastActionType.WaitForFaculty
-                };
+                    var rozkladUser = new RozkladUser
+                    {
+                        TelegramId = user.Id,
+                        Name = user.Username,
+                        LastAction = RozkladUser.LastActionType.WaitForFaculty
+                    };
+                    await _context.Users.AddAsync(rozkladUser);
+                }
+                else
+                {
+                    currentRozkladUser.IsDeleted = false;
+                    currentRozkladUser.LastAction = RozkladUser.LastActionType.WaitForFaculty;
+                    _context.Entry(currentRozkladUser).Property(u => u.IsDeleted).IsModified = true;
+                    _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
+                }
+                
                 List<List<KeyboardButton>> rows = GetFacultiesKeyBoardRows();
-
                 ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(rows);
-
-                await _context.Users.AddAsync(rozkladUser);
-                await _context.SaveChangesAsync();
                 await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери факультет:", replyMarkup: keyboard);
+                await _context.SaveChangesAsync();
                 return;
             }
             else
             {
                 if (message.Text == "/reset")
                 {
-                    _context.Users.Remove(currentRozkladUser);
+                    currentRozkladUser.IsDeleted = true;
+                    currentRozkladUser.LastAction = RozkladUser.LastActionType.Default;
+                    _context.Users.Update(currentRozkladUser);
                     await _context.SaveChangesAsync();
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, "рип", replyMarkup: new ReplyKeyboardRemove());
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Чтобы начать отправь /start", replyMarkup: new ReplyKeyboardRemove());
                     return;
                 }
             }
+
+            currentRozkladUser.QueryCount++;
+            _context.Entry(currentRozkladUser).Property(u => u.QueryCount).IsModified = true;
+            await _context.SaveChangesAsync();
 
             switch (currentRozkladUser.LastAction)
             {
@@ -84,7 +99,7 @@ namespace RozkladNpuAspNetCore.Services
 
                    
 
-                    ReplyKeyboardMarkup groupsKeyboard = await GetGroupsKeyboard(selectedFaculty.ShortName);
+                    ReplyKeyboardMarkup groupsKeyboard = await GetGroupsKeyboardAsync(selectedFaculty.ShortName);
                     if (!groupsKeyboard.Keyboard.Any())
                     {
                         List<List<KeyboardButton>> rows = GetFacultiesKeyBoardRows();
@@ -109,7 +124,7 @@ namespace RozkladNpuAspNetCore.Services
                     if (selectedGroup == null)
                     {
                         ReplyKeyboardMarkup groupsKeyboard =
-                            await GetGroupsKeyboard(currentRozkladUser.FacultyShortName);
+                            await GetGroupsKeyboardAsync(currentRozkladUser.FacultyShortName);
                         await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"?. Выбери группу:",
                             replyMarkup: groupsKeyboard);
                         return;
@@ -193,7 +208,7 @@ namespace RozkladNpuAspNetCore.Services
                             currentRozkladUser.LastAction = RozkladUser.LastActionType.Default;
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
-                                    await PrintWeekLessons(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1), currentRozkladUser, message);
+                                    await PrintWeekLessonsAsync(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1), currentRozkladUser, message);
                             return;
                         }
                         case "На следующую неделю":
@@ -201,7 +216,7 @@ namespace RozkladNpuAspNetCore.Services
                             currentRozkladUser.LastAction = RozkladUser.LastActionType.Default;
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
-                                    await PrintWeekLessons(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1).AddDays(7), currentRozkladUser, message);
+                                    await PrintWeekLessonsAsync(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1).AddDays(7), currentRozkladUser, message);
                             return;
                         }
                         case "Назад к меню":
@@ -229,12 +244,12 @@ namespace RozkladNpuAspNetCore.Services
                 }
                 case "Расписание на сегодня":
                 {
-                    await PrintOneDayLessons(DateTime.Today, currentRozkladUser, message);
+                    await PrintOneDayLessonsAsync(DateTime.Today, currentRozkladUser, message);
                     return;
                 }
                 case "Расписание на завтра":
                 {
-                    await PrintOneDayLessons(DateTime.Today.AddDays(1), currentRozkladUser, message);
+                    await PrintOneDayLessonsAsync(DateTime.Today.AddDays(1), currentRozkladUser, message);
                     return;
                 }
                 case "Расписание на неделю":
@@ -278,7 +293,7 @@ namespace RozkladNpuAspNetCore.Services
             }
         }
 
-        private async Task PrintWeekLessons(DateTime startWeekDate, RozkladUser user, Message userMessage)
+        private async Task PrintWeekLessonsAsync(DateTime startWeekDate, RozkladUser user, Message userMessage)
         {
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
                 $"Пары на неделю:");
@@ -304,7 +319,7 @@ namespace RozkladNpuAspNetCore.Services
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "жж", replyMarkup: GetCommonActionsKeyboard());
         }
 
-        private async Task PrintOneDayLessons(DateTime time, RozkladUser user, Message userMessage)
+        private async Task PrintOneDayLessonsAsync(DateTime time, RozkladUser user, Message userMessage)
         {
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
                 $"Пары на *{LessonsUtils.ConvertDayOfWeekToText(time.DayOfWeek)}* `{time:dd/MM}`", ParseMode.Markdown);
@@ -359,7 +374,7 @@ namespace RozkladNpuAspNetCore.Services
             };
         }
 
-        private async Task<ReplyKeyboardMarkup> GetGroupsKeyboard(string facultyShortName)
+        private async Task<ReplyKeyboardMarkup> GetGroupsKeyboardAsync(string facultyShortName)
         {
             var groups = await _parser.GetGroups(facultyShortName);
 
