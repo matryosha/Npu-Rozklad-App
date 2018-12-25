@@ -11,11 +11,11 @@ namespace RozkladNpuAspNetCore.Controllers
     public class UpdateController : ControllerBase
     {
         private BotService _botService;
-        private MessageService _messageServices;
-        public UpdateController(BotService service, MessageService messageService)
+        private MessageHandleService _messageHandleServices;
+        public UpdateController(BotService service, MessageHandleService messageHandleService)
         {
             _botService = service;
-            _messageServices = messageService;
+            _messageHandleServices = messageHandleService;
         }
         [HttpPost]
         public async Task<IActionResult> Update([FromBody] Update update)
@@ -31,7 +31,7 @@ namespace RozkladNpuAspNetCore.Controllers
 
             if (message.Type == MessageType.Text)
             {
-                await _messageServices.TakeMessage(message);
+                await _messageHandleServices.HandleTextMessage(message);
 
             }
             else if (message.Type == MessageType.Sticker)

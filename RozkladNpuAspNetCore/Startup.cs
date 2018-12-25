@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using NpuTimetableParser;
+using RozkladNpuAspNetCore.Configurations;
 using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
+using RozkladNpuAspNetCore.Persistence;
 using RozkladNpuAspNetCore.Services;
-using RozkladNpuAspNetCore.Utils;
 
 namespace RozkladNpuAspNetCore
 {
@@ -31,19 +24,19 @@ namespace RozkladNpuAspNetCore
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BaseDbContext>(conf =>
+            services.AddDbContext<RozkladBotContext>(conf =>
                 {
                     conf.UseMySQL(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
                 });
             services.AddSingleton<BotService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
-            services.AddTransient<MessageService>();
+            services.AddTransient<MessageHandleService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<BotConfiguration>(options => Configuration.GetSection("BotConfiguration").Bind(options));
-            services.Configure<IdkStickers>(Configuration.GetSection("Stickers"));
+            services.Configure<UnknownResponseConfiguration>(Configuration.GetSection("Stickers"));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, BaseDbContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, RozkladBotContext context)
         {
             if (env.IsDevelopment())
             {

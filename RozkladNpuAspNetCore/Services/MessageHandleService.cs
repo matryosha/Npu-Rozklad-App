@@ -4,23 +4,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using RozkladNpuAspNetCore.Configurations;
+using RozkladNpuAspNetCore.Entities;
+using RozkladNpuAspNetCore.Helpers;
 using RozkladNpuAspNetCore.Interfaces;
-using RozkladNpuAspNetCore.Models;
-using RozkladNpuAspNetCore.Utils;
-using RozkladNpuBot.Utils;
+using RozkladNpuAspNetCore.Persistence;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RozkladNpuAspNetCore.Services
 {
-    public class MessageService
+    public class MessageHandleService
     {
-        private BaseDbContext _context;
+        private RozkladBotContext _context;
         private BotService _bot;
         private ILessonsProvider _lessonsProvider;
-        private IdkStickers _replyStickers;
-        public MessageService(BaseDbContext context, BotService botService, ILessonsProvider lessonsProvider, IOptions<IdkStickers> idkStikers)
+        private UnknownResponseConfiguration _replyStickers;
+        public MessageHandleService(RozkladBotContext context, BotService botService, ILessonsProvider lessonsProvider, IOptions<UnknownResponseConfiguration> idkStikers)
         {
             _context = context;
             _bot = botService;
@@ -28,7 +29,7 @@ namespace RozkladNpuAspNetCore.Services
             _replyStickers = idkStikers.Value;
         }
 
-        public async Task TakeMessage(Message message)
+        public async Task HandleTextMessage(Message message)
         {
             var user = message.From;
 
@@ -307,13 +308,13 @@ namespace RozkladNpuAspNetCore.Services
                 if (!lessons.Any())
                 {
                     await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, 
-                        $@"Пар на {LessonsUtils.ConvertDayOfWeekToText(currentDate.DayOfWeek)} {currentDate:dd/MM} нету :)", 
+                        $@"Пар на {MessageHandleHelper.ConvertDayOfWeekToText(currentDate.DayOfWeek)} {currentDate:dd/MM} нету :)", 
                         replyMarkup: GetCommonActionsKeyboard());
                     continue;
                 }
 
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                    LessonMessagesFormat.CreateOneDayWeekLessonsMessage(lessons, currentDate), parseMode:ParseMode.Markdown);
+                    MessageHandleHelper.CreateOneDayWeekLessonsMessage(lessons, currentDate), parseMode:ParseMode.Markdown);
             }
 
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "жж", replyMarkup: GetCommonActionsKeyboard());
@@ -322,7 +323,7 @@ namespace RozkladNpuAspNetCore.Services
         private async Task PrintOneDayLessonsAsync(DateTime time, RozkladUser user, Message userMessage)
         {
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                $"Пары на *{LessonsUtils.ConvertDayOfWeekToText(time.DayOfWeek)}* `{time:dd/MM}`", ParseMode.Markdown);
+                $"Пары на *{MessageHandleHelper.ConvertDayOfWeekToText(time.DayOfWeek)}* `{time:dd/MM}`", ParseMode.Markdown);
             await _bot.Client.SendChatActionAsync(userMessage.Chat.Id, ChatAction.Typing);
             var lessons = await _lessonsProvider.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, time);
             if (!lessons.Any())
@@ -332,7 +333,7 @@ namespace RozkladNpuAspNetCore.Services
             foreach (var lesson in lessons)
             {
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
-                    LessonMessagesFormat.CreateOneDayLessonMessage(lesson), ParseMode.Markdown);
+                    MessageHandleHelper.CreateOneDayLessonMessage(lesson), ParseMode.Markdown);
             }
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "пум-пум", replyMarkup: GetCommonActionsKeyboard());
         }

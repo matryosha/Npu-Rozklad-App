@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RozkladNpuAspNetCore.Utils;
+using RozkladNpuAspNetCore.Persistence;
 
 namespace RozkladNpuAspNetCore.Migrations
 {
-    [DbContext(typeof(BaseDbContext))]
+    [DbContext(typeof(RozkladBotContext))]
     [Migration("20181116174650_UpdateRozkladUser")]
     partial class UpdateRozkladUser
     {

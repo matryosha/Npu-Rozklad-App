@@ -1,11 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NpuTimetableParser;
 
-namespace RozkladNpuBot.Utils
+namespace RozkladNpuAspNetCore.Helpers
 {
-    class LessonsUtils
+    public static class MessageHandleHelper
     {
+        public static string CreateOneDayWeekLessonsMessage(List<Lesson> lessons, DateTime currentDate)
+        {
+            var message = new StringBuilder();
+            message.AppendLine(
+                $"Пары на *{ConvertDayOfWeekToText(currentDate.DayOfWeek)}* `{currentDate:dd/MM}`");
+            message.AppendLine(Environment.NewLine);
+
+            foreach (var lesson in lessons)
+            {
+                message.AppendLine(CreateOneDayLessonMessage(lesson));
+                message.AppendLine();
+            }
+
+            return message.ToString();
+        }
+
+        public static string CreateOneDayLessonMessage(Lesson lesson)
+        {
+            var result = new StringBuilder();
+            var subgroupInfo = lesson.SubGroup == SubGroup.First ? "1 группа" :
+                lesson.SubGroup == SubGroup.Second ? "2 группа" : "";
+
+            result.AppendLine(GetLessonNumber(lesson.LessonNumber));
+            if (lesson.Subject != null && !String.IsNullOrWhiteSpace(lesson.Subject.Name))
+                result.AppendLine(GetSubjectNameString(lesson.Subject.Name));
+
+            if (lesson.Lecturer != null && !String.IsNullOrWhiteSpace(lesson.Lecturer.FullName))
+                result.AppendLine(GetLecturerNameString(lesson.Lecturer.FullName));
+
+            if (lesson.Classroom != null && !String.IsNullOrWhiteSpace(lesson.Classroom.Name))
+                result.AppendLine(GetClassroomNameString(lesson.Classroom.Name));
+
+            if (subgroupInfo != String.Empty) result.AppendLine(GetSubgroupString(subgroupInfo));
+
+            return result.ToString();
+        }
+
         public static string ConvertLessonNumberToText(int number)
         {
             switch (number)
@@ -86,6 +124,14 @@ namespace RozkladNpuBot.Utils
         public static string GetSubgroupString(string subgroup)
         {
             return "👥 " + subgroup;
+        }
+
+        private static string GetLessonNumber(int lesson)
+        {
+            var result = new StringBuilder();
+            result.Append((string)LessonNumberToEmoji(lesson));
+            result.Append(" " + "_" + ConvertLessonNumberToText(lesson) + "_");
+            return result.ToString();
         }
     }
 }

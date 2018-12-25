@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RozkladNpuAspNetCore.Utils;
+using RozkladNpuAspNetCore.Persistence;
 
 namespace RozkladNpuAspNetCore.Migrations
 {
-    [DbContext(typeof(BaseDbContext))]
+    [DbContext(typeof(RozkladBotContext))]
     partial class BaseDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

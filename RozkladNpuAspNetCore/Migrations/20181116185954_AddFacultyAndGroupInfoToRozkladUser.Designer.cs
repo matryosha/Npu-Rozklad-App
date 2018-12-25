@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RozkladNpuAspNetCore.Utils;
+using RozkladNpuAspNetCore.Persistence;
 
 namespace RozkladNpuAspNetCore.Migrations
 {
-    [DbContext(typeof(BaseDbContext))]
+    [DbContext(typeof(RozkladBotContext))]
     [Migration("20181116185954_AddFacultyAndGroupInfoToRozkladUser")]
     partial class AddFacultyAndGroupInfoToRozkladUser
     {

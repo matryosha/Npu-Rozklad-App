@@ -1,4 +1,4 @@
-﻿namespace RozkladNpuAspNetCore.Utils
+﻿namespace RozkladNpuAspNetCore.Configurations
 {
     public class BotConfiguration
     {
