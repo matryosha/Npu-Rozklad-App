@@ -36,7 +36,7 @@ namespace RozkladNpuAspNetCore
             services.Configure<UnknownResponseConfiguration>(Configuration.GetSection("Stickers"));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, RozkladBotContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,  RozkladBotContext context)
         {
             if (env.IsDevelopment())
             {

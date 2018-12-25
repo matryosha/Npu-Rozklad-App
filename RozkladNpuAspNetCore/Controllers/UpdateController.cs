@@ -10,8 +10,8 @@ namespace RozkladNpuAspNetCore.Controllers
     [ApiController]
     public class UpdateController : ControllerBase
     {
-        private BotService _botService;
-        private MessageHandleService _messageHandleServices;
+        private readonly BotService _botService;
+        private readonly MessageHandleService _messageHandleServices;
         public UpdateController(BotService service, MessageHandleService messageHandleService)
         {
             _botService = service;

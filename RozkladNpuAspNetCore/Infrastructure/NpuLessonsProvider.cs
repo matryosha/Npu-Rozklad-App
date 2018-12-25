@@ -8,15 +8,12 @@ namespace RozkladNpuAspNetCore.Infrastructure
 {
     public class NpuLessonsProvider : ILessonsProvider
     {
-        private NpuParser _provider;
+        private readonly NpuParser _provider;
         public NpuLessonsProvider()
         {
             _provider = new NpuParser();
         }
-        public List<Faculty> GetFaculties()
-        {
-            return _provider.GetFaculties();
-        }
+        public List<Faculty> GetFaculties() => _provider.GetFaculties();
 
         public async Task<List<Group>> GetGroups(string facultyShortName)
         {

@@ -17,14 +17,17 @@ namespace RozkladNpuAspNetCore
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hosting, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "Properties/secret.json"), optional: false, reloadOnChange: true);
+                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "Properties/secret.json"),
+                        optional: false, reloadOnChange: true);
                 })
                 .UseUrls("http://*:1616")
                 .UseStartup<Startup>();
+        }
     }
 }

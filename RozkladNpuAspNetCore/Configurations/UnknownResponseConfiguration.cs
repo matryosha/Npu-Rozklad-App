@@ -5,13 +5,13 @@ namespace RozkladNpuAspNetCore.Configurations
 {
     public class UnknownResponseConfiguration
     {
-        private Random _random;
+        private static readonly Random Random  = new Random();
+
         public List<string> StickersString { get; set; }
 
         public string GetRandomStickerString()
         {
-            _random = new Random();
-            return StickersString[_random.Next(0, StickersString.Count - 1)];
+            return StickersString[Random.Next(0, StickersString.Count - 1)];
         }
     }
 }

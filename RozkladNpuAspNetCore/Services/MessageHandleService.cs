@@ -16,10 +16,10 @@ namespace RozkladNpuAspNetCore.Services
 {
     public class MessageHandleService
     {
-        private RozkladBotContext _context;
-        private BotService _bot;
-        private ILessonsProvider _lessonsProvider;
-        private UnknownResponseConfiguration _replyStickers;
+        private readonly RozkladBotContext _context;
+        private readonly BotService _bot;
+        private readonly ILessonsProvider _lessonsProvider;
+        private readonly UnknownResponseConfiguration _replyStickers;
         public MessageHandleService(RozkladBotContext context, 
             BotService botService, ILessonsProvider lessonsProvider, 
             IOptions<UnknownResponseConfiguration> idkStickers)
@@ -88,19 +88,20 @@ namespace RozkladNpuAspNetCore.Services
                 case RozkladUser.LastActionType.WaitForFaculty:
                 {
                     var selectedFaculty = _lessonsProvider.GetFaculties().FirstOrDefault(f => f.FullName == message.Text);
+                    var faculties = _lessonsProvider.GetFaculties();
                     if (selectedFaculty == null)
                     {
                         await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери факультет:",
-                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
+                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(faculties));
                         return;
                     }
 
-                    ReplyKeyboardMarkup groupsKeyboard =  MessageHandleHelper.GetGroupsReplyKeyboardMarkup(
+                    var groupsKeyboard =  MessageHandleHelper.GetGroupsReplyKeyboardMarkup(
                         await _lessonsProvider.GetGroups(selectedFaculty.ShortName));
                     if (!groupsKeyboard.Keyboard.Any())
                     {
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Для этого фака нет групп :(",
-                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
+                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(faculties));
                         return;
                     }
 

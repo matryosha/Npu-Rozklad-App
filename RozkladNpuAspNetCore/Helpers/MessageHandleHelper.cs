@@ -108,25 +108,13 @@ namespace RozkladNpuAspNetCore.Helpers
             return "??";
         }
 
-        public static string GetSubjectNameString(string subject)
-        {
-            return "📘 " + subject;
-        }
+        public static string GetSubjectNameString(string subject) => "📘 " + subject;
 
-        public static string GetLecturerNameString(string lecturer)
-        {
-            return "👤 " + lecturer;
-        }
+        public static string GetLecturerNameString(string lecturer) => "👤 " + lecturer;
 
-        public static string GetClassroomNameString(string classroom)
-        {
-            return "🚪 " + classroom;
-        }
+        public static string GetClassroomNameString(string classroom) => "🚪 " + classroom;
 
-        public static string GetSubgroupString(string subgroup)
-        {
-            return "👥 " + subgroup;
-        }
+        public static string GetSubgroupString(string subgroup) => "👥 " + subgroup;
 
         public static ReplyKeyboardMarkup GetFacultiesReplyKeyboardMarkup(List<Faculty> faculties)
         {
@@ -151,8 +139,7 @@ namespace RozkladNpuAspNetCore.Helpers
                 groupsRow.Add(row);
             }
 
-            ReplyKeyboardMarkup groupsKeyboard = new ReplyKeyboardMarkup(groupsRow);
-            return groupsKeyboard;
+            return new ReplyKeyboardMarkup(groupsRow);
         }
 
         public static ReplyKeyboardMarkup GetMainMenuReplyKeyboardMarkup()
@@ -164,19 +151,25 @@ namespace RozkladNpuAspNetCore.Helpers
             };
         }
 
-        public static ReplyKeyboardMarkup GetScheduleActionsReplyKeyboardMarkup() => new[]
+        public static ReplyKeyboardMarkup GetScheduleActionsReplyKeyboardMarkup()
         {
-            new[] {"Расписание на сегодня"},
-            new[] {"Расписание на завтра"},
-            new[] {"Расписание на неделю"},
-            new[] {"Назад к меню"},
-        };
+            return new[]
+            {
+                new[] {"Расписание на сегодня"},
+                new[] {"Расписание на завтра"},
+                new[] {"Расписание на неделю"},
+                new[] {"Назад к меню"}
+            };
+        }
 
-        public static ReplyKeyboardMarkup GetSettingsActionsReplyKeyboardMarkup() => new[]
+        public static ReplyKeyboardMarkup GetSettingsActionsReplyKeyboardMarkup()
         {
-            new[] {"Сбросить настройки"},
-            new[] {"Назад к меню"},
-        };
+            return new[]
+            {
+                new[] {"Сбросить настройки"},
+                new[] {"Назад к меню"}
+            };
+        }
 
         public static ReplyKeyboardMarkup GetConfirmButtonsReplyKeyboardMarkup() => new[]
         {
@@ -184,12 +177,15 @@ namespace RozkladNpuAspNetCore.Helpers
             new[] {"Нет"}
         };
 
-        public static ReplyKeyboardMarkup GetWeekScheduleActionsReplyKeyboardMarkup() => new[]
+        public static ReplyKeyboardMarkup GetWeekScheduleActionsReplyKeyboardMarkup()
         {
-            new[] {"На текущую неделю"},
-            new[] {"На следующую неделю"},
-            new[] {"Назад к меню"},
-        };
+            return new[]
+            {
+                new[] {"На текущую неделю"},
+                new[] {"На следующую неделю"},
+                new[] {"Назад к меню"}
+            };
+        }
 
         private static string GetLessonNumber(int lesson)
         {
