@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NpuTimetableParser;
+using RozkladNpuAspNetCore.Interfaces;
 using RozkladNpuAspNetCore.Models;
 using RozkladNpuAspNetCore.Utils;
 using RozkladNpuBot.Utils;
@@ -18,13 +18,13 @@ namespace RozkladNpuAspNetCore.Services
     {
         private BaseDbContext _context;
         private BotService _bot;
-        private NpuParser _parser;
+        private ILessonsProvider _lessonsProvider;
         private IdkStickers _replyStickers;
-        public MessageService(BaseDbContext context, BotService botService, NpuParser parser, IOptions<IdkStickers> idkStikers)
+        public MessageService(BaseDbContext context, BotService botService, ILessonsProvider lessonsProvider, IOptions<IdkStickers> idkStikers)
         {
             _context = context;
             _bot = botService;
-            _parser = parser;
+            _lessonsProvider = lessonsProvider;
             _replyStickers = idkStikers.Value;
         }
 
@@ -86,7 +86,7 @@ namespace RozkladNpuAspNetCore.Services
             {
                 case RozkladUser.LastActionType.WaitForFaculty:
                 {
-                    var selectedFaculty = _parser.GetFaculties().FirstOrDefault(f => f.FullName == message.Text);
+                    var selectedFaculty = _lessonsProvider.GetFaculties().FirstOrDefault(f => f.FullName == message.Text);
                     if (selectedFaculty == null)
                     {
                         List<List<KeyboardButton>> facultiesKeyBoardRows = GetFacultiesKeyBoardRows();
@@ -119,7 +119,7 @@ namespace RozkladNpuAspNetCore.Services
                 }
                 case RozkladUser.LastActionType.WaitForGroup:
                 {
-                    var groups = await _parser.GetGroups(currentRozkladUser.FacultyShortName);
+                    var groups = await _lessonsProvider.GetGroups(currentRozkladUser.FacultyShortName);
                     var selectedGroup = groups.FirstOrDefault(g => g.ShortName == message.Text);
                     if (selectedGroup == null)
                     {
@@ -303,7 +303,7 @@ namespace RozkladNpuAspNetCore.Services
             for (int dayNumber = 0; dayNumber < 5; dayNumber++)
             {
                 var currentDate = startWeekDate.AddDays(dayNumber);
-                var lessons = await _parser.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, currentDate);
+                var lessons = await _lessonsProvider.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, currentDate);
                 if (!lessons.Any())
                 {
                     await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, 
@@ -324,7 +324,7 @@ namespace RozkladNpuAspNetCore.Services
             await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
                 $"Пары на *{LessonsUtils.ConvertDayOfWeekToText(time.DayOfWeek)}* `{time:dd/MM}`", ParseMode.Markdown);
             await _bot.Client.SendChatActionAsync(userMessage.Chat.Id, ChatAction.Typing);
-            var lessons = await _parser.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, time);
+            var lessons = await _lessonsProvider.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, time);
             if (!lessons.Any())
             {
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "Пар нет :)", replyMarkup: GetCommonActionsKeyboard());
@@ -376,7 +376,7 @@ namespace RozkladNpuAspNetCore.Services
 
         private async Task<ReplyKeyboardMarkup> GetGroupsKeyboardAsync(string facultyShortName)
         {
-            var groups = await _parser.GetGroups(facultyShortName);
+            var groups = await _lessonsProvider.GetGroups(facultyShortName);
 
             var groupsRow = new
                 List<List<KeyboardButton>>();
@@ -393,7 +393,7 @@ namespace RozkladNpuAspNetCore.Services
 
         private List<List<KeyboardButton>> GetFacultiesKeyBoardRows()
         {
-            var faculties = _parser.GetFaculties();
+            var faculties = _lessonsProvider.GetFaculties();
             var rows = new List<List<KeyboardButton>>();
             foreach (var faculty in faculties)
             {

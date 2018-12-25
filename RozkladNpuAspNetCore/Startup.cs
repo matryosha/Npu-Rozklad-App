@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NpuTimetableParser;
+using RozkladNpuAspNetCore.Infrastructure;
+using RozkladNpuAspNetCore.Interfaces;
 using RozkladNpuAspNetCore.Services;
 using RozkladNpuAspNetCore.Utils;
 
@@ -34,7 +36,7 @@ namespace RozkladNpuAspNetCore
                     conf.UseMySQL(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
                 });
             services.AddSingleton<BotService>();
-            services.AddSingleton<NpuParser>();
+            services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
             services.AddTransient<MessageService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<BotConfiguration>(options => Configuration.GetSection("BotConfiguration").Bind(options));
