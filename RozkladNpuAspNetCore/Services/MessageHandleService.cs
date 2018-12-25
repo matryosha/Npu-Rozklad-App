@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +20,14 @@ namespace RozkladNpuAspNetCore.Services
         private BotService _bot;
         private ILessonsProvider _lessonsProvider;
         private UnknownResponseConfiguration _replyStickers;
-        public MessageHandleService(RozkladBotContext context, BotService botService, ILessonsProvider lessonsProvider, IOptions<UnknownResponseConfiguration> idkStikers)
+        public MessageHandleService(RozkladBotContext context, 
+            BotService botService, ILessonsProvider lessonsProvider, 
+            IOptions<UnknownResponseConfiguration> idkStickers)
         {
             _context = context;
             _bot = botService;
             _lessonsProvider = lessonsProvider;
-            _replyStickers = idkStikers.Value;
+            _replyStickers = idkStickers.Value;
         }
 
         public async Task HandleTextMessage(Message message)
@@ -60,9 +61,8 @@ namespace RozkladNpuAspNetCore.Services
                     _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                 }
                 
-                List<List<KeyboardButton>> rows = GetFacultiesKeyBoardRows();
-                ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(rows);
-                await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери факультет:", replyMarkup: keyboard);
+                await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери факультет:", 
+                    replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
                 await _context.SaveChangesAsync();
                 return;
             }
@@ -90,31 +90,25 @@ namespace RozkladNpuAspNetCore.Services
                     var selectedFaculty = _lessonsProvider.GetFaculties().FirstOrDefault(f => f.FullName == message.Text);
                     if (selectedFaculty == null)
                     {
-                        List<List<KeyboardButton>> facultiesKeyBoardRows = GetFacultiesKeyBoardRows();
-
-                        ReplyKeyboardMarkup facultyKeyboard = new ReplyKeyboardMarkup(facultiesKeyBoardRows);
                         await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери факультет:",
-                            replyMarkup: facultyKeyboard);
+                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
                         return;
                     }
 
-                   
-
-                    ReplyKeyboardMarkup groupsKeyboard = await GetGroupsKeyboardAsync(selectedFaculty.ShortName);
+                    ReplyKeyboardMarkup groupsKeyboard =  MessageHandleHelper.GetGroupsReplyKeyboardMarkup(
+                        await _lessonsProvider.GetGroups(selectedFaculty.ShortName));
                     if (!groupsKeyboard.Keyboard.Any())
                     {
-                        List<List<KeyboardButton>> rows = GetFacultiesKeyBoardRows();
-                        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(rows);
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Для этого фака нет групп :(",
-                            replyMarkup: keyboard);
+                            replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
                         return;
                     }
 
                     currentRozkladUser.LastAction = RozkladUser.LastActionType.WaitForGroup;
                     currentRozkladUser.FacultyShortName = selectedFaculty.ShortName;
-                        _context.Users.Update(currentRozkladUser);
+                    _context.Users.Update(currentRozkladUser);
                     await _context.SaveChangesAsync();
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"Выбери группу:",
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Выбери группу:",
                         replyMarkup: groupsKeyboard);
                     return;
                 }
@@ -124,10 +118,9 @@ namespace RozkladNpuAspNetCore.Services
                     var selectedGroup = groups.FirstOrDefault(g => g.ShortName == message.Text);
                     if (selectedGroup == null)
                     {
-                        ReplyKeyboardMarkup groupsKeyboard =
-                            await GetGroupsKeyboardAsync(currentRozkladUser.FacultyShortName);
-                        await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"?. Выбери группу:",
-                            replyMarkup: groupsKeyboard);
+                        await _bot.Client.SendTextMessageAsync(message.Chat.Id, "?. Выбери группу:",
+                            replyMarkup: MessageHandleHelper.GetGroupsReplyKeyboardMarkup(
+                                await _lessonsProvider.GetGroups(currentRozkladUser.FacultyShortName)));
                         return;
                     }
 
@@ -137,10 +130,8 @@ namespace RozkladNpuAspNetCore.Services
                     _context.Users.Update(currentRozkladUser);
                     await _context.SaveChangesAsync();
 
-                    ReplyKeyboardMarkup commonActionsKeyboard = GetCommonActionsKeyboard();
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"Готово. Выбери действие:",
-                        replyMarkup: commonActionsKeyboard);
-
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Готово. Выбери действие:",
+                        replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
 
                     return;
                 }
@@ -155,7 +146,7 @@ namespace RozkladNpuAspNetCore.Services
                             await _context.SaveChangesAsync();
 
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Точно-точно?",
-                                replyMarkup: GetConfirmsButtonsKeyboard());
+                                replyMarkup: MessageHandleHelper.GetConfirmButtonsReplyKeyboardMarkup());
                             return;
                         }
                         case "Назад к меню":
@@ -164,7 +155,7 @@ namespace RozkladNpuAspNetCore.Services
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "#_#",
-                                replyMarkup: GetCommonActionsKeyboard());
+                                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
                            return;
                         }
                     }
@@ -189,13 +180,13 @@ namespace RozkladNpuAspNetCore.Services
                             _context.Users.Update(currentRozkladUser);
                             await _context.SaveChangesAsync();
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "=3",
-                                replyMarkup: GetCommonActionsKeyboard());
+                                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
                             return;
                         }
                         default:
                         {
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, "Сбросить, м?",
-                                replyMarkup: GetConfirmsButtonsKeyboard());
+                                replyMarkup: MessageHandleHelper.GetConfirmButtonsReplyKeyboardMarkup());
                             return;
                         }
                     }
@@ -209,7 +200,9 @@ namespace RozkladNpuAspNetCore.Services
                             currentRozkladUser.LastAction = RozkladUser.LastActionType.Default;
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
-                                    await PrintWeekLessonsAsync(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1), currentRozkladUser, message);
+                                    await PrintWeekLessonsAsync(
+                                        DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1), 
+                                        currentRozkladUser, message);
                             return;
                         }
                         case "На следующую неделю":
@@ -217,7 +210,9 @@ namespace RozkladNpuAspNetCore.Services
                             currentRozkladUser.LastAction = RozkladUser.LastActionType.Default;
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
-                                    await PrintWeekLessonsAsync(DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1).AddDays(7), currentRozkladUser, message);
+                                    await PrintWeekLessonsAsync(
+                                        DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1).AddDays(7), 
+                                        currentRozkladUser, message);
                             return;
                         }
                         case "Назад к меню":
@@ -226,7 +221,7 @@ namespace RozkladNpuAspNetCore.Services
                             _context.Entry(currentRozkladUser).Property(u => u.LastAction).IsModified = true;
                             await _context.SaveChangesAsync();
                             await _bot.Client.SendTextMessageAsync(message.Chat.Id, ":O",
-                                replyMarkup: GetCommonActionsKeyboard());
+                                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
                             return;
                         }
                     }
@@ -240,7 +235,7 @@ namespace RozkladNpuAspNetCore.Services
                 case "Расписание":
                 {
                     await _bot.Client.SendTextMessageAsync(message.Chat.Id, "На когда?",
-                        replyMarkup: GetScheduleActionsKeyboard());
+                        replyMarkup: MessageHandleHelper.GetScheduleActionsReplyKeyboardMarkup());
                     return;
                 }
                 case "Расписание на сегодня":
@@ -260,7 +255,7 @@ namespace RozkladNpuAspNetCore.Services
                     await _context.SaveChangesAsync();
 
                     await _bot.Client.SendTextMessageAsync(message.Chat.Id, "На какую неделю?",
-                        replyMarkup: GetWeekScheduleActionsKeyboard());
+                        replyMarkup: MessageHandleHelper.GetWeekScheduleActionsReplyKeyboardMarkup());
 
                     return;
                 }
@@ -272,8 +267,8 @@ namespace RozkladNpuAspNetCore.Services
                         _context.Entry(currentRozkladUser).Property(p => p.LastAction).IsModified = true;
                         await _context.SaveChangesAsync();
                     }
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $"парам-пам",
-                        replyMarkup: GetCommonActionsKeyboard());
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, "парам-пам",
+                        replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
                     return;
                 }
                 case "Настройки":
@@ -281,16 +276,15 @@ namespace RozkladNpuAspNetCore.Services
                     currentRozkladUser.LastAction = RozkladUser.LastActionType.Settings;
                     _context.Users.Update(currentRozkladUser);
                     await _context.SaveChangesAsync();
-                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, $".0.",
-                        replyMarkup: GetSettingsActionsKeyboard());
+                    await _bot.Client.SendTextMessageAsync(message.Chat.Id, ".0.",
+                        replyMarkup: MessageHandleHelper.GetSettingsActionsReplyKeyboardMarkup());
                         return;
                 }
                 default:
                 {
                     await _bot.Client.SendStickerAsync(message.Chat.Id, _replyStickers.GetRandomStickerString());
                     return;
-                }
-                    
+                }    
             }
         }
 
@@ -309,7 +303,7 @@ namespace RozkladNpuAspNetCore.Services
                 {
                     await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, 
                         $@"Пар на {MessageHandleHelper.ConvertDayOfWeekToText(currentDate.DayOfWeek)} {currentDate:dd/MM} нету :)", 
-                        replyMarkup: GetCommonActionsKeyboard());
+                        replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
                     continue;
                 }
 
@@ -317,7 +311,8 @@ namespace RozkladNpuAspNetCore.Services
                     MessageHandleHelper.CreateOneDayWeekLessonsMessage(lessons, currentDate), parseMode:ParseMode.Markdown);
             }
 
-            await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "жж", replyMarkup: GetCommonActionsKeyboard());
+            await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "жж", 
+                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
 
         private async Task PrintOneDayLessonsAsync(DateTime time, RozkladUser user, Message userMessage)
@@ -328,82 +323,16 @@ namespace RozkladNpuAspNetCore.Services
             var lessons = await _lessonsProvider.GetLessonsOnDate(user.FacultyShortName, user.ExternalGroupId, time);
             if (!lessons.Any())
             {
-                await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "Пар нет :)", replyMarkup: GetCommonActionsKeyboard());
+                await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "Пар нет :)", 
+                    replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
             }
             foreach (var lesson in lessons)
             {
                 await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id,
                     MessageHandleHelper.CreateOneDayLessonMessage(lesson), ParseMode.Markdown);
             }
-            await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "пум-пум", replyMarkup: GetCommonActionsKeyboard());
-        }
-
-        private ReplyKeyboardMarkup GetWeekScheduleActionsKeyboard() => new[]
-        {
-            new[] {"На текущую неделю"},
-            new[] {"На следующую неделю"},
-            new[] {"Назад к меню"},
-
-        };
-
-        private ReplyKeyboardMarkup GetConfirmsButtonsKeyboard() => new[]
-        {
-            new[] {"Да"},
-            new[] {"Нет"}
-        };
-
-        private ReplyKeyboardMarkup GetSettingsActionsKeyboard() => new[]
-        {
-            new[] {"Сбросить настройки"},
-            new[] {"Назад к меню"},
-        };
-
-        private ReplyKeyboardMarkup GetScheduleActionsKeyboard() => new[]
-        {
-            new[] {"Расписание на сегодня"},
-            new[] {"Расписание на завтра"},
-            new[] {"Расписание на неделю"},
-            new[] {"Назад к меню"},
-        };
-
-        private ReplyKeyboardMarkup GetCommonActionsKeyboard()
-        {
-            return new[]
-            {
-                new []{ "Расписание" },
-                new []{ "Настройки" }
-            };
-        }
-
-        private async Task<ReplyKeyboardMarkup> GetGroupsKeyboardAsync(string facultyShortName)
-        {
-            var groups = await _lessonsProvider.GetGroups(facultyShortName);
-
-            var groupsRow = new
-                List<List<KeyboardButton>>();
-            foreach (var group in groups)
-            {
-                var row = new List<KeyboardButton>();
-                row.Add(group.ShortName);
-                groupsRow.Add(row);
-            }
-
-            ReplyKeyboardMarkup groupsKeyboard = new ReplyKeyboardMarkup(groupsRow);
-            return groupsKeyboard;
-        }
-
-        private List<List<KeyboardButton>> GetFacultiesKeyBoardRows()
-        {
-            var faculties = _lessonsProvider.GetFaculties();
-            var rows = new List<List<KeyboardButton>>();
-            foreach (var faculty in faculties)
-            {
-                var row = new List<KeyboardButton>();
-                row.Add(faculty.FullName);
-                rows.Add(row);
-            }
-
-            return rows;
+            await _bot.Client.SendTextMessageAsync(userMessage.Chat.Id, "пум-пум", 
+                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using NpuTimetableParser;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RozkladNpuAspNetCore.Helpers
 {
@@ -125,6 +127,69 @@ namespace RozkladNpuAspNetCore.Helpers
         {
             return "👥 " + subgroup;
         }
+
+        public static ReplyKeyboardMarkup GetFacultiesReplyKeyboardMarkup(List<Faculty> faculties)
+        {
+            var rows = new List<List<KeyboardButton>>();
+            foreach (var faculty in faculties)
+            {
+                var row = new List<KeyboardButton>();
+                row.Add(faculty.FullName);
+                rows.Add(row);
+            }
+            return new ReplyKeyboardMarkup(rows);
+        }
+
+        public static ReplyKeyboardMarkup GetGroupsReplyKeyboardMarkup(List<Group> groups)
+        {
+            var groupsRow = new
+                List<List<KeyboardButton>>();
+            foreach (var group in groups)
+            {
+                var row = new List<KeyboardButton>();
+                row.Add(group.ShortName);
+                groupsRow.Add(row);
+            }
+
+            ReplyKeyboardMarkup groupsKeyboard = new ReplyKeyboardMarkup(groupsRow);
+            return groupsKeyboard;
+        }
+
+        public static ReplyKeyboardMarkup GetMainMenuReplyKeyboardMarkup()
+        {
+            return new[]
+            {
+                new []{ "Расписание" },
+                new []{ "Настройки" }
+            };
+        }
+
+        public static ReplyKeyboardMarkup GetScheduleActionsReplyKeyboardMarkup() => new[]
+        {
+            new[] {"Расписание на сегодня"},
+            new[] {"Расписание на завтра"},
+            new[] {"Расписание на неделю"},
+            new[] {"Назад к меню"},
+        };
+
+        public static ReplyKeyboardMarkup GetSettingsActionsReplyKeyboardMarkup() => new[]
+        {
+            new[] {"Сбросить настройки"},
+            new[] {"Назад к меню"},
+        };
+
+        public static ReplyKeyboardMarkup GetConfirmButtonsReplyKeyboardMarkup() => new[]
+        {
+            new[] {"Да"},
+            new[] {"Нет"}
+        };
+
+        public static ReplyKeyboardMarkup GetWeekScheduleActionsReplyKeyboardMarkup() => new[]
+        {
+            new[] {"На текущую неделю"},
+            new[] {"На следующую неделю"},
+            new[] {"Назад к меню"},
+        };
 
         private static string GetLessonNumber(int lesson)
         {
