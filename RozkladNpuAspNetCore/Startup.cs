@@ -26,7 +26,7 @@ namespace RozkladNpuAspNetCore
         {
             services.AddDbContext<RozkladBotContext>(conf =>
                 {
-                    conf.UseMySQL(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
+                    conf.UseMySql(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
                 });
             services.AddSingleton<BotService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
@@ -52,7 +52,7 @@ namespace RozkladNpuAspNetCore
                 await next();
                 var path = httpContext.Request.Path.Value;
 
-                if (!path.StartsWith("/api") && !Path.HasExtension(path))
+                if (!path.StartsWith("/api") && !path.StartsWith("/update") && !Path.HasExtension(path))
                 {
                     httpContext.Request.Path = "/index.html";
                     await next();
@@ -61,6 +61,7 @@ namespace RozkladNpuAspNetCore
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
+            
         }
 
     }
