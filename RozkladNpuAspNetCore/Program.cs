@@ -25,6 +25,9 @@ namespace RozkladNpuAspNetCore
                     config.SetBasePath(Directory.GetCurrentDirectory());
                     config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "Properties/secret.json"),
                         optional: false, reloadOnChange: true);
+                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), 
+                            $"Properties/secret.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json"),
+                        optional: true, reloadOnChange: true);
                 })
                 .UseUrls("http://*:1616")
                 .UseStartup<Startup>();
