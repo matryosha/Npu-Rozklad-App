@@ -7,11 +7,11 @@ namespace RozkladNpuAspNetCore.Configurations
     {
         private static readonly Random Random  = new Random();
 
-        public List<string> StickersString { get; set; }
+        public List<string> IdkStickersValues { get; set; }
 
         public string GetRandomStickerString()
         {
-            return StickersString[Random.Next(0, StickersString.Count - 1)];
+            return IdkStickersValues[Random.Next(0, IdkStickersValues.Count - 1)];
         }
     }
 }
