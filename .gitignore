@@ -32,3 +32,4 @@ _ReSharper*/
 packages/
 secret.json
 .idea/
+secret.Development.json
