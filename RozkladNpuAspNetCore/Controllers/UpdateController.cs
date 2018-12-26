@@ -44,6 +44,7 @@ namespace RozkladNpuAspNetCore.Controllers
                 catch (Exception e)
                 {
                     _logger.LogError(4000, e, "Something wrong with message handle service");
+                    await _botService.SendErrorMessage(message.Chat.Id);
                     return Ok();
                 }
             }
