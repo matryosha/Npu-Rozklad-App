@@ -108,9 +108,14 @@ namespace NpuTimetableParser
 
         public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
         {
-            if (_lessons == null || _lessons.Count == 0 || DateTime.Now - _lastLessonUpdateTime > TimeSpan.FromMinutes(10))
+            if (_lessons.Count == 0 ||
+                DateTime.Now - _lastLessonUpdateTime > TimeSpan.FromMinutes(10))
+            {
+                _lessons.Clear();
                 await Task.Run(() =>
-                    _helper.CreateLessonsList(_calendarRawList,_groups,_lecturers,_classrooms,_lessons));
+                    _helper.CreateLessonsList(_calendarRawList, _groups, _lecturers, _classrooms, _lessons));
+            }
+                
             _lastLessonUpdateTime = DateTime.Now;
 
             var startPoint = date.AddDays(_deltaGapInDays);
