@@ -37,12 +37,14 @@ namespace NpuTimeTableParserTest
             //var count = lessons.Count;
 
             var parser = new NpuParser();
-            var a = parser.GetGroups("fi").Result;
+            var groups = parser.GetGroups("fi").Result;
+            var a = parser.GetLessonsOnDate("fi", 75, DateTime.Today).Result;
+            var b = parser.GetLessonsOnDate("fi", 75, DateTime.Today).Result;
 
 
         }
 
-        [TestMethod]
+        
         public async Task GetLessonsOnDateTest1()
         {
             //arrange
@@ -51,7 +53,7 @@ namespace NpuTimeTableParserTest
             mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
             mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
             mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
-            NpuParserInstance parserInstance = new NpuParserInstance(mockClient);
+            NpuParserInstance parserInstance = new NpuParserInstance(mockClient, new RawStringParser());
 
             //act
             List<Lesson> testLessonsList = await parserInstance.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
@@ -613,7 +615,7 @@ namespace NpuTimeTableParserTest
         public async Task NpuParser_Example()
         {
             //Create instance
-            var npuParser = new NpuParserInstance();
+            var npuParser = new NpuParserInstance(new RawStringParser());
             //Get all faculties
             var faculties = await npuParser.GetFaculties();
             //Select certain faculty

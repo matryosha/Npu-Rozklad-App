@@ -74,7 +74,6 @@ namespace NpuTimetableParser
                 }
             }
 
-            var groups = await _npuInstances[facultyShortName].GetGroups();
             return await _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
         }
     }

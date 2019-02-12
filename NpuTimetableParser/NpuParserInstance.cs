@@ -18,6 +18,7 @@ namespace NpuTimetableParser
         private List<Lecturer> _lecturers;
         private List<CalendarRawItem> _calendarRawList;
         private List<Faculty> _faculties;
+        private DateTime _lastLessonUpdateTime;
         private int _deltaGapInDays = -140;
         private string _faculty;
         private string _siteUrl = "http://ei.npu.edu.ua";
@@ -107,9 +108,10 @@ namespace NpuTimetableParser
 
         public async Task<List<Lesson>> GetLessonsOnDate(DateTime date, int groupId)
         {
-            if (_lessons == null || _lessons.Count == 0)
+            if (_lessons == null || _lessons.Count == 0 || DateTime.Now - _lastLessonUpdateTime > TimeSpan.FromMinutes(10))
                 await Task.Run(() =>
                     _helper.CreateLessonsList(_calendarRawList,_groups,_lecturers,_classrooms,_lessons));
+            _lastLessonUpdateTime = DateTime.Now;
 
             var startPoint = date.AddDays(_deltaGapInDays);
             List<Lesson> resultLessonsList = new List<Lesson>();
