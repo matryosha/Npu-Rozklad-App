@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>matryoshka</Authors>
     <Product>Npu Telegram Schedule Bot</Product>
   </PropertyGroup>
