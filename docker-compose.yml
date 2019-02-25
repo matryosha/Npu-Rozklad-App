@@ -1,0 +1,13 @@
+version: "3"
+services:
+    aspdepy:
+        image: "aspdepy:dev"
+        build:
+            context: .
+            dockerfile: Dockerfile
+        hostname: aspdepy
+        stdin_open: true
+        tty: true
+        working_dir: '/aspdepy-dev'
+        volumes:
+            - ".:/aspdepy-dev"
