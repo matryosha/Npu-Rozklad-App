@@ -27,12 +27,10 @@ class Base(Controller):
                 'version' : VERSION_BANNER } ),
         ]
 
-
     def _default(self):
         """Default action if no sub-command is passed."""
 
         self.app.args.print_help()
-
 
     @ex(
         help='example sub command1',

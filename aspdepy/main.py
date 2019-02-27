@@ -1,12 +1,38 @@
+import os
 
 from cement import App, TestApp, init_defaults
 from cement.core.exc import CaughtSignal
+from cement.utils import fs
+from tinydb import TinyDB
+
+from aspdepy.controllers.project import Project
 from .core.exc import MyAppError
 from .controllers.base import Base
 
 # configuration defaults
 CONFIG = init_defaults('aspdepy')
-CONFIG['aspdepy']['foo'] = 'bar'
+# CONFIG['aspdepy']['foo'] = 'bar'
+CONFIG['aspdepy']['db_file'] = '~/.aspdepy/db.json'
+
+
+def extend_tinydb(app):
+    app.log.info('extending todo application with tinydb')
+    db_file = app.config.get('aspdepy', 'db_file')
+
+    # ensure that we expand the full path
+    db_file = fs.abspath(db_file)
+    app.log.info('tinydb database file is: %s' % db_file)
+
+    # ensure our parent directory exists
+    db_dir = os.path.dirname(db_file)
+
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir)
+
+    db = TinyDB(db_file);
+    db.table('projects')
+
+    app.extend('db', db)
 
 
 class MyApp(App):
@@ -14,6 +40,10 @@ class MyApp(App):
 
     class Meta:
         label = 'aspdepy'
+
+        hooks = [
+            ('post_setup', extend_tinydb),
+        ]
 
         # configuration defaults
         config_defaults = CONFIG
@@ -42,7 +72,8 @@ class MyApp(App):
 
         # register handlers
         handlers = [
-            Base
+            Base,
+            Project
         ]
 
 
