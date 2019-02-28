@@ -11,6 +11,7 @@ class Scenario(Controller):
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'managing scenario'
+        help = 'managing scenario'
 
     def _default(self):
         """Default action if no sub-command is passed."""
@@ -25,7 +26,6 @@ class Scenario(Controller):
 
         for scenario in os.listdir(scenarios_path):
             print('* %s' % os.path.splitext(scenario)[0])
-
 
     @ex(
         help='add scenario',
