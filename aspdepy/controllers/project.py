@@ -1,7 +1,7 @@
 import os
 
 from cement import Controller, ex
-from tinydb import Query
+from tinydb import Query, operations
 
 
 class Project(Controller):
@@ -10,6 +10,8 @@ class Project(Controller):
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'managing projects'
+        help = 'managing projects'
+
 
     def _default(self):
         """Default action if no sub-command is passed."""
@@ -87,3 +89,29 @@ class Project(Controller):
         self.app.db.table('projects').remove(doc_ids=[project.doc_id])
 
         print('Deleted')
+
+    @ex(
+        help='Set ssh user for given project',
+        arguments=[
+            (['-n', '--name'],
+             {'help': 'name of project',
+              'action': 'store',
+              'dest': 'project_name'}),
+            (['-u', '--username'],
+             {'help': 'name of user',
+              'action': 'store',
+              'dest': 'user_name'})
+        ],
+    )
+    def setuser(self):
+        projects_table = self.app.db.table('projects')
+
+        query = Query()
+        project = next(iter(projects_table.search(query.name == self.app.pargs.project_name)), None)
+        if project is None:
+            print('There is no project with given name')
+            return
+
+        projects_table.update(operations.set(
+            'username', self.app.pargs.user_name),
+            query.name == self.app.pargs.project_name)
