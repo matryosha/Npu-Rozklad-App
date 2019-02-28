@@ -73,7 +73,7 @@ class Project(Controller):
     def list(self):
         print('Added projects: ')
         for row in self.app.db.table('projects'):
-            print('* - %s ' % row['name'])
+            print('* - [%s] %s@%s' %(row['name'], row['username'], row['server_ip']))
 
     @ex(
         help='delete project from list',
