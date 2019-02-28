@@ -12,11 +12,19 @@ class Project(Controller):
         description = 'managing projects'
         help = 'managing projects'
 
-
     def _default(self):
         """Default action if no sub-command is passed."""
 
         self.list()
+
+    def isprojectexist(self, project_name):
+        projects_table = self.app.db.table('projects')
+
+        query = Query()
+        project = next(iter(projects_table.search(query.name == project_name)), None)
+        if project is None:
+            return 0
+        return 1
 
     @ex(
         help='add project',
@@ -115,3 +123,29 @@ class Project(Controller):
         projects_table.update(operations.set(
             'username', self.app.pargs.user_name),
             query.name == self.app.pargs.project_name)
+
+    @ex(
+        help='Set remote server ip for given project',
+        arguments=[
+            (['-n', '--name'],
+             {'help': 'name of project',
+              'action': 'store',
+              'dest': 'project_name'}),
+            (['-s', '--server-ip'],
+             {'help': 'sever-ip',
+              'action': 'store',
+              'dest': 'server_ip'})
+        ],
+    )
+    def setserver(self):
+        projects_table = self.app.db.table('projects')
+        query = Query()
+
+        if self.isprojectexist(self.app.pargs.project_name) is False:
+            print('There is no project with given name')
+            return
+
+        projects_table.update(operations.set(
+            'server_ip', self.app.pargs.server_ip),
+            query.name == self.app.pargs.project_name)
+
