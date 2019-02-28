@@ -70,7 +70,7 @@ class Project(Controller):
         arguments=[
             ### add a sample foo option under subcommand namespace
             (['-n', '--name'],
-             {'help': 'add project with path',
+             {'help': 'delete project with given name',
               'action': 'store',
               'dest': 'project_name'}),
         ],

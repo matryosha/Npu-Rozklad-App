@@ -6,13 +6,14 @@ from cement.utils import fs
 from tinydb import TinyDB
 
 from aspdepy.controllers.project import Project
+from aspdepy.controllers.scenario import Scenario
 from .core.exc import MyAppError
 from .controllers.base import Base
 
 # configuration defaults
 CONFIG = init_defaults('aspdepy')
-# CONFIG['aspdepy']['foo'] = 'bar'
-CONFIG['aspdepy']['db_file'] = '~/.aspdepy/db.json'
+CONFIG['aspdepy']['default_path'] = '~/.aspdepy/'
+CONFIG['aspdepy']['db_file'] = CONFIG['aspdepy']['default_path'] + 'db.json'
 
 
 def extend_tinydb(app):
@@ -35,6 +36,13 @@ def extend_tinydb(app):
     app.extend('db', db)
 
 
+def init_app(app):
+    path = fs.abspath(app.config.get('aspdepy', 'default_path') + 'scenarios')
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    pass
+
+
 class MyApp(App):
     """aspdepy primary application."""
 
@@ -43,6 +51,7 @@ class MyApp(App):
 
         hooks = [
             ('post_setup', extend_tinydb),
+            ('post_setup', init_app),
         ]
 
         # configuration defaults
@@ -73,7 +82,8 @@ class MyApp(App):
         # register handlers
         handlers = [
             Base,
-            Project
+            Project,
+            Scenario
         ]
 
 
