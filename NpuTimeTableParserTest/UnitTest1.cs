@@ -38,7 +38,7 @@ namespace NpuTimeTableParserTest
 
             var parser = new NpuParser();
             var groups = parser.GetGroups("fi").Result;
-            var a = parser.GetLessonsOnDate("fi", 75, DateTime.Today).Result;
+            var a = parser.GetLessonsOnDate("fi", 75, DateTime.Today.AddDays(1)).Result;
             var b = parser.GetLessonsOnDate("fi", 75, DateTime.Today).Result;
 
 
