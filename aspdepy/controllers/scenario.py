@@ -13,8 +13,9 @@ class Scenario(Controller):
         description = 'managing scenario'
         help = 'managing scenario'
 
-    def get_scenario_path(self, scenario_name):
-        return fs.abspath(self.app.config.get(
+    @staticmethod
+    def get_scenario_path(app, scenario_name):
+        return fs.abspath(app.config.get(
             'aspdepy', 'default_path') + 'scenarios/' + scenario_name + '.ascenario')
 
     def _default(self):
@@ -71,7 +72,7 @@ class Scenario(Controller):
         ],
     )
     def delete(self):
-        scenario_path = self.get_scenario_path(self.app.pargs.scenario_name)
+        scenario_path = Scenario.get_scenario_path(self.app, self.app.pargs.scenario_name)
 
         if not os.path.exists(scenario_path):
             print('Cant find scenario with given name')
