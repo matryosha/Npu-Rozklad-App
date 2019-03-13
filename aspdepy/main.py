@@ -6,6 +6,7 @@ from cement.utils import fs
 from tinydb import TinyDB
 
 from aspdepy.controllers.project import Project
+from aspdepy.controllers.run import Run
 from aspdepy.controllers.scenario import Scenario
 from .core.exc import MyAppError
 from .controllers.base import Base
@@ -83,7 +84,8 @@ class MyApp(App):
         handlers = [
             Base,
             Project,
-            Scenario
+            Scenario,
+            Run
         ]
 
 
