@@ -56,10 +56,10 @@ class Project(Controller):
             print('Project with that name already exist')
             return
 
-        new_project = next(iter(projects_table.search(project_query.path == project_path)), None)
-        if new_project is not None:
-            print('This project already exist with name %s' % new_project['name'])
-            return
+        # new_project = next(iter(projects_table.search(project_query.path == project_path)), None)
+        # if new_project is not None:
+        #     print('This project already exist with name %s' % new_project['name'])
+        #     return
 
         projects_table.insert({'path': project_path,
                                'name': project_name})
