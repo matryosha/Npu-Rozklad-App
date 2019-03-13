@@ -137,7 +137,7 @@ class Project(Controller):
         projects_table = self.app.db.table('projects')
         query = Query()
 
-        if Project.get_project(self.app, self.app.pargs.project_name) is not None:
+        if Project.get_project(self.app, self.app.pargs.project_name) is None:
             print('There is no project with given name')
             return
 
