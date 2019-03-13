@@ -17,8 +17,9 @@ class Project(Controller):
 
         self.list()
 
-    def get_project(self, project_name):
-        projects_table = self.app.db.table('projects')
+    @staticmethod
+    def get_project(app, project_name):
+        projects_table = app.db.table('projects')
 
         query = Query()
         return next(iter(projects_table.search(query.name == project_name)), None)
@@ -110,7 +111,7 @@ class Project(Controller):
         projects_table = self.app.db.table('projects')
 
         query = Query()
-        project = self.get_project(self.app.pargs.project_name)
+        project = Project.get_project(self.app, self.app.pargs.project_name)
         if project is None:
             print('There is no project with given name')
             return
@@ -136,7 +137,7 @@ class Project(Controller):
         projects_table = self.app.db.table('projects')
         query = Query()
 
-        if self.get_project(self.app.pargs.project_name) is not None:
+        if Project.get_project(self.app, self.app.pargs.project_name) is not None:
             print('There is no project with given name')
             return
 
