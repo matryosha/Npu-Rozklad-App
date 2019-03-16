@@ -7,36 +7,23 @@
 ## Usage Examples:
 ### 1:
 ```c#
-   //Create instance
-   var npuParser = new NpuParser();
-   
-   //Get all faculties
-   var faculties = await npuParser.GetFaculties();
-   
-   //Select certain faculty
-   var fi = faculties.First(f => f.ShortName == "fi");
-   
-   //Set faculty sending faculty object
-   npuParser.SetFaculty(fi);
-   //Or just using short name
-   npuParser.SetFaculty(fi.ShortName);
-   
-   //Get faculty's groups
-   var groups = await npuParser.GetGroups();
-   
-   //Get lesson list by passing date and group id
-   var lessons = await npuParser.GetLessonsOnDate(new DateTime(2018, 10, 29), groups[1].ExternalId); 
-```
-### 2:
-```c#
-   //Create instance wiht faculty name
-   var npuParser = new NpuParser("fi");
-   
-   //Get faculty's groups
-   var groups = await npuParser.GetGroups();
-   
-   //Get lesson list by passing date and group id
-   var lessons = await npuParser.GetLessonsOnDate(new DateTime(2018, 10, 29), groups[1].ExternalId);   
+//Create instance
+var npuParser = new NpuParser();
+
+//Get all faculties
+var faculties = npuParser.GetFaculties();
+
+//Select certain faculty
+var fi = faculties.First(f => f.ShortName == "fi");
+
+//Get faculty's groups
+var groups = await npuParser.GetGroups(fi.ShortName);
+
+//Get classes
+var classes = await npuParser.GetLessonsOnDate(
+                 fi.ShortName, 
+                 groups[4].ExternalId,
+                 new DateTime(2019, 3, 18)); 
 ```
 ### GetLessonsOnDate returns List of Lesson object:
 ```c#
