@@ -10,7 +10,7 @@ namespace NpuTimetableParser
 {
     public class NpuParser
     {
-        private readonly RestClient _client;
+        private IRestClient _client;
         private ReaderWriterLockSlim _groupsLock = new ReaderWriterLockSlim();
         private ReaderWriterLockSlim _lessonsLock = new ReaderWriterLockSlim();
 
@@ -75,6 +75,11 @@ namespace NpuTimetableParser
             }
 
             return await _npuInstances[facultyShortName].GetLessonsOnDate(date, groupId);
+        }
+
+        public void SetClient(IRestClient client)
+        {
+            _client = client;
         }
     }
 }
