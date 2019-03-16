@@ -125,6 +125,12 @@ namespace RozkladNpuAspNetCore.Helpers
                 row.Add(faculty.FullName);
                 rows.Add(row);
             }
+
+            rows.Add(new List<KeyboardButton>
+            {
+                "Menu"
+            });
+
             return new ReplyKeyboardMarkup(rows);
         }
 
@@ -134,8 +140,7 @@ namespace RozkladNpuAspNetCore.Helpers
                 List<List<KeyboardButton>>();
             foreach (var group in groups)
             {
-                var row = new List<KeyboardButton>();
-                row.Add(group.ShortName);
+                var row = new List<KeyboardButton> {group.ShortName};
                 groupsRow.Add(row);
             }
 
@@ -146,7 +151,7 @@ namespace RozkladNpuAspNetCore.Helpers
         {
             return new[]
             {
-                new []{ "Расписание" },
+                new []{ "Schedule" },
                 new []{ "Настройки" }
             };
         }
