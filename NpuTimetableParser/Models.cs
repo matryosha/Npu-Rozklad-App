@@ -29,6 +29,7 @@ namespace NpuTimetableParser
     public class Group
     {
         public int ExternalId { get; set; }
+        public string FacultyShortName { get; set; }
         public string FullName { get; set; }
         public string ShortName { get; set; }
         public override string ToString()
