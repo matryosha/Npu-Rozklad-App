@@ -11,6 +11,7 @@ namespace NpuTimetableParser
         private IRestClient _client;
         private RawStringParser _rawParser;
         private string _faculty;
+        private List<Faculty> _faculties;
 
         public NpuParserHelper(IRestClient client, RawStringParser rawParser, string faculty)
         {
@@ -129,7 +130,7 @@ namespace NpuTimetableParser
             var groupList = new List<Group>();
 
             var clientResponse = SiteRequest("get groups", _faculty);
-            groupList = _rawParser.DeserializeGroups(clientResponse);
+            groupList = _rawParser.DeserializeGroups(clientResponse, _faculty);
 
             return groupList;
         }
@@ -156,12 +157,16 @@ namespace NpuTimetableParser
 
         public List<Faculty>  GetFaculties()
         {
-            return _rawParser.DeserializeFaculties(SiteRequest("get faculties", "fi"));
+            return _faculties ?? (_faculties = 
+                       _rawParser.DeserializeFaculties(
+                           SiteRequest("get faculties", "fi")));
         }
 
         public List<Group> GetGroups(string faculty)
         {
-            return _rawParser.DeserializeGroups(SiteRequest("get groups", faculty));
+            return _rawParser.DeserializeGroups(
+                SiteRequest("get groups", faculty),
+                _faculty);
         }
 
         public void SetFaculty(string faculty)

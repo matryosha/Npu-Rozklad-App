@@ -112,7 +112,9 @@ namespace NpuTimetableParser
             return result;
         }
 
-        public List<Group> DeserializeGroups(string rawString)
+        public List<Group> DeserializeGroups(
+            string rawString, 
+            string facultyShortName)
         {
             var result = new List<Group>();
             var rawValues = GetValues(rawString);
@@ -122,7 +124,8 @@ namespace NpuTimetableParser
                 var item = new Group
                 {
                     ExternalId = int.Parse(rawValue[0]),
-                    ShortName = Regex.Unescape(rawValue[1])
+                    ShortName = Regex.Unescape(rawValue[1]),
+                    FacultyShortName = facultyShortName
                 };
                 result.Add(item);
             }
