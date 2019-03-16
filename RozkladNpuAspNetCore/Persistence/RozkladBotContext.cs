@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
 
 namespace RozkladNpuAspNetCore.Persistence
@@ -11,5 +12,13 @@ namespace RozkladNpuAspNetCore.Persistence
         }
 
         public DbSet<RozkladUser> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Group>()
+                .HasKey(g => g.ExternalId);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

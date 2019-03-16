@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using NpuTimetableParser;
 
 namespace RozkladNpuAspNetCore.Entities
 {
@@ -11,7 +13,8 @@ namespace RozkladNpuAspNetCore.Entities
             WaitForGroup,
             Settings,
             SettingsReset,
-            WeekSchedule
+            WeekSchedule,
+            ScheduleMenu
         }
         public RozkladUser()
         {
@@ -28,5 +31,6 @@ namespace RozkladNpuAspNetCore.Entities
         public bool IsDeleted { get; set; }
         public int QueryCount { get; set; }
         public LastActionType LastAction { get; set; }
+        public List<Group> Groups { get; set; }
     }
 }
