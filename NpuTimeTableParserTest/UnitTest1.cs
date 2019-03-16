@@ -2,18 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Cache;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NpuTimetableParser;
-using RestSharp;
-using RestSharp.Authenticators;
-using RestSharp.Deserializers;
+using NpuTimeTableParserTest.Infrastructure;
 
 namespace NpuTimeTableParserTest
 {
@@ -21,66 +13,114 @@ namespace NpuTimeTableParserTest
     public class NpuParserTest
     {
         [TestMethod]
-        public async Task TestPolygon()
-        {
-            //var mockClient = new MockRestClient();
-            //mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
-            ////mockClient.CalendarRawContent = ReadMockContent("testcalendar.txt"); 
-            //mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
-            //mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
-            //mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
-            //mockClient.FacultiesRawContent = ReadMockContent("FacultiesRawContent.txt");
-            //NpuParserInstance parserInstance = new NpuParserInstance(mockClient);
-            //var faculties = await parserInstance.GetFaculties();
-            ////var lessons = await parserInstance.GetLessonsOnDate(new DateTime(2017, 9, 8), 87);
-            //var lessons = await parserInstance.GetLessonsOnDate(DateTime.Today.AddDays(1), 87);
-            //var count = lessons.Count;
-
-            var parser = new NpuParser();
-            var groups = parser.GetGroups("fi").Result;
-            var a = parser.GetLessonsOnDate("fi", 75, DateTime.Today.AddDays(1)).Result;
-            var b = parser.GetLessonsOnDate("fi", 75, DateTime.Today).Result;
-
-
-        }
-
-        
-        public async Task GetLessonsOnDateTest1()
+        public async Task SimpleLessonsTest()
         {
             //arrange
-            var mockClient = new MockRestClient();
-            mockClient.CalendarRawContent = ReadMockContent("CalendarRawContent.txt");
-            mockClient.GroupsRawContent = ReadMockContent("GroupsRawContent.txt");
-            mockClient.LecturesRawContent = ReadMockContent("LecturesRawContent.txt");
-            mockClient.ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt");
-            NpuParserInstance parserInstance = new NpuParserInstance(mockClient, new RawStringParser());
+            var parser = GetParser();
+            var groups = await parser.GetGroups("fi");
 
             //act
-            List<Lesson> testLessonsList = await parserInstance.GetLessonsOnDate(new DateTime(2017, 11, 17), 87);
+            List<Lesson> testLessonsList = 
+                await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 18));
 
             //assert
-            Assert.AreEqual(4, testLessonsList.Count);
+            Assert.AreEqual(3, testLessonsList.Count);
 
             var assert1 = testLessonsList.Where(l => l.LessonNumber == 2).ToList();
             Assert.AreEqual(1, assert1.Count);
-            Assert.AreEqual(111, assert1[0].Lecturer.ExternalId);
+            var lesson1 = assert1[0];
+            Assert.AreEqual(389, lesson1.Lecturer.ExternalId);
+            Assert.AreEqual(Fraction.None, lesson1.Fraction);
+            Assert.AreEqual(SubGroup.None, lesson1.SubGroup);
 
-            var assert2 = testLessonsList.Where(l => l.LessonNumber == 1).ToList();
+            var assert2 = testLessonsList.Where(l => l.LessonNumber == 3).ToList();
             Assert.AreEqual(1, assert2.Count);
-            Assert.AreEqual(83, assert2[0].Lecturer.ExternalId);
+            var lesson2 = assert2[0];
+            Assert.AreEqual(389, lesson2.Lecturer.ExternalId);
+            Assert.AreEqual(Fraction.None, lesson2.Fraction);
+            Assert.AreEqual(SubGroup.None, lesson2.SubGroup);
 
-            var assert3 = testLessonsList.Where(l => l.LessonNumber == 3).ToList();
-            Assert.AreEqual(2, assert3.Count);
-            Assert.AreEqual(true, assert3.Any( l => l.Subject.Name =="Комп'ютерна дискретна математика"));
-            Assert.AreEqual(true, assert3.Any( l => l.Subject.Name == "Фізика"));
+            var assert3 = testLessonsList.Where(l => l.LessonNumber == 4).ToList();
+            Assert.AreEqual(1, assert3.Count);
+            var lesson3 = assert3[0];
+            Assert.AreEqual(115, lesson3.Lecturer.ExternalId);
+            Assert.AreEqual(Fraction.None, lesson3.Fraction);
+            Assert.AreEqual(SubGroup.None, lesson3.SubGroup);
         }
+
+        [TestMethod]
+        public async Task SimpleFractionTest()
+        {
+            var parser = GetParser();
+            List<Lesson> lessons = 
+                await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 21));
+
+            Assert.AreEqual(2, lessons.Count);
+            var fractionLesson = lessons.FirstOrDefault(l => l.LessonNumber == 3);
+            Assert.AreEqual(Fraction.Denominator, fractionLesson.Fraction);
+        }
+
+        [TestMethod]
+        public async Task DoubleFractionTest()
+        {
+            var parser = GetParser();
+            List<Lesson> lessons =
+                await parser.GetLessonsOnDate("fi", 86, new DateTime(2019, 3, 19));
+
+            Assert.AreEqual(2, lessons.Count);
+            var classes3 = lessons.Where(l => l.LessonNumber == 3).ToList();
+            Assert.AreEqual(1, classes3.Count);
+            var class3 = classes3.FirstOrDefault();
+            Assert.AreEqual(Fraction.Denominator, class3.Fraction);
+            Assert.AreEqual("Педагогіка", class3.Subject.Name);
+        }
+
+        [TestMethod]
+        public async Task SubGroupTest()
+        {
+            var parser = GetParser();
+            List<Lesson> lessons =
+                await parser.GetLessonsOnDate("fi", 490, new DateTime(2019, 3, 20));
+
+            Assert.AreEqual(4, lessons.Count);
+            var subGroupLessons = lessons.Where(l => l.LessonNumber == 4).ToList();
+            Assert.AreEqual(2, subGroupLessons.Count);
+            var firstGroupLesson = subGroupLessons.FirstOrDefault(l => l.SubGroup == SubGroup.First);
+            var secondGroupLesson = subGroupLessons.FirstOrDefault(l => l.SubGroup == SubGroup.Second);
+            Assert.AreEqual("Економіка та бізнес (за вибором)", firstGroupLesson.Subject.Name);
+            Assert.AreEqual("Політологія", secondGroupLesson.Subject.Name);
+        }
+
+        public static string ReadMockContent(string fileName)
+        {
+            return File.ReadAllText($"{fileName}");
+        }
+
+        private static NpuParser GetParser()
+        {
+            var mockClient = new MockRestClient
+            {
+                CalendarRawContent = ReadMockContent("CalendarRawContent.txt"),
+                GroupsRawContent = ReadMockContent("GroupsRawContent.txt"),
+                LecturesRawContent = ReadMockContent("LecturesRawContent.txt"),
+                ClassroomsRawContent = ReadMockContent("ClassroomsRawContent.txt")
+            };
+            var parser = new NpuParser();
+            parser.SetClient(mockClient);
+            return parser;
+        }
+    }
+
+    [TestClass]
+    public class NpuParserHelperTests
+    {
         [TestMethod]
         public void ReplaceLessonTest()
         {
-            var newLesson = new Lesson() {Subject = new Subject() {Name = "new"}};
-            var oldLesson = new Lesson() {Subject = new Subject() {Name = "old"}};
+            var newLesson = new Lesson() { Subject = new Subject() { Name = "new" } };
+            var oldLesson = new Lesson() { Subject = new Subject() { Name = "old" } };
             var list = new List<Lesson>();
-            
+
             list.Add(oldLesson);
             NpuParserHelper.ReplaceLesson(list, newLesson, oldLesson);
 
@@ -111,7 +151,7 @@ namespace NpuTimeTableParserTest
                 Fraction = Fraction.None,
                 LessonNumber = 1
             };
-            
+
             resultLessonsList.Add(oldLessonFractionNone);
             newLessonsList.Add(newLessonFractionNone);
 
@@ -608,268 +648,8 @@ namespace NpuTimeTableParserTest
 
             var assertList = resultLessonsList.Where(l => l.LessonNumber == 2).ToList();
             Assert.AreEqual(2, assertList.Count);
-            Assert.AreEqual("new2_0_1", assertList.FirstOrDefault( l => l.SubGroup == SubGroup.First).Subject.Name);
-            Assert.AreEqual("new2_0_2", assertList.FirstOrDefault( l => l.SubGroup == SubGroup.Second).Subject.Name);
+            Assert.AreEqual("new2_0_1", assertList.FirstOrDefault(l => l.SubGroup == SubGroup.First).Subject.Name);
+            Assert.AreEqual("new2_0_2", assertList.FirstOrDefault(l => l.SubGroup == SubGroup.Second).Subject.Name);
         }
-
-        public async Task NpuParser_Example()
-        {
-            //Create instance
-            var npuParser = new NpuParserInstance(new RawStringParser());
-            //Get all faculties
-            var faculties = await npuParser.GetFaculties();
-            //Select certain faculty
-            var fi = faculties.First(f => f.ShortName == "fi");
-            //Set faculty sending faculty object
-            npuParser.SetFaculty(fi);
-            //Or just using short name
-            npuParser.SetFaculty(fi.ShortName);
-            //Get faculty's groups
-            var groups = await npuParser.GetGroups();
-            //Get lesson list by passing date and group id
-            var lessons = await npuParser.GetLessonsOnDate(new DateTime(2018, 10, 29), groups[1].ExternalId);
-        }
-        public string ReadMockContent(string fileName)
-        {
-            return File.ReadAllText($"{fileName}");
-        }
-    }
-
-
-
-    public class MockRestClient : IRestClient
-    {
-        public string CalendarRawContent { get; set; }
-        public string GroupsRawContent { get; set; }
-        public string LecturesRawContent { get; set; }
-        public string ClassroomsRawContent { get; set; }
-        public string FacultiesRawContent { get; set; }
-
-        public IRestResponse Execute(IRestRequest request)
-        {
-            var codeParameter = request.Parameters.First(a => (string) a.Name == "code");
-
-            switch (codeParameter.Value.ToString())
-            {
-                case "get calendar":
-                    return new MockRestResponse(CalendarRawContent);
-                case "get groups":
-                    return new MockRestResponse(GroupsRawContent);
-                case "get lectors":
-                    return new MockRestResponse(LecturesRawContent);
-                case "get auditories":
-                    return new MockRestResponse(ClassroomsRawContent);
-                case "get faculties":
-                    return new MockRestResponse(FacultiesRawContent);
-            }
-            throw new Exception("There is no such a code");
-        }
-
-        public RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRestResponse<T> Deserialize<T>(IRestResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public IRestResponse<T> Execute<T>(IRestRequest request) where T : new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public byte[] DownloadData(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public byte[] DownloadData(IRestRequest request, bool throwOnError)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Uri BuildUri(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RestRequestAsyncHandle ExecuteAsyncGet(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RestRequestAsyncHandle ExecuteAsyncPost(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RestRequestAsyncHandle ExecuteAsyncGet<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RestRequestAsyncHandle ExecuteAsyncPost<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ConfigureWebRequest(Action<HttpWebRequest> configurator)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddHandler(string contentType, IDeserializer deserializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveHandler(string contentType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearHandlers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRestResponse ExecuteAsGet(IRestRequest request, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRestResponse ExecuteAsPost(IRestRequest request, string httpMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRestResponse<T> ExecuteAsGet<T>(IRestRequest request, string httpMethod) where T : new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRestResponse<T> ExecuteAsPost<T>(IRestRequest request, string httpMethod) where T : new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecuteTaskAsync<T>(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecuteGetTaskAsync<T>(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse<T>> ExecutePostTaskAsync<T>(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecuteTaskAsync(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecuteTaskAsync(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecuteGetTaskAsync(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IRestResponse> ExecutePostTaskAsync(IRestRequest request, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CookieContainer CookieContainer { get; set; }
-        public bool AutomaticDecompression { get; set; }
-        public int? MaxRedirects { get; set; }
-        public string UserAgent { get; set; }
-        public int Timeout { get; set; }
-        public int ReadWriteTimeout { get; set; }
-        public bool UseSynchronizationContext { get; set; }
-        public IAuthenticator Authenticator { get; set; }
-        public Uri BaseUrl { get; set; }
-        public Encoding Encoding { get; set; }
-        public string ConnectionGroupName { get; set; }
-        public bool PreAuthenticate { get; set; }
-        public bool UnsafeAuthenticatedConnectionSharing { get; set; }
-        public IList<Parameter> DefaultParameters { get; }
-        public string BaseHost { get; set; }
-        public bool AllowMultipleDefaultParametersWithSameName { get; set; }
-        public X509CertificateCollection ClientCertificates { get; set; }
-        public IWebProxy Proxy { get; set; }
-        public RequestCachePolicy CachePolicy { get; set; }
-        public bool Pipelined { get; set; }
-        public bool FollowRedirects { get; set; }
-        public RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
-    }
-
-    public class MockRestResponse : IRestResponse
-    {
-        public MockRestResponse(string mockResponse)
-        {
-            Content = mockResponse;
-            ContentLength = 1;
-
-        }
-        public IRestRequest Request { get; set; }
-        public string ContentType { get; set; }
-        public long ContentLength { get; set; }
-        public string ContentEncoding { get; set; }
-        public string Content { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
-        public bool IsSuccessful { get; }
-        public string StatusDescription { get; set; }
-        public byte[] RawBytes { get; set; }
-        public Uri ResponseUri { get; set; }
-        public string Server { get; set; }
-        public IList<RestResponseCookie> Cookies { get; }
-        public IList<Parameter> Headers { get; }
-        public ResponseStatus ResponseStatus { get; set; }
-        public string ErrorMessage { get; set; }
-        public Exception ErrorException { get; set; }
-        public Version ProtocolVersion { get; set; }
     }
 }
