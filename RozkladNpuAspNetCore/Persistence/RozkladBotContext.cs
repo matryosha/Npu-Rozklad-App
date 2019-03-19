@@ -17,6 +17,8 @@ namespace RozkladNpuAspNetCore.Persistence
         {
             modelBuilder.Entity<Group>()
                 .HasKey(g => g.ExternalId);
+            modelBuilder.Entity<RozkladUser>()
+                .Ignore(u => u.Groups);
 
             base.OnModelCreating(modelBuilder);
         }
