@@ -12,7 +12,10 @@ namespace RozkladNpuAspNetCore.Interfaces
     public interface IInlineKeyboardReplyService
     {
         Task ShowScheduleMenu(Message message, int telegramId);
-        Task ShowScheduleMenu(Message message, RozkladUser user);
+        Task ShowScheduleMenu(
+            Message message, 
+            RozkladUser user,
+            bool spawnNewMenu = false);
         Task ShowGroupMenu(
             Message callbackQueryMessage, 
             Group group,

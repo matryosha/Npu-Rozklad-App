@@ -36,7 +36,10 @@ namespace RozkladNpuAspNetCore.Services
             await ShowScheduleMenu(message, user);
         }
 
-        public async Task ShowScheduleMenu(Message message, RozkladUser user)
+        public async Task ShowScheduleMenu(
+            Message message, 
+            RozkladUser user,
+            bool spawnNewMenu = false)
         {
 //            await _botService.Client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
             var inlineKeyboard = new List<List<InlineKeyboardButton>>();
@@ -49,7 +52,7 @@ namespace RozkladNpuAspNetCore.Services
                     DateTime.Today.DayOfWeek,
                     ShowGroupSelectedWeek.ThisWeek,
                     isSingleGroup: true,
-                    spawnNewMenu: true);
+                    spawnNewMenu: spawnNewMenu);
             }
             else
             {
@@ -84,7 +87,8 @@ namespace RozkladNpuAspNetCore.Services
                     }
                 });
 
-                if (_userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
+                if (!spawnNewMenu && 
+                    _userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
                 {
                     await _botService.Client.EditMessageTextAsync(
                         message.Chat.Id,

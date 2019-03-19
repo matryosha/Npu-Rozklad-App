@@ -117,7 +117,10 @@ namespace RozkladNpuAspNetCore.Services
             {
                 case "Schedule":
                 {
-                    await _inlineKeyboardReplyService.ShowScheduleMenu(message, user);
+                    await _inlineKeyboardReplyService.ShowScheduleMenu(
+                        message, 
+                        user,
+                        spawnNewMenu: true);
                     return;
                 }
                 case "Menu":
