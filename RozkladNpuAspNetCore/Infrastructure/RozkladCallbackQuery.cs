@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RozkladNpuAspNetCore.Infrastructure
+﻿namespace RozkladNpuAspNetCore.Infrastructure
 {
+    //todo better naming
     public enum CallbackQueryType
     {
         AddGroup,
-        ShowGroupMenu
+        ShowDetailGroupMenu,
+        ShowScheduleMenu
     }
 
     public enum ShowGroupSelectedWeek
