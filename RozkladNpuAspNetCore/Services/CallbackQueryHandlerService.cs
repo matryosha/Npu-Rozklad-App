@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
 using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
@@ -29,14 +28,17 @@ namespace RozkladNpuAspNetCore.Services
 
         public async Task Handle(CallbackQuery callbackQuery)
         {
-            if(string.IsNullOrEmpty(callbackQuery.Data)) return;    
-            var callbackQueryData = CallbackQueryDataConverters.ConvertDataFromString(callbackQuery.Data);
+            if (string.IsNullOrEmpty(callbackQuery.Data)) return;
+            var callbackQueryKeyValuePair =
+                CallbackQueryDataConverters.ConvertDataFromString(callbackQuery.Data);
             await _botService.Client.AnswerCallbackQueryAsync(callbackQuery.Id);
-            switch (callbackQueryData.Key)
+            switch (callbackQueryKeyValuePair.Key)
             {
                 case CallbackQueryType.AddGroup:
                 {
-                    var user = await _userService.GetUser(callbackQuery.From.Id).ConfigureAwait(false);
+                    var user =
+                        await _userService.GetUser(callbackQuery.From.Id)
+                            .ConfigureAwait(false);
                     user.LastAction = RozkladUser.LastActionType.WaitForFaculty;
                     await _userService.UpdateUser(user);
                     await _keyboardReplyService.ShowFacultyList(callbackQuery.Message);
@@ -46,19 +48,18 @@ namespace RozkladNpuAspNetCore.Services
                 {
                     await _inlineKeyboardReplyService.ShowGroupMenu(
                         callbackQuery.Message,
-                        CallbackQueryDataConverters.ToGroup(callbackQueryData.Value),
-                        (DayOfWeek)int.Parse(callbackQueryData.Value[3]),
-                        (ShowGroupSelectedWeek)int.Parse(callbackQueryData.Value[4]));
+                        CallbackQueryDataConverters.ToGroup(callbackQueryKeyValuePair.Value),
+                        (DayOfWeek) int.Parse(callbackQueryKeyValuePair.Value[3]),
+                        (ShowGroupSelectedWeek) int.Parse(callbackQueryKeyValuePair.Value[4]));
                     break;
                 }
                 case CallbackQueryType.ShowScheduleMenu:
                 {
-                    await _inlineKeyboardReplyService.ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
+                    await _inlineKeyboardReplyService
+                        .ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
                     break;
                 }
-
             }
-
         }
     }
 }
