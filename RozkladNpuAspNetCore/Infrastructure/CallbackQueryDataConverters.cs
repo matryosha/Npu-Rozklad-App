@@ -73,7 +73,7 @@ namespace RozkladNpuAspNetCore.Infrastructure
             ShowGroupSelectedWeek week,
             DayOfWeek dayOfWeek)
         {
-            return (int) CallbackQueryType.ShowGroupMenu +
+            return (int) CallbackQueryType.ShowDetailGroupMenu +
                    $";{group.ToDataString()};{(int)dayOfWeek}" +
                    $";{(int)week}";
         }
