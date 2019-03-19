@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NpuTimetableParser;
+using RozkladNpuAspNetCore.Entities;
+using RozkladNpuAspNetCore.Infrastructure;
 using Telegram.Bot.Types;
 
 namespace RozkladNpuAspNetCore.Interfaces
 {
     public interface IInlineKeyboardReplyService
     {
-        Task ShowScheduleMenu(Message message);
+        Task ShowScheduleMenu(Message message, RozkladUser user);
+        Task ShowGroupMenu(
+            Message callbackQueryMessage, 
+            Group group,
+            DayOfWeek dayOfWeek,
+            ShowGroupSelectedWeek week,
+            bool isSingleGroup = false,
+            bool spawnNewMenu = false);
     }
 }
