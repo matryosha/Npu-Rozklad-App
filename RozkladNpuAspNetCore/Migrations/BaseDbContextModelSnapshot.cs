@@ -13,9 +13,30 @@ namespace RozkladNpuAspNetCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932");
+                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("RozkladNpuAspNetCore.Models.RozkladUser", b =>
+            modelBuilder.Entity("NpuTimetableParser.Group", b =>
+                {
+                    b.Property<int>("ExternalId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("FacultyShortName");
+
+                    b.Property<string>("FullName");
+
+                    b.Property<string>("RozkladUserGuid");
+
+                    b.Property<string>("ShortName");
+
+                    b.HasKey("ExternalId");
+
+                    b.HasIndex("RozkladUserGuid");
+
+                    b.ToTable("Group");
+                });
+
+            modelBuilder.Entity("RozkladNpuAspNetCore.Entities.RozkladUser", b =>
                 {
                     b.Property<string>("Guid")
                         .ValueGeneratedOnAdd();
@@ -41,6 +62,13 @@ namespace RozkladNpuAspNetCore.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("NpuTimetableParser.Group", b =>
+                {
+                    b.HasOne("RozkladNpuAspNetCore.Entities.RozkladUser")
+                        .WithMany("Groups")
+                        .HasForeignKey("RozkladUserGuid");
                 });
 #pragma warning restore 612, 618
         }
