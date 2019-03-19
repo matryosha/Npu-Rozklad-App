@@ -69,7 +69,7 @@ namespace RozkladNpuAspNetCore.Services
                     else
                     {
                         inlineKeyboard.Add(rowButtons);
-                        rowButtons.Clear();
+                        rowButtons = new List<InlineKeyboardButton>();
                         rowButtons.Add(button);
                     }
                 }
