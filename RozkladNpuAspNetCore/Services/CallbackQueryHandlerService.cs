@@ -42,7 +42,7 @@ namespace RozkladNpuAspNetCore.Services
                     await _keyboardReplyService.ShowFacultyList(callbackQuery.Message);
                     break;
                 }
-                case CallbackQueryType.ShowGroupMenu:
+                case CallbackQueryType.ShowDetailGroupMenu:
                 {
                     await _inlineKeyboardReplyService.ShowGroupMenu(
                         callbackQuery.Message,
@@ -51,6 +51,12 @@ namespace RozkladNpuAspNetCore.Services
                         (ShowGroupSelectedWeek)int.Parse(callbackQueryData.Value[4]));
                     break;
                 }
+                case CallbackQueryType.ShowScheduleMenu:
+                {
+                    await _inlineKeyboardReplyService.ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
+                    break;
+                }
+
             }
 
         }
