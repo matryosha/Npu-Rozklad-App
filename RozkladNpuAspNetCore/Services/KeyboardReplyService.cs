@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuAspNetCore.Helpers;
@@ -24,20 +22,25 @@ namespace RozkladNpuAspNetCore.Services
 
         public Task ShowMainMenu(Message message)
         {
-            return _botService.Client.SendTextMessageAsync(message.Chat.Id, "Choose action: ",
+            return _botService.Client.SendTextMessageAsync(
+                message.Chat.Id, "Choose action: ",
                 replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
 
         public Task ShowScheduleMenu(Message message)
         {
-            return _botService.Client.SendTextMessageAsync(message.Chat.Id, "Groups: ",
+            return _botService.Client.SendTextMessageAsync(
+                message.Chat.Id, "Groups: ",
                 replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
 
         public Task ShowFacultyList(Message message)
         {
-            return _botService.Client.SendTextMessageAsync(message.Chat.Id, "Choose faculty: ",
-                    replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(_lessonsProvider.GetFaculties()));
+            return _botService.Client.SendTextMessageAsync(
+                message.Chat.Id, 
+                "Choose faculty: ",
+                replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(
+                    _lessonsProvider.GetFaculties()));
         }
 
         public async Task<bool> ShowGroupList(Message message, Faculty faculty)
@@ -47,11 +50,15 @@ namespace RozkladNpuAspNetCore.Services
 
             if (!groupsKeyboard.Keyboard.Any())
             {
-                await _botService.Client.SendTextMessageAsync(message.Chat.Id, "There are no groups for this faculty");
+                await _botService.Client.SendTextMessageAsync(
+                    message.Chat.Id, 
+                    "There are no groups for this faculty");
                 return false;
             }
             
-            await _botService.Client.SendTextMessageAsync(message.Chat.Id, "Choose group: ",
+            await _botService.Client.SendTextMessageAsync(
+                message.Chat.Id, 
+                "Choose group: ",
                 replyMarkup: groupsKeyboard);
             return true;
         }
