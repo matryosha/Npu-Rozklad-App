@@ -9,11 +9,12 @@ namespace RozkladNpuAspNetCore.Helpers
 {
     public static class MessageHandleHelper
     {
-        public static string CreateOneDayWeekLessonsMessage(List<Lesson> lessons, DateTime currentDate)
+        public static string OneDayClassesMessage(List<Lesson> lessons, DateTime currentDate)
         {
             var message = new StringBuilder();
             message.AppendLine(
-                $"Пары на *{ConvertDayOfWeekToText(currentDate.DayOfWeek)}* `{currentDate:dd/MM}`");
+                $"Classes on *{ConvertDayOfWeekToText(currentDate.DayOfWeek)}* `{currentDate:dd/MM}`");
+            message.AppendLine($"Updated on: {DateTime.Now:hh:mm:ss}");
             message.AppendLine(Environment.NewLine);
 
             foreach (var lesson in lessons)
@@ -143,6 +144,11 @@ namespace RozkladNpuAspNetCore.Helpers
                 var row = new List<KeyboardButton> {group.ShortName};
                 groupsRow.Add(row);
             }
+
+            groupsRow.Add(new List<KeyboardButton>
+            {
+                "Menu"
+            });
 
             return new ReplyKeyboardMarkup(groupsRow);
         }
