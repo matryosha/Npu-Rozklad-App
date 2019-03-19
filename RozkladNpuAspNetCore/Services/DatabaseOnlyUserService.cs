@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
 using RozkladNpuAspNetCore.Interfaces;
 using RozkladNpuAspNetCore.Persistence;
@@ -16,7 +11,8 @@ namespace RozkladNpuAspNetCore.Services
     public class DatabaseOnlyUserService : IUserService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly Dictionary<long, int> _lastMessagesDictionary = new Dictionary<long, int>();
+        private readonly Dictionary<long, int> _lastMessagesDictionary = 
+            new Dictionary<long, int>();
         public DatabaseOnlyUserService(
             IServiceScopeFactory scopeFactory)
         {
@@ -49,7 +45,7 @@ namespace RozkladNpuAspNetCore.Services
 
         public async Task<RozkladUser> GetUser(int telegramId)
         {
-            RozkladUser user = null;
+            RozkladUser user;
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dbContext =
