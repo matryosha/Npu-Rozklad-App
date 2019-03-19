@@ -127,7 +127,10 @@ namespace RozkladNpuAspNetCore.Services
                 classesDate);
 
             var message =
-                MessageHandleHelper.OneDayClassesMessage(classes, classesDate);
+                MessageHandleHelper.OneDayClassesMessage(
+                    classes, 
+                    classesDate,
+                    group);
 
             var inlineReplyKeyboard = new List<List<InlineKeyboardButton>>();
             var weekButtonsRow = new List<InlineKeyboardButton>

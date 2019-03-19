@@ -9,9 +9,13 @@ namespace RozkladNpuAspNetCore.Helpers
 {
     public static class MessageHandleHelper
     {
-        public static string OneDayClassesMessage(List<Lesson> lessons, DateTime currentDate)
+        public static string OneDayClassesMessage(
+            List<Lesson> lessons, 
+            DateTime currentDate,
+            Group group)
         {
             var message = new StringBuilder();
+            message.AppendLine($"*--{group.ShortName}--*");
             message.AppendLine(
                 $"Classes on *{ConvertDayOfWeekToText(currentDate.DayOfWeek)}* `{currentDate:dd/MM}`");
             message.AppendLine($"Updated on: {DateTime.Now:hh:mm:ss}");
@@ -157,8 +161,7 @@ namespace RozkladNpuAspNetCore.Helpers
         {
             return new[]
             {
-                new []{ "Schedule" },
-                new []{ "Настройки" }
+                new []{ "Schedule" }
             };
         }
 
