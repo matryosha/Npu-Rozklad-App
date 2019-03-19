@@ -5,13 +5,20 @@ using System.Threading.Tasks;
 
 namespace RozkladNpuAspNetCore.Infrastructure
 {
-    public enum RozkladCallbackQueryType
+    public enum CallbackQueryType
     {
-        AddGroup
+        AddGroup,
+        ShowGroupMenu
+    }
+
+    public enum ShowGroupSelectedWeek
+    {
+        ThisWeek,
+        NextWeek
     }
 
     public class RozkladCallbackQuery
     {
-        public RozkladCallbackQueryType UpdateType;
+        public CallbackQueryType UpdateType;
     }
 }
