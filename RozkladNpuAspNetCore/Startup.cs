@@ -30,7 +30,12 @@ namespace RozkladNpuAspNetCore
                 });
             services.AddSingleton<BotService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
-            services.AddTransient<MessageHandleService>();
+            services.AddScoped<IInlineKeyboardReplyService, InlineKeyboardReplyService>();
+            services.AddScoped<IKeyboardReplyService, KeyboardReplyService>();
+            services.AddSingleton<IUserService, DatabaseOnlyUserService>();
+            services.AddScoped<IMessageHandleService, MessageHandleService>();
+            services.AddScoped<ICallbackQueryHandlerService, CallbackQueryHandlerService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<BotConfiguration>(options => Configuration.GetSection("BotConfiguration").Bind(options));
             services.Configure<UnknownResponseConfiguration>(Configuration.GetSection("Stickers"));
