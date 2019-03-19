@@ -12,7 +12,6 @@ namespace RozkladNpuAspNetCore.Services
 {
     public class MessageHandleService : IMessageHandleService
     {
-//        private readonly RozkladBotContext _context;
         private readonly BotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
         private readonly IUserService _userService;
@@ -68,8 +67,8 @@ namespace RozkladNpuAspNetCore.Services
                 return;
             }
 
-//            user.QueryCount++;
-//            await _userService.UpdateUser(user);
+            user.QueryCount++;
+            await _userService.UpdateUser(user);
 
             switch (user.LastAction)
             {
