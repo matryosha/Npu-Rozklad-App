@@ -29,15 +29,22 @@ namespace RozkladNpuAspNetCore.Services
             _userService = userService;
         }
 
+
+        public async Task ShowScheduleMenu(Message message, int telegramId)
+        {
+            var user = await _userService.GetUser(telegramId);
+            await ShowScheduleMenu(message, user);
+        }
+
         public async Task ShowScheduleMenu(Message message, RozkladUser user)
         {
-            await _botService.Client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+//            await _botService.Client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
             var inlineKeyboard = new List<List<InlineKeyboardButton>>();
             var rowButtons = new List<InlineKeyboardButton>();
             if (user.Groups.Count == 1)
             {
                 await ShowGroupMenu(
-                    message, 
+                    message,
                     user.Groups.FirstOrDefault(),
                     DateTime.Today.DayOfWeek,
                     ShowGroupSelectedWeek.ThisWeek,
@@ -50,7 +57,7 @@ namespace RozkladNpuAspNetCore.Services
                 {
                     var button = new InlineKeyboardButton
                     {
-                        CallbackData = 
+                        CallbackData =
                             CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                                 group, ShowGroupSelectedWeek.ThisWeek),
                         Text = @group.ShortName
@@ -72,19 +79,31 @@ namespace RozkladNpuAspNetCore.Services
                 {
                     new InlineKeyboardButton
                     {
-                        CallbackData = ((int)CallbackQueryType.AddGroup).ToString(),
+                        CallbackData = ((int) CallbackQueryType.AddGroup).ToString(),
                         Text = "Add group"
                     }
                 });
 
-                var sentMessage = await _botService.Client.SendTextMessageAsync(
-                    message.Chat.Id,
-                    "Choose group:",
-                    replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
+                if (_userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
+                {
+                    await _botService.Client.EditMessageTextAsync(
+                        message.Chat.Id,
+                        messageId,
+                        text: "Choose group",
+                        replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
+                }
+                else
+                {
+                    var sentMessage = await _botService.Client.SendTextMessageAsync(
+                        message.Chat.Id,
+                        "Choose group:",
+                        replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
+                    _userService.SetLastMessageId(message.Chat.Id, sentMessage.MessageId);
+                }
 
-                _userService.SetLastMessageId(message.Chat.Id, sentMessage.MessageId);
             }
         }
+        
         /// <param name="spawnNewMenu">Print group menu rather than editing last</param>
         public async Task ShowGroupMenu(
             Message callbackQueryMessage, 
@@ -181,7 +200,7 @@ namespace RozkladNpuAspNetCore.Services
                 actionButtonRow.Add(new InlineKeyboardButton
                 {
                     Text = "Back",
-                    CallbackData = ((int)CallbackQueryType.ShowGroupMenu).ToString()
+                    CallbackData = ((int)CallbackQueryType.ShowScheduleMenu).ToString()
                 });
             }
             inlineReplyKeyboard.Add(weekButtonsRow);
