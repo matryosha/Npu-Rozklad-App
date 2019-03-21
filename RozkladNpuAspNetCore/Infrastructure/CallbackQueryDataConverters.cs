@@ -59,23 +59,26 @@ namespace RozkladNpuAspNetCore.Infrastructure
 
         public static string GetGroupScheduleCallbackData(
             Group group,
-            ShowGroupSelectedWeek week)
+            ShowGroupSelectedWeek week,
+            int userTelegramId)
         {
             return GetGroupScheduleCallbackData(
                 group,
                 week,
-                DateTime.Today.ToLocal().DayOfWeek);
+                DateTime.Today.ToLocal().DayOfWeek,
+                userTelegramId);
         }
 
         //todo better naming?
         public static string GetGroupScheduleCallbackData(
             Group group,
             ShowGroupSelectedWeek week,
-            DayOfWeek dayOfWeek)
+            DayOfWeek dayOfWeek,
+            int userTelegramId)
         {
             return (int) CallbackQueryType.ShowDetailGroupMenu +
                    $";{group.ToDataString()};{(int)dayOfWeek}" +
-                   $";{(int)week}";
+                   $";{(int)week};{userTelegramId}";
         }
  
 

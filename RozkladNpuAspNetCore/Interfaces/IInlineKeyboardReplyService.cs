@@ -19,6 +19,7 @@ namespace RozkladNpuAspNetCore.Interfaces
             Group group,
             DayOfWeek dayOfWeek,
             ShowGroupSelectedWeek week,
+            int userTelegramId,
             bool isSingleGroup = false,
             bool spawnNewMenu = false);
     }

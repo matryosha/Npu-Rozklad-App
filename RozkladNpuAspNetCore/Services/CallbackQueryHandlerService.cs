@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using RozkladNpuAspNetCore.Entities;
 using RozkladNpuAspNetCore.Infrastructure;
@@ -50,11 +51,27 @@ namespace RozkladNpuAspNetCore.Services
                         callbackQuery.Message,
                         CallbackQueryDataConverters.ToGroup(callbackQueryKeyValuePair.Value),
                         (DayOfWeek) int.Parse(callbackQueryKeyValuePair.Value[3]),
-                        (ShowGroupSelectedWeek) int.Parse(callbackQueryKeyValuePair.Value[4]));
+                        (ShowGroupSelectedWeek) int.Parse(callbackQueryKeyValuePair.Value[4]),
+                        int.Parse(callbackQueryKeyValuePair.Value[5]));
                     break;
                 }
                 case CallbackQueryType.ShowScheduleMenu:
                 {
+                    await _inlineKeyboardReplyService
+                        .ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
+                    break;
+                }
+                case CallbackQueryType.DeleteGroup:
+                {
+                    var user = await _userService.GetUser(
+                        int.Parse(callbackQueryKeyValuePair.Value[0]));
+
+                    user.Groups.Remove(
+                        user.Groups.FirstOrDefault(
+                            g => g.ExternalId == int.Parse(
+                                     callbackQueryKeyValuePair.Value[1])));
+
+                    await _userService.UpdateUser(user);
                     await _inlineKeyboardReplyService
                         .ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
                     break;

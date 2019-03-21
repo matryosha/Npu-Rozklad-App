@@ -5,7 +5,8 @@
     {
         AddGroup,
         ShowDetailGroupMenu,
-        ShowScheduleMenu
+        ShowScheduleMenu,
+        DeleteGroup
     }
 
     public enum ShowGroupSelectedWeek

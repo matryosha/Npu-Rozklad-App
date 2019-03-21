@@ -51,6 +51,7 @@ namespace RozkladNpuAspNetCore.Services
                     user.Groups.FirstOrDefault(),
                     DateTime.Today.ToLocal().DayOfWeek,
                     ShowGroupSelectedWeek.ThisWeek,
+                    user.TelegramId,
                     isSingleGroup: true,
                     spawnNewMenu: spawnNewMenu);
             }
@@ -62,7 +63,7 @@ namespace RozkladNpuAspNetCore.Services
                     {
                         CallbackData =
                             CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                                group, ShowGroupSelectedWeek.ThisWeek),
+                                group, ShowGroupSelectedWeek.ThisWeek, user.TelegramId),
                         Text = @group.ShortName
                     };
                     if (rowButtons.Count < 2)
@@ -115,6 +116,7 @@ namespace RozkladNpuAspNetCore.Services
             Group @group, 
             DayOfWeek dayOfWeek, 
             ShowGroupSelectedWeek week,
+            int userTelegramId,
             bool isSingleGroup,
             bool spawnNewMenu = false)
         {
@@ -145,35 +147,35 @@ namespace RozkladNpuAspNetCore.Services
                     Text = dayOfWeek == DayOfWeek.Monday ? "*Mo" : "Mo",
                     CallbackData = 
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, week, DayOfWeek.Monday)
+                            group, week, DayOfWeek.Monday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
                     Text = dayOfWeek == DayOfWeek.Tuesday ? "*Tu" : "Tu",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, week, DayOfWeek.Tuesday)
+                            group, week, DayOfWeek.Tuesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
                     Text = dayOfWeek == DayOfWeek.Wednesday ? "*Wd" :"Wd",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, week, DayOfWeek.Wednesday)
+                            group, week, DayOfWeek.Wednesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
                     Text = dayOfWeek == DayOfWeek.Thursday ? "*Th" : "Th",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, week, DayOfWeek.Thursday)
+                            group, week, DayOfWeek.Thursday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
                     Text = dayOfWeek == DayOfWeek.Friday ? "*Fr" : "Fr",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, week, DayOfWeek.Friday)
+                            group, week, DayOfWeek.Friday, userTelegramId)
                 }
             };
             var weekSelectButtonsRow = new List<InlineKeyboardButton>
@@ -183,7 +185,7 @@ namespace RozkladNpuAspNetCore.Services
                     Text = week == ShowGroupSelectedWeek.ThisWeek ? "*This week" : "This week",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, ShowGroupSelectedWeek.ThisWeek, dayOfWeek)
+                            group, ShowGroupSelectedWeek.ThisWeek, dayOfWeek, userTelegramId)
 
                 },
                 new InlineKeyboardButton
@@ -191,13 +193,13 @@ namespace RozkladNpuAspNetCore.Services
                     Text = week == ShowGroupSelectedWeek.NextWeek ? "*Next week" : "Next week",
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
-                            group, ShowGroupSelectedWeek.NextWeek, dayOfWeek)
+                            group, ShowGroupSelectedWeek.NextWeek, dayOfWeek, userTelegramId)
                 }
             };
-            var actionButtonRow = new List<InlineKeyboardButton>();
+            var actionButtonsRow = new List<InlineKeyboardButton>();
             if (isSingleGroup)
             {
-                actionButtonRow.Add(new InlineKeyboardButton
+                actionButtonsRow.Add(new InlineKeyboardButton
                 {
                     Text = "Add group",
                     CallbackData = ((int)CallbackQueryType.AddGroup).ToString()
@@ -205,15 +207,21 @@ namespace RozkladNpuAspNetCore.Services
             }
             else
             {
-                actionButtonRow.Add(new InlineKeyboardButton
+                actionButtonsRow.Add(new InlineKeyboardButton
                 {
                     Text = "Back",
                     CallbackData = ((int)CallbackQueryType.ShowScheduleMenu).ToString()
                 });
             }
+            actionButtonsRow.Add(new InlineKeyboardButton
+            {
+                Text = "Delete group",
+                CallbackData = (int)CallbackQueryType.DeleteGroup + 
+                               $";{userTelegramId};{group.ExternalId}"
+            });
             inlineReplyKeyboard.Add(weekButtonsRow);
             inlineReplyKeyboard.Add(weekSelectButtonsRow);
-            inlineReplyKeyboard.Add(actionButtonRow);
+            inlineReplyKeyboard.Add(actionButtonsRow);
 
             if (!spawnNewMenu &&
                 _userService.TryGetLastMessageId(callbackQueryMessage.Chat.Id, out int messageId))
