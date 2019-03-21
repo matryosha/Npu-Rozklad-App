@@ -30,13 +30,13 @@ namespace RozkladNpuAspNetCore.Services
         }
 
 
-        public async Task ShowScheduleMenu(Message message, int telegramId)
+        public async Task<Message> ShowScheduleMenu(Message message, int telegramId)
         {
             var user = await _userService.GetUser(telegramId);
-            await ShowScheduleMenu(message, user);
+            return await ShowScheduleMenu(message, user);
         }
 
-        public async Task ShowScheduleMenu(
+        public async Task<Message> ShowScheduleMenu(
             Message message, 
             RozkladUser user,
             bool spawnNewMenu = false)
@@ -46,7 +46,7 @@ namespace RozkladNpuAspNetCore.Services
             var rowButtons = new List<InlineKeyboardButton>();
             if (user.Groups.Count == 1)
             {
-                await ShowGroupMenu(
+                return await ShowGroupMenu(
                     message,
                     user.Groups.FirstOrDefault(),
                     DateTime.Today.DayOfWeek,
@@ -90,7 +90,7 @@ namespace RozkladNpuAspNetCore.Services
                 if (!spawnNewMenu && 
                     _userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
                 {
-                    await _botService.Client.EditMessageTextAsync(
+                    return await _botService.Client.EditMessageTextAsync(
                         message.Chat.Id,
                         messageId,
                         text: "Choose group",
@@ -103,13 +103,14 @@ namespace RozkladNpuAspNetCore.Services
                         "Choose group:",
                         replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
                     _userService.SetLastMessageId(message.Chat.Id, sentMessage.MessageId);
+                    return sentMessage;
                 }
 
             }
         }
         
         /// <param name="spawnNewMenu">Print group menu rather than editing last</param>
-        public async Task ShowGroupMenu(
+        public async Task<Message> ShowGroupMenu(
             Message callbackQueryMessage, 
             Group @group, 
             DayOfWeek dayOfWeek, 
@@ -217,7 +218,7 @@ namespace RozkladNpuAspNetCore.Services
             if (!spawnNewMenu &&
                 _userService.TryGetLastMessageId(callbackQueryMessage.Chat.Id, out int messageId))
             {
-                await _botService.Client.EditMessageTextAsync(
+                return await _botService.Client.EditMessageTextAsync(
                     callbackQueryMessage.Chat.Id,
                     messageId,
                     message,
@@ -235,6 +236,7 @@ namespace RozkladNpuAspNetCore.Services
                 _userService.SetLastMessageId(
                     callbackQueryMessage.Chat.Id,
                     sentMessage.MessageId);
+                return sentMessage;
             }
             
         }
