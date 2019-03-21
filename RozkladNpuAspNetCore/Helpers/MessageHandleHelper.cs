@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using NpuTimetableParser;
+using RozkladNpuAspNetCore.Infrastructure;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RozkladNpuAspNetCore.Helpers
@@ -18,7 +18,7 @@ namespace RozkladNpuAspNetCore.Helpers
             message.AppendLine($"*--{group.ShortName}--*");
             message.AppendLine(
                 $"Classes on *{ConvertDayOfWeekToText(currentDate.DayOfWeek)}* `{currentDate:dd/MM}`");
-            message.AppendLine($"Updated on: {DateTime.Now:hh:mm:ss}");
+            message.AppendLine($"Updated on: {DateTime.Now.ToLocal():HH:mm:ss}");
             message.AppendLine(Environment.NewLine);
 
             foreach (var lesson in lessons)

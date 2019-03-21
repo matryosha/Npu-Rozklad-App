@@ -64,7 +64,7 @@ namespace RozkladNpuAspNetCore.Infrastructure
             return GetGroupScheduleCallbackData(
                 group,
                 week,
-                DateTime.Today.DayOfWeek);
+                DateTime.Today.ToLocal().DayOfWeek);
         }
 
         //todo better naming?

@@ -49,7 +49,7 @@ namespace RozkladNpuAspNetCore.Services
                 return await ShowGroupMenu(
                     message,
                     user.Groups.FirstOrDefault(),
-                    DateTime.Today.DayOfWeek,
+                    DateTime.Today.ToLocal().DayOfWeek,
                     ShowGroupSelectedWeek.ThisWeek,
                     isSingleGroup: true,
                     spawnNewMenu: spawnNewMenu);
@@ -120,7 +120,7 @@ namespace RozkladNpuAspNetCore.Services
         {
             DateTime classesDate;
             var currentDay = DateTime.Today.DayOfWeek;
-            classesDate = DateTime.Today.AddDays(dayOfWeek - currentDay);
+            classesDate = DateTime.Today.AddDays(dayOfWeek - currentDay).ToLocal();
             if (week == ShowGroupSelectedWeek.NextWeek)
             {
                 classesDate = classesDate.AddDays(7);
