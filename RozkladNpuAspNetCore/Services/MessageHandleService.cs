@@ -81,7 +81,8 @@ namespace RozkladNpuAspNetCore.Services
                         break;
                     }
 
-                    if (await _keyboardReplyService.ShowGroupList(message, selectedFaculty))
+                    var showGroupListMessage = await _keyboardReplyService.ShowGroupList(message, selectedFaculty);
+                    if (showGroupListMessage.Text == "Choose group: ")
                     {
                         user.LastAction = RozkladUser.LastActionType.WaitForGroup;
                         user.FacultyShortName = selectedFaculty.ShortName;
