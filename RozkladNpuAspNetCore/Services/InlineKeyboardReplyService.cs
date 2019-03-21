@@ -121,7 +121,7 @@ namespace RozkladNpuAspNetCore.Services
             bool spawnNewMenu = false)
         {
             DateTime classesDate;
-            var currentDay = DateTime.Today.DayOfWeek;
+            var currentDay = DateTime.Today.ToLocal().DayOfWeek;
             classesDate = DateTime.Today.AddDays(dayOfWeek - currentDay).ToLocal();
             if (week == ShowGroupSelectedWeek.NextWeek)
             {
