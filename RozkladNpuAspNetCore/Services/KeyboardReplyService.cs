@@ -20,21 +20,14 @@ namespace RozkladNpuAspNetCore.Services
             _lessonsProvider = lessonsProvider;
         }
 
-        public Task ShowMainMenu(Message message)
+        public Task<Message> ShowMainMenu(Message message)
         {
             return _botService.Client.SendTextMessageAsync(
                 message.Chat.Id, "Choose action: ",
                 replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
 
-        public Task ShowScheduleMenu(Message message)
-        {
-            return _botService.Client.SendTextMessageAsync(
-                message.Chat.Id, "Groups: ",
-                replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
-        }
-
-        public Task ShowFacultyList(Message message)
+        public Task<Message> ShowFacultyList(Message message)
         {
             return _botService.Client.SendTextMessageAsync(
                 message.Chat.Id, 
@@ -43,24 +36,22 @@ namespace RozkladNpuAspNetCore.Services
                     _lessonsProvider.GetFaculties()));
         }
 
-        public async Task<bool> ShowGroupList(Message message, Faculty faculty)
+        public async Task<Message> ShowGroupList(Message message, Faculty faculty)
         {
             var groupsKeyboard =  MessageHandleHelper.GetGroupsReplyKeyboardMarkup(
                 await _lessonsProvider.GetGroups(faculty.ShortName));
 
             if (!groupsKeyboard.Keyboard.Any())
             {
-                await _botService.Client.SendTextMessageAsync(
+                return await _botService.Client.SendTextMessageAsync(
                     message.Chat.Id, 
                     "There are no groups for this faculty");
-                return false;
             }
             
-            await _botService.Client.SendTextMessageAsync(
+            return await _botService.Client.SendTextMessageAsync(
                 message.Chat.Id, 
                 "Choose group: ",
                 replyMarkup: groupsKeyboard);
-            return true;
         }
     }
 }
