@@ -56,6 +56,7 @@ namespace NpuTimetableParser
 
         public async Task<List<Lesson>> GetLessonsOnDate(string facultyShortName, int groupId, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, 0,0,0);
             if (!_npuInstances.ContainsKey(facultyShortName))
             {
                 if (_faculties.Any(f => f.ShortName == facultyShortName))
