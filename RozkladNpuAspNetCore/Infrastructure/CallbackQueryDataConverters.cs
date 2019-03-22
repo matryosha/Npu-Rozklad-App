@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NpuTimetableParser;
 
 namespace RozkladNpuAspNetCore.Infrastructure
 {
     public static class CallbackQueryDataConverters
     {
+        //TODO return dictionary with values depends on CallbackQueryType
         public static KeyValuePair<CallbackQueryType, List<string>> ConvertDataFromString(string dataString)
         {
             var resultValues = new List<string>();

@@ -12,14 +12,14 @@ namespace RozkladNpuAspNetCore.Services
 {
     public class MessageHandleService : IMessageHandleService
     {
-        private readonly BotService _botService;
+        private readonly IBotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
         private readonly IUserService _userService;
         private readonly IKeyboardReplyService _keyboardReplyService;
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
         private readonly UnknownResponseConfiguration _replyStickers;
-        public MessageHandleService( 
-            BotService botService, 
+        public MessageHandleService(
+            IBotService botService, 
             ILessonsProvider lessonsProvider, 
             IOptions<UnknownResponseConfiguration> idkStickers,
             IUserService userService,

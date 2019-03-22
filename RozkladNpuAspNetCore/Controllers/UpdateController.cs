@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RozkladNpuAspNetCore.Interfaces;
-using RozkladNpuAspNetCore.Services;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -13,11 +12,11 @@ namespace RozkladNpuAspNetCore.Controllers
     [ApiController]
     public class UpdateController : ControllerBase
     {
-        private readonly BotService _botService;
+        private readonly IBotService _botService;
         private readonly IMessageHandleService _messageHandleServices;
         private readonly ICallbackQueryHandlerService _callbackQueryHandlerService;
         private readonly ILogger _logger;
-        public UpdateController(BotService service,
+        public UpdateController(IBotService service,
             IMessageHandleService messageHandleService,
             ICallbackQueryHandlerService callbackQueryHandlerService,
             ILogger<UpdateController> logger)

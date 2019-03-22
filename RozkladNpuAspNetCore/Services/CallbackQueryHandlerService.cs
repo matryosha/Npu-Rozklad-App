@@ -13,13 +13,13 @@ namespace RozkladNpuAspNetCore.Services
         private readonly IKeyboardReplyService _keyboardReplyService;
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
         private readonly IUserService _userService;
-        private readonly BotService _botService;
+        private readonly IBotService _botService;
 
         public CallbackQueryHandlerService(
             IKeyboardReplyService keyboardReplyService,
             IInlineKeyboardReplyService inlineKeyboardReplyService,
             IUserService userService,
-            BotService botService)
+            IBotService botService)
         {
             _keyboardReplyService = keyboardReplyService;
             _inlineKeyboardReplyService = inlineKeyboardReplyService;

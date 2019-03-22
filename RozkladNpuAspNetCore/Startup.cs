@@ -28,7 +28,7 @@ namespace RozkladNpuAspNetCore
                 {
                     conf.UseMySql(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
                 });
-            services.AddSingleton<BotService>();
+            services.AddSingleton<IBotService, BotService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
             services.AddScoped<IInlineKeyboardReplyService, InlineKeyboardReplyService>();
             services.AddScoped<IKeyboardReplyService, KeyboardReplyService>();

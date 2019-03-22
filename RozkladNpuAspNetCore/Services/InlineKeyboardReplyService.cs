@@ -15,12 +15,12 @@ namespace RozkladNpuAspNetCore.Services
 {
     public class InlineKeyboardReplyService : IInlineKeyboardReplyService
     {
-        private readonly BotService _botService;
+        private readonly IBotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
         private readonly IUserService _userService;
 
         public InlineKeyboardReplyService(
-            BotService botService,
+            IBotService botService,
             ILessonsProvider lessonsProvider,
             IUserService userService)
         {

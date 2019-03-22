@@ -9,11 +9,11 @@ namespace RozkladNpuAspNetCore.Services
 {
     public class KeyboardReplyService : IKeyboardReplyService
     {
-        private readonly BotService _botService;
+        private readonly IBotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
 
         public KeyboardReplyService(
-            BotService botService,
+            IBotService botService,
             ILessonsProvider lessonsProvider)
         {
             _botService = botService;
