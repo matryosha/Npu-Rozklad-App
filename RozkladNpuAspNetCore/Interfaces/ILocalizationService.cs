@@ -4,6 +4,6 @@ namespace RozkladNpuAspNetCore.Interfaces
 {
     public interface ILocalizationService
     {
-        LocalizationValue this[string language, string text] { get; set; }
+        LocalizationValue this[string language, string text] { get; }
     }
 }
