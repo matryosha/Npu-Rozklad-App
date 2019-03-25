@@ -29,10 +29,11 @@ namespace RozkladNpuAspNetCore
                     conf.UseMySql(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
                 });
             services.AddSingleton<IBotService, BotService>();
+            services.AddSingleton<IUserService, DatabaseOnlyUserService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
+            services.AddSingleton<ILocalizationService, LocalizationService>();
             services.AddScoped<IInlineKeyboardReplyService, InlineKeyboardReplyService>();
             services.AddScoped<IKeyboardReplyService, KeyboardReplyService>();
-            services.AddSingleton<IUserService, DatabaseOnlyUserService>();
             services.AddScoped<IMessageHandleService, MessageHandleService>();
             services.AddScoped<ICallbackQueryHandlerService, CallbackQueryHandlerService>();
 
