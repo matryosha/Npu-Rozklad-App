@@ -22,10 +22,20 @@ namespace RozkladNpuAspNetCore.Infrastructure.Localization
             "wednesday",
             "thursday",
             "friday",
+            "saturday",
+            "sunday",
+            "monday-short",
+            "tuesday-short",
+            "wednesday-short",
+            "thursday-short",
+            "friday-short",
             "this-week",
             "next-week",
             "back",
-            "delete"
+            "delete",
+            "classes-on",
+            "updated-on",
+            "group"
         };
         public static void Validate(
             RozkladLocalization rozkladLocalization)

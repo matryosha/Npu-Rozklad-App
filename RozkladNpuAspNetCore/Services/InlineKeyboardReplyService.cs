@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
 using RozkladNpuAspNetCore.Extensions;
-using RozkladNpuAspNetCore.Helpers;
 using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
 using Telegram.Bot.Types;
@@ -20,17 +19,20 @@ namespace RozkladNpuAspNetCore.Services
         private readonly ILessonsProvider _lessonsProvider;
         private readonly IUserService _userService;
         private readonly ILocalizationService _localization;
+        private readonly MessageBuilderService _messageBuilderService;
 
         public InlineKeyboardReplyService(
             IBotService botService,
             ILessonsProvider lessonsProvider,
             IUserService userService,
-            ILocalizationService localization)
+            ILocalizationService localization,
+            MessageBuilderService messageBuilderService)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
             _userService = userService;
             _localization = localization;
+            _messageBuilderService = messageBuilderService;
         }
 
 
@@ -138,7 +140,7 @@ namespace RozkladNpuAspNetCore.Services
                 classesDate);
 
             var message =
-                MessageHandleHelper.OneDayClassesMessage(
+                _messageBuilderService.OneDayClassesMessage(
                     classes, 
                     classesDate,
                     group);
@@ -148,45 +150,45 @@ namespace RozkladNpuAspNetCore.Services
             {
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Monday 
-                        ? _localization["ua", "monday"].AsActive() 
-                        : _localization["ua", "monday"],
-                    CallbackData = 
+                    Text = dayOfWeek == DayOfWeek.Monday
+                        ? _localization["ua", "monday-short"].AsActive()
+                        : _localization["ua", "monday-short"],
+                    CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Monday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Tuesday 
-                        ? _localization["ua", "tuesday"].AsActive() 
-                        : _localization["ua", "tuesday"],
+                    Text = dayOfWeek == DayOfWeek.Tuesday
+                        ? _localization["ua", "tuesday-short"].AsActive()
+                        : _localization["ua", "tuesday-short"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Tuesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Wednesday 
-                        ? _localization["ua", "wednesday"].AsActive()
-                        : _localization["ua", "wednesday"],
+                    Text = dayOfWeek == DayOfWeek.Wednesday
+                        ? _localization["ua", "wednesday-short"].AsActive()
+                        : _localization["ua", "wednesday-short"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Wednesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Thursday 
-                        ? _localization["ua", "thursday"].AsActive()
-                        : _localization["ua", "thursday"],
+                    Text = dayOfWeek == DayOfWeek.Thursday
+                        ? _localization["ua", "thursday-short"].AsActive()
+                        : _localization["ua", "thursday-short"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Thursday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Friday 
-                        ? _localization["ua", "friday"].AsActive()
-                        : _localization["ua", "friday"],
+                    Text = dayOfWeek == DayOfWeek.Friday
+                        ? _localization["ua", "friday-short"].AsActive()
+                        : _localization["ua", "friday-short"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Friday, userTelegramId)
