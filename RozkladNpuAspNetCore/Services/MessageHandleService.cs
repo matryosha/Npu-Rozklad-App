@@ -17,6 +17,7 @@ namespace RozkladNpuAspNetCore.Services
         private readonly IUserService _userService;
         private readonly IKeyboardReplyService _keyboardReplyService;
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
+        private readonly ILocalizationService _localization;
         private readonly UnknownResponseConfiguration _replyStickers;
         public MessageHandleService(
             IBotService botService, 
@@ -24,13 +25,15 @@ namespace RozkladNpuAspNetCore.Services
             IOptions<UnknownResponseConfiguration> idkStickers,
             IUserService userService,
             IKeyboardReplyService keyboardReplyService,
-            IInlineKeyboardReplyService inlineKeyboardReplyService)
+            IInlineKeyboardReplyService inlineKeyboardReplyService,
+            ILocalizationService localization)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
             _userService = userService;
             _keyboardReplyService = keyboardReplyService;
             _inlineKeyboardReplyService = inlineKeyboardReplyService;
+            _localization = localization;
             _replyStickers = idkStickers.Value;
         }
 
@@ -82,7 +85,7 @@ namespace RozkladNpuAspNetCore.Services
                     }
 
                     var showGroupListMessage = await _keyboardReplyService.ShowGroupList(message, selectedFaculty);
-                    if (showGroupListMessage.Text == "Choose group:")
+                    if (showGroupListMessage.Text == _localization["ua", "choose-group-message"])
                     {
                         user.LastAction = RozkladUser.LastActionType.WaitForGroup;
                         user.FacultyShortName = selectedFaculty.ShortName;
@@ -107,30 +110,27 @@ namespace RozkladNpuAspNetCore.Services
 
                     await _userService.UpdateUser(user);
 
-                    await _botService.Client.SendTextMessageAsync(message.Chat.Id, "Готово. Выбери действие:",
+                    await _botService.Client.SendTextMessageAsync(message.Chat.Id, _localization["ua", "choose-action-message"],
                         replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
 
                     return;
                 }
             }
 
-            switch (message.Text)
+            if (message.Text == _localization["ua", "schedule-reply-keyboard"])
             {
-                case "Schedule":
-                {
-                    await _inlineKeyboardReplyService.ShowScheduleMenu(
-                        message, 
-                        user,
-                        spawnNewMenu: true);
-                    return;
-                }
-                case "Menu":
-                {
-                    user.LastAction = RozkladUser.LastActionType.Default;
-                    await _userService.UpdateUser(user);
-                    await _keyboardReplyService.ShowMainMenu(message);
-                    return;
-                }
+                await _inlineKeyboardReplyService.ShowScheduleMenu(
+                    message,
+                    user,
+                    spawnNewMenu: true);
+                return;
+            }
+            else if (message.Text == _localization["ua", "menu-reply-keyboard"])
+            {
+                user.LastAction = RozkladUser.LastActionType.Default;
+                await _userService.UpdateUser(user);
+                await _keyboardReplyService.ShowMainMenu(message);
+                return;
             }
 
             await _botService.Client.SendStickerAsync(message.Chat.Id, _replyStickers.GetRandomStickerString());
