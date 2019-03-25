@@ -11,27 +11,30 @@ namespace RozkladNpuAspNetCore.Services
     {
         private readonly IBotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
+        private readonly ILocalizationService _localization;
 
         public KeyboardReplyService(
             IBotService botService,
-            ILessonsProvider lessonsProvider)
+            ILessonsProvider lessonsProvider,
+            ILocalizationService localization)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
+            _localization = localization;
         }
 
         public Task<Message> ShowMainMenu(Message message)
         {
             return _botService.Client.SendTextMessageAsync(
-                message.Chat.Id, "Choose action: ",
+                message.Chat.Id, _localization["ua", "choose-action-message"],
                 replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
         }
 
         public Task<Message> ShowFacultyList(Message message)
         {
             return _botService.Client.SendTextMessageAsync(
-                message.Chat.Id, 
-                "Choose faculty: ",
+                message.Chat.Id,
+                _localization["ua", "choose-faculty-message"],
                 replyMarkup: MessageHandleHelper.GetFacultiesReplyKeyboardMarkup(
                     _lessonsProvider.GetFaculties()));
         }
@@ -44,13 +47,13 @@ namespace RozkladNpuAspNetCore.Services
             if (!groupsKeyboard.Keyboard.Any())
             {
                 return await _botService.Client.SendTextMessageAsync(
-                    message.Chat.Id, 
-                    "There are no groups for this faculty");
+                    message.Chat.Id,
+                    _localization["ua", "no-groups-for-faculty-message"]);
             }
             
             return await _botService.Client.SendTextMessageAsync(
-                message.Chat.Id, 
-                "Choose group: ",
+                message.Chat.Id,
+                _localization["ua", "choose-group-message"],
                 replyMarkup: groupsKeyboard);
         }
     }
