@@ -32,6 +32,7 @@ namespace RozkladNpuAspNetCore
             services.AddSingleton<IUserService, DatabaseOnlyUserService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
             services.AddSingleton<ILocalizationService, LocalizationService>();
+            services.AddSingleton<ReplyKeyboardMarkupCreator>();
             services.AddScoped<IInlineKeyboardReplyService, InlineKeyboardReplyService>();
             services.AddScoped<IKeyboardReplyService, KeyboardReplyService>();
             services.AddScoped<IMessageHandleService, MessageHandleService>();

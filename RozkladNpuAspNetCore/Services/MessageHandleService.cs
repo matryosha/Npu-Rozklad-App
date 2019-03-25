@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using RozkladNpuAspNetCore.Configurations;
 using RozkladNpuAspNetCore.Entities;
 using RozkladNpuAspNetCore.Helpers;
+using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
 using Telegram.Bot.Types;
 
@@ -18,6 +19,7 @@ namespace RozkladNpuAspNetCore.Services
         private readonly IKeyboardReplyService _keyboardReplyService;
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
         private readonly ILocalizationService _localization;
+        private readonly ReplyKeyboardMarkupCreator _replyKeyboardMarkupCreator;
         private readonly UnknownResponseConfiguration _replyStickers;
         public MessageHandleService(
             IBotService botService, 
@@ -26,7 +28,8 @@ namespace RozkladNpuAspNetCore.Services
             IUserService userService,
             IKeyboardReplyService keyboardReplyService,
             IInlineKeyboardReplyService inlineKeyboardReplyService,
-            ILocalizationService localization)
+            ILocalizationService localization,
+            ReplyKeyboardMarkupCreator replyKeyboardMarkupCreator)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
@@ -34,6 +37,7 @@ namespace RozkladNpuAspNetCore.Services
             _keyboardReplyService = keyboardReplyService;
             _inlineKeyboardReplyService = inlineKeyboardReplyService;
             _localization = localization;
+            _replyKeyboardMarkupCreator = replyKeyboardMarkupCreator;
             _replyStickers = idkStickers.Value;
         }
 
@@ -111,7 +115,7 @@ namespace RozkladNpuAspNetCore.Services
                     await _userService.UpdateUser(user);
 
                     await _botService.Client.SendTextMessageAsync(message.Chat.Id, _localization["ua", "choose-action-message"],
-                        replyMarkup: MessageHandleHelper.GetMainMenuReplyKeyboardMarkup());
+                        replyMarkup: _replyKeyboardMarkupCreator.MainMenuMarkup());
 
                     return;
                 }
