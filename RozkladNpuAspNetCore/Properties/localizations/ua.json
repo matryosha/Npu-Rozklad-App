@@ -1,8 +1,22 @@
 {
-	"language-short-name" : "ua",
-	"language-full-name" : "🇺🇦 Українська",
-	"values" : {
-		"this-week" : "Цей тиждень",
-		"this-week-active" : "▶️ Цей тиждень"
-	}
+   "language-short-name":"ua",
+   "language-full-name":"🇺🇦 Українська",
+   "values":{
+      "choose-group-message":"Обери групу",
+      "choose-action-message":"Вибери дію",
+      "schedule-reply-keyboard":"Розклад",
+      "menu-reply-keyboard":"Меню",
+      "choose-faculty-message":"Вибери факультет:",
+      "no-groups-for-faculty-message":"На жаль, для цього факультету груп не має :(",
+      "add-group":"Додати групу",
+      "monday":"Пн",
+      "tuesday":"Вт",
+      "wednesday":"Ср",
+      "thursday":"Чт",
+      "friday":"Пт",
+      "this-week":"Цей тиждень",
+      "next-week":"Наступний тиждень",
+      "back":"Назад",
+      "delete":"Видалити"
+   }
 }
