@@ -4,7 +4,7 @@ namespace RozkladNpuAspNetCore.Extensions
 {
     public static class LocalizationValueExtensions
     {
-        public static string Active(this LocalizationValue value)
+        public static string AsActive(this LocalizationValue value)
         {
             return $"▶ {value}";
         }
