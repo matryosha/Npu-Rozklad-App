@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using RozkladNpuAspNetCore.Entities;
-using Telegram.Bot.Types;
 
 namespace RozkladNpuAspNetCore.Interfaces
 {

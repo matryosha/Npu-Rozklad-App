@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using NpuTimetableParser;
-using RozkladNpuAspNetCore.Helpers;
 using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
 using Telegram.Bot.Types;
