@@ -41,7 +41,7 @@ namespace RozkladNpuAspNetCore.Services
             var user = await _userService.GetUser(telegramId);
             return await ShowScheduleMenu(message, user);
         }
-
+        
         public async Task<Message> ShowScheduleMenu(
             Message message, 
             RozkladUser user,
@@ -115,7 +115,7 @@ namespace RozkladNpuAspNetCore.Services
 
             }
         }
-        
+        //todo extract isSingleGroup
         /// <param name="spawnNewMenu">Print group menu rather than editing last</param>
         public async Task<Message> ShowGroupMenu(
             Message callbackQueryMessage, 

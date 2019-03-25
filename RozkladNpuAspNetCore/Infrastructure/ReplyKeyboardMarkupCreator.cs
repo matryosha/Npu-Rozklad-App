@@ -1,11 +1,20 @@
 ﻿using System.Collections.Generic;
 using NpuTimetableParser;
+using RozkladNpuAspNetCore.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RozkladNpuAspNetCore.Infrastructure
 {
     public class ReplyKeyboardMarkupCreator
     {
+        private readonly ILocalizationService _localizationService;
+
+        public ReplyKeyboardMarkupCreator(
+            ILocalizationService localizationService)
+        {
+            _localizationService = localizationService;
+        }
+
         public ReplyKeyboardMarkup FacultiesMarkup(List<Faculty> faculties)
         {
             var rows = new List<List<KeyboardButton>>();
@@ -18,7 +27,7 @@ namespace RozkladNpuAspNetCore.Infrastructure
 
             rows.Add(new List<KeyboardButton>
             {
-                "Menu"
+                $"{_localizationService["ua", "menu-reply-keyboard"]}"
             });
 
             return new ReplyKeyboardMarkup(rows);
@@ -36,7 +45,7 @@ namespace RozkladNpuAspNetCore.Infrastructure
 
             groupsRow.Add(new List<KeyboardButton>
             {
-                "Menu"
+                $"{_localizationService["ua", "menu-reply-keyboard"]}"
             });
 
             return new ReplyKeyboardMarkup(groupsRow);
@@ -46,7 +55,7 @@ namespace RozkladNpuAspNetCore.Infrastructure
         {
             return new[]
             {
-                new []{ "Schedule" }
+                new []{ $"{_localizationService["ua", "schedule-reply-keyboard"]}" }
             };
         }
     }
