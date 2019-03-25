@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
+using RozkladNpuAspNetCore.Extensions;
 using RozkladNpuAspNetCore.Helpers;
 using RozkladNpuAspNetCore.Infrastructure;
 using RozkladNpuAspNetCore.Interfaces;
@@ -18,15 +19,18 @@ namespace RozkladNpuAspNetCore.Services
         private readonly IBotService _botService;
         private readonly ILessonsProvider _lessonsProvider;
         private readonly IUserService _userService;
+        private readonly ILocalizationService _localization;
 
         public InlineKeyboardReplyService(
             IBotService botService,
             ILessonsProvider lessonsProvider,
-            IUserService userService)
+            IUserService userService,
+            ILocalizationService localization)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
             _userService = userService;
+            _localization = localization;
         }
 
 
@@ -84,7 +88,7 @@ namespace RozkladNpuAspNetCore.Services
                     new InlineKeyboardButton
                     {
                         CallbackData = ((int) CallbackQueryType.AddGroup).ToString(),
-                        Text = "Add group"
+                        Text = _localization["ua", "add-group"]
                     }
                 });
 
@@ -94,14 +98,14 @@ namespace RozkladNpuAspNetCore.Services
                     return await _botService.Client.EditMessageTextAsync(
                         message.Chat.Id,
                         messageId,
-                        text: "Choose group",
+                        text: _localization["ua", "choose-group-message"],
                         replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
                 }
                 else
                 {
                     var sentMessage = await _botService.Client.SendTextMessageAsync(
                         message.Chat.Id,
-                        "Choose group:",
+                        _localization["ua", "choose-group-message"],
                         replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
                     _userService.SetLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     return sentMessage;
@@ -144,35 +148,45 @@ namespace RozkladNpuAspNetCore.Services
             {
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Monday ? "*Mo" : "Mo",
+                    Text = dayOfWeek == DayOfWeek.Monday 
+                        ? _localization["ua", "monday"].AsActive() 
+                        : _localization["ua", "monday"],
                     CallbackData = 
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Monday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Tuesday ? "*Tu" : "Tu",
+                    Text = dayOfWeek == DayOfWeek.Tuesday 
+                        ? _localization["ua", "tuesday"].AsActive() 
+                        : _localization["ua", "tuesday"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Tuesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Wednesday ? "*Wd" :"Wd",
+                    Text = dayOfWeek == DayOfWeek.Wednesday 
+                        ? _localization["ua", "wednesday"].AsActive()
+                        : _localization["ua", "wednesday"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Wednesday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Thursday ? "*Th" : "Th",
+                    Text = dayOfWeek == DayOfWeek.Thursday 
+                        ? _localization["ua", "thursday"].AsActive()
+                        : _localization["ua", "thursday"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Thursday, userTelegramId)
                 },
                 new InlineKeyboardButton
                 {
-                    Text = dayOfWeek == DayOfWeek.Friday ? "*Fr" : "Fr",
+                    Text = dayOfWeek == DayOfWeek.Friday 
+                        ? _localization["ua", "friday"].AsActive()
+                        : _localization["ua", "friday"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, week, DayOfWeek.Friday, userTelegramId)
@@ -182,7 +196,9 @@ namespace RozkladNpuAspNetCore.Services
             {
                 new InlineKeyboardButton
                 {
-                    Text = week == ShowGroupSelectedWeek.ThisWeek ? "*This week" : "This week",
+                    Text = week == ShowGroupSelectedWeek.ThisWeek 
+                        ? _localization["ua", "this-week"].AsActive()
+                        : _localization["ua", "this-week"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, ShowGroupSelectedWeek.ThisWeek, dayOfWeek, userTelegramId)
@@ -190,7 +206,9 @@ namespace RozkladNpuAspNetCore.Services
                 },
                 new InlineKeyboardButton
                 {
-                    Text = week == ShowGroupSelectedWeek.NextWeek ? "*Next week" : "Next week",
+                    Text = week == ShowGroupSelectedWeek.NextWeek 
+                        ? _localization["ua", "next-week"].AsActive()
+                        : _localization["ua", "next-week"],
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupScheduleCallbackData(
                             group, ShowGroupSelectedWeek.NextWeek, dayOfWeek, userTelegramId)
@@ -201,7 +219,7 @@ namespace RozkladNpuAspNetCore.Services
             {
                 actionButtonsRow.Add(new InlineKeyboardButton
                 {
-                    Text = "Add group",
+                    Text = _localization["ua", "add-group"],
                     CallbackData = ((int)CallbackQueryType.AddGroup).ToString()
                 });
             }
@@ -209,13 +227,13 @@ namespace RozkladNpuAspNetCore.Services
             {
                 actionButtonsRow.Add(new InlineKeyboardButton
                 {
-                    Text = "Back",
+                    Text = _localization["ua", "back"],
                     CallbackData = ((int)CallbackQueryType.ShowScheduleMenu).ToString()
                 });
             }
             actionButtonsRow.Add(new InlineKeyboardButton
             {
-                Text = "Delete group",
+                Text = _localization["ua", "delete"],
                 CallbackData = (int)CallbackQueryType.DeleteGroup + 
                                $";{userTelegramId};{group.ExternalId}"
             });
