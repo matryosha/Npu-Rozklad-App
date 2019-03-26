@@ -24,7 +24,7 @@ namespace RozkladNpuAspNetCore.Services
                 }
                 catch (RozkladLocalizationValidationException e)
                 {
-                    logger.LogWarning("Localization validation exception", e);
+                    logger.LogWarning(e.Message);
                 }
             }
             
@@ -38,7 +38,7 @@ namespace RozkladNpuAspNetCore.Services
                 if (localization == null)
                     throw new Exception($"Localization for {language} is not defined");
                 if (!localization.Values.TryGetValue(text, out string value))
-                    return new LocalizationValue(string.Empty);
+                    return new LocalizationValue(text);
 
                 return new LocalizationValue(value);
             }
