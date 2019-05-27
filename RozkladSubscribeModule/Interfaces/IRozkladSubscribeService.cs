@@ -1,10 +1,11 @@
-﻿using RozkladNpuAspNetCore.Entities;
+﻿using NpuTimetableParser;
+using RozkladNpuAspNetCore.Entities;
 
-namespace RozkladSubscribeModuleClient.Interfaces
+namespace RozkladSubscribeModule.Interfaces
 {
     internal interface IRozkladSubscribeService
     {
-        void SubscribeUser(RozkladUser user);
-        void UnsubscribeUser(RozkladUser user);
+        void SubscribeUser(RozkladUser user, Group group);
+        void UnsubscribeUser(RozkladUser user, Group group);
     }
 }

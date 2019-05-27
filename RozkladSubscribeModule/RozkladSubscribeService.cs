@@ -1,4 +1,5 @@
-﻿using RozkladNpuAspNetCore.Entities;
+﻿using NpuTimetableParser;
+using RozkladNpuAspNetCore.Entities;
 using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule
@@ -10,13 +11,12 @@ namespace RozkladSubscribeModule
         {
         }
 
-
-        public void SubscribeUser(RozkladUser user)
+        public void SubscribeUser(RozkladUser user, Group group)
         {
             throw new System.NotImplementedException();
         }
 
-        public void UnsubscribeUser(RozkladUser user)
+        public void UnsubscribeUser(RozkladUser user, Group group)
         {
             throw new System.NotImplementedException();
         }
