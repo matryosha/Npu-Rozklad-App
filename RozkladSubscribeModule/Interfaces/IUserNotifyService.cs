@@ -1,8 +1,10 @@
-﻿namespace RozkladSubscribeModuleClient.Interfaces
+﻿using RozkladSubscribeModuleClient.Entities;
+
+namespace RozkladSubscribeModuleClient.Interfaces
 {
     internal interface IUserNotifyService<in TNotifyPayload>
         where TNotifyPayload: INotifyPayload
     {
-        void Notify(TNotifyPayload payload);
+        void Notify(SubscribedUser subscribedUser, TNotifyPayload payload);
     }
 }
