@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RozkladSubscribeModuleClient.Application;
-using RozkladSubscribeModuleClient.Entities;
-using RozkladSubscribeModuleClient.Interfaces;
+using RozkladSubscribeModule.Application;
+using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule.Tests
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RozkladSubscribeModuleClient.Entities;
+using RozkladSubscribeModule.Entities;
 
-namespace RozkladSubscribeModuleClient.Interfaces
+namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ISubscribedUsersManager
     {

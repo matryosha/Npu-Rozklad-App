@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using RozkladSubscribeModuleClient.Application;
-using RozkladSubscribeModuleClient.Entities;
-using RozkladSubscribeModuleClient.Interfaces;
+using RozkladSubscribeModule.Application;
+using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Interfaces;
 using Xunit;
 
 namespace RozkladSubscribeModule.Tests

@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RozkladSubscribeModuleClient.Interfaces;
+using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModuleClient.Application
+namespace RozkladSubscribeModule.Application
 {
     internal class SchedulerHostedService<TCheckPayload, TNotifyPayload> : IHostedService
         where TCheckPayload: ICheckPayload

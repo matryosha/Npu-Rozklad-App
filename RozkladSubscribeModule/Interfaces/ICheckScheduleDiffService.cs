@@ -1,4 +1,4 @@
-﻿namespace RozkladSubscribeModuleClient.Interfaces
+﻿namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ICheckScheduleDiffService<out TCheckPayload>
         where TCheckPayload: ICheckPayload

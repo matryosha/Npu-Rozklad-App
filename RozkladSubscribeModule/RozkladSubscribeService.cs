@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
-using RozkladNpuAspNetCore.Entities;
-using RozkladSubscribeModuleClient.Interfaces;
+﻿using RozkladNpuAspNetCore.Entities;
+using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModuleClient
+namespace RozkladSubscribeModule
 {
     public class RozkladSubscribeService : IRozkladSubscribeService
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using RozkladSubscribeModuleClient.Entities;
+using RozkladSubscribeModule.Entities;
 
-namespace RozkladSubscribeModuleClient.Interfaces
+namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ISubscribedUsersRepository
     {

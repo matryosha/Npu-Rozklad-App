@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RozkladSubscribeModuleClient.Entities;
+using RozkladSubscribeModule.Entities;
 
 namespace RozkladSubscribeModule.Tests
 {

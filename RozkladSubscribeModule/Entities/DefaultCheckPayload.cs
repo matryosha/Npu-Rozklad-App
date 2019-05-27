@@ -1,6 +1,6 @@
-﻿using RozkladSubscribeModuleClient.Interfaces;
+﻿using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModuleClient.Entities
+namespace RozkladSubscribeModule.Entities
 {
     internal class DefaultCheckPayload : ICheckPayload
     {

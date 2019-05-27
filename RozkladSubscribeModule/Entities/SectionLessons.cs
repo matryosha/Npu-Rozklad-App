@@ -1,4 +1,4 @@
-﻿namespace RozkladSubscribeModuleClient.Entities
+﻿namespace RozkladSubscribeModule.Entities
 {
     internal class SectionLessons
     {

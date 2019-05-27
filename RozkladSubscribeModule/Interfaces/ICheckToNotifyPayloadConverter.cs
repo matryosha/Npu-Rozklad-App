@@ -1,5 +1,5 @@
 ﻿
-namespace RozkladSubscribeModuleClient.Interfaces
+namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ICheckToNotifyPayloadConverter<in TCheckPayload, out TNotifyPayload> 
         where TCheckPayload: ICheckPayload 

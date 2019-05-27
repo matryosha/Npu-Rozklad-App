@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using RozkladSubscribeModuleClient.Application;
-using RozkladSubscribeModuleClient.Entities;
-using RozkladSubscribeModuleClient.Interfaces;
+using RozkladSubscribeModule.Application;
+using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModuleClient
+namespace RozkladSubscribeModule
 {
     public static class RozkladSubscribeServiceExtensions
     {

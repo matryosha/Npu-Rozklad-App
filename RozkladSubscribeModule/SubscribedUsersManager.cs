@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using RozkladNpuAspNetCore.Persistence;
-using RozkladSubscribeModuleClient.Entities;
-using RozkladSubscribeModuleClient.Interfaces;
+using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModuleClient
+namespace RozkladSubscribeModule
 {
     internal class SubscribedUsersManager : ISubscribedUsersManager
     {
