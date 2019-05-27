@@ -75,8 +75,14 @@ namespace RozkladSubscribeModuleClient.Application
                 var checkPayload = _scheduleDiffService.CheckDiff(group.FacultyShortName, group.GroupExternalId);
                 if (checkPayload.IsDiff())
                 {
-                    _userNotifyService.Notify(
-                        _checkToNotifyPayloadConverter.Convert(checkPayload));
+                    var currentGroupUsers = subscribedUser.Where(u => u.GroupExternalId == group.GroupExternalId);
+                    foreach (var user in currentGroupUsers)
+                    {
+                        _userNotifyService.Notify(
+                            user,
+                            _checkToNotifyPayloadConverter.Convert(
+                                checkPayload));
+                    }
                 }
             }
         }
