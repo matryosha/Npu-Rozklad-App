@@ -60,9 +60,8 @@ namespace RozkladSubscribeModuleClient.Application
         private void ProcessSubscribedUsers(object state)
         {
             var subscribedUser = _subscribedUsersRepository.GetUsers();
-
-            foreach (var group in subscribedUser
-                .GroupBy(u => u.FacultyShortName+'|'+u.GroupExternalId, u => u, (s, users) =>
+            var distinctGroups = subscribedUser.GroupBy(
+                u => u.FacultyShortName + '|' + u.GroupExternalId, u => u, (s, users) =>
                 {
                     var user = users.FirstOrDefault();
                     return new
@@ -70,12 +69,18 @@ namespace RozkladSubscribeModuleClient.Application
                         user.GroupExternalId,
                         user.FacultyShortName
                     };
-                }))
+                });
+
+
+            foreach (var group in distinctGroups)
             {
                 var checkPayload = _scheduleDiffService.CheckDiff(group.FacultyShortName, group.GroupExternalId);
                 if (checkPayload.IsDiff())
                 {
-                    var currentGroupUsers = subscribedUser.Where(u => u.GroupExternalId == group.GroupExternalId);
+                    var currentGroupUsers = subscribedUser.Where(
+                        u => u.GroupExternalId == group.GroupExternalId &&
+                             u.FacultyShortName == group.FacultyShortName);
+
                     foreach (var user in currentGroupUsers)
                     {
                         _userNotifyService.Notify(
