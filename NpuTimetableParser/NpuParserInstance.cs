@@ -111,6 +111,7 @@ namespace NpuTimetableParser
             if (_lessons.Count == 0 ||
                 DateTime.Now - _lastLessonUpdateTime > TimeSpan.FromMinutes(10))
             {
+                //Do not clear before getting new lessons
                 _lessons.Clear();
                 await Task.Run(() =>
                     _helper.CreateLessonsList(_calendarRawList, _groups, _lecturers, _classrooms, _lessons));
