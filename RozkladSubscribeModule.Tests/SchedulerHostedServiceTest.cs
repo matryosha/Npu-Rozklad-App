@@ -9,7 +9,7 @@ using RozkladSubscribeModuleClient.Entities;
 using RozkladSubscribeModuleClient.Interfaces;
 using Xunit;
 
-namespace RozkladSubscribeModuleClient.Tests
+namespace RozkladSubscribeModule.Tests
 {
     public class SchedulerHostedServiceTest
     {
@@ -39,8 +39,11 @@ namespace RozkladSubscribeModuleClient.Tests
 
             var mockUserNotifyService = new Mock<IUserNotifyService<INotifyPayload>>();
             mockUserNotifyService.Setup(
-                    service => service.Notify(It.IsAny<INotifyPayload>()))
+                    service => service.Notify(
+                        It.IsAny<SubscribedUser>(), It.IsAny<INotifyPayload>()))
                 .Callback(() => notifyCount++);
+
+
             var checkToNotifyPayloadConverter =
                 new Mock<ICheckToNotifyPayloadConverter<ICheckPayload, INotifyPayload>>();
             checkToNotifyPayloadConverter.Setup(converter =>
@@ -48,11 +51,11 @@ namespace RozkladSubscribeModuleClient.Tests
 
             var schedulerHostedService = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 logger, subscribedUsers, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                checkToNotifyPayloadConverter.Object, TimeSpan.FromSeconds(2));
+                checkToNotifyPayloadConverter.Object, TimeSpan.FromSeconds(1000));
 
             await schedulerHostedService.StartAsync(CancellationToken.None);
             await Task.Delay(5000);
-
+            Assert.Equal(2, notifyCount);
         }
     }
 }
