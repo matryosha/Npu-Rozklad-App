@@ -9,7 +9,6 @@ namespace RozkladSubscribeModule.Interfaces
         Task AddUserAsync(SubscribedUser subscribedUser);
         Task DeleteUserAsync(SubscribedUser subscribedUser);
         Task<ICollection<SubscribedUser>> GetUsersAsync();
-        SubscribedUser GetUser();
         Task<bool> IsUserExistsAsync(SubscribedUser subscribedUser);
     }
 }
