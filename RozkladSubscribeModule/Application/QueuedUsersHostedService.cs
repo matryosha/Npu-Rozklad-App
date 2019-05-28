@@ -55,7 +55,7 @@ namespace RozkladSubscribeModule.Application
 
                 try
                 {
-                    await _usersRepository.AddUser(newUser)
+                    await _usersRepository.AddUserAsync(newUser)
                         .ConfigureAwait(false);
                 }
                 catch (Exception e)
@@ -75,7 +75,7 @@ namespace RozkladSubscribeModule.Application
 
                 try
                 {
-                    await _usersRepository.DeleteUser(userToDelete)
+                    await _usersRepository.DeleteUserAsync(userToDelete)
                         .ConfigureAwait(false);
                 }
                 catch (Exception e)

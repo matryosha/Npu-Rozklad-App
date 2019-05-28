@@ -22,21 +22,24 @@ namespace RozkladSubscribeModule.Persistence
             _persistenceStorage = persistenceStorage;
             _logger = logger;
 
-
+//            _cache.SetUsers(_persistenceStorage.GetUsers());
         }
-        public Task AddUser(SubscribedUser subscribedUser)
+        public async Task AddUserAsync(SubscribedUser subscribedUser)
         {
+            if (!await _cache.IsUserExistsAsync(subscribedUser))
+            {
 
+            }
         }
 
-        public Task DeleteUser(SubscribedUser seSubscribedUser)
+        public Task DeleteUserAsync(SubscribedUser seSubscribedUser)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<SubscribedUser> GetUsers()
+        public Task<ICollection<SubscribedUser>> GetUsersAsync()
         {
-            return _cache.GetUsers();
+            return _cache.GetUsersAsync();
         }
 
         public SubscribedUser GetUser()
@@ -44,7 +47,7 @@ namespace RozkladSubscribeModule.Persistence
             throw new System.NotImplementedException();
         }
 
-        public bool IsUserExists(SubscribedUser subscribedUser)
+        public Task<bool> IsUserExistsAsync(SubscribedUser subscribedUser)
         {
             throw new System.NotImplementedException();
         }

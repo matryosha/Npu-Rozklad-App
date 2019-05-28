@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RozkladSubscribeModule.Entities;
 
 namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ISubscribedUsersRepository
     {
-        void AddUser(SubscribedUser subscribedUser);
-        void DeleteUser(SubscribedUser subscribedUser);
-        List<SubscribedUser> GetUsers();
+        Task AddUserAsync(SubscribedUser subscribedUser);
+        Task DeleteUserAsync(SubscribedUser subscribedUser);
+        Task<ICollection<SubscribedUser>> GetUsersAsync();
         SubscribedUser GetUser();
-        bool IsUserExists(SubscribedUser subscribedUser);
+        Task<bool> IsUserExistsAsync(SubscribedUser subscribedUser);
     }
 }

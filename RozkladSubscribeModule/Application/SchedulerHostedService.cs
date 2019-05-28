@@ -57,9 +57,10 @@ namespace RozkladSubscribeModule.Application
             return Task.CompletedTask;
         }
 
-        private void ProcessSubscribedUsers(object state)
+        private async void ProcessSubscribedUsers(object state)
         {
-            var subscribedUser = _subscribedUsersRepository.GetUsers();
+            var subscribedUser = await _subscribedUsersRepository.GetUsersAsync()
+                .ConfigureAwait(false);
             var distinctGroups = subscribedUser.GroupBy(
                 u => u.FacultyShortName + '|' + u.GroupExternalId, u => u, (s, users) =>
                 {

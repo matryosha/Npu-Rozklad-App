@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RozkladSubscribeModule.Application;
@@ -26,8 +27,8 @@ namespace RozkladSubscribeModule.Tests
         private protected ISubscribedUsersRepository GetMockSubscribedUsersRepositoryWithUsers(List<SubscribedUser> users)
         {
             var mock = GetMockISubscribedUsersRepository;
-            mock.Setup(repository => repository.GetUsers())
-                .Returns(users);
+            mock.Setup(repository => repository.GetUsersAsync())
+                .ReturnsAsync(users);
             return mock.Object;
         }
 
