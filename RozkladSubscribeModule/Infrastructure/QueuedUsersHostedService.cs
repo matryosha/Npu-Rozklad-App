@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RozkladSubscribeModule.Interfaces;
 
-namespace RozkladSubscribeModule.Application
+namespace RozkladSubscribeModule.Infrastructure
 {
     internal class QueuedUsersHostedService: IHostedService
     {
