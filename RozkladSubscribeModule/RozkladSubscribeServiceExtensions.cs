@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RozkladSubscribeModule.Application;
 using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Infrastructure;
 using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule
@@ -9,11 +10,15 @@ namespace RozkladSubscribeModule
     public static class RozkladSubscribeServiceExtensions
     {
         public static IServiceCollection AddRozkladSubscribeService(
-            this IServiceCollection services)
+            this IServiceCollection services,
+            Action<RozkladSubscribeServiceOptions> options)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
+            if (services == null) throw new ArgumentNullException(nameof(options));
+
+            services.Configure(options);
+
             services.AddHostedService<SchedulerHostedService<DefaultCheckPayload, DefaultNotifyPayload>>();
-            services.AddSingleton<ISubscribedUsersManager, SubscribedUsersManager>();
             return services.AddSingleton<RozkladSubscribeService>();
         }
     }
