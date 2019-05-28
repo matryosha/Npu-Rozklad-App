@@ -1,5 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 
@@ -9,24 +10,26 @@ namespace RozkladSubscribeModule.Persistence
         ISubscribedUsersRepository
     {
         private readonly ISubscribedUsersCache _cache;
-
-        private readonly HashSet<SubscribedUser> _subscribedUsers;
-
-
+        private readonly ISubscribedUsersPersistenceStorage _persistenceStorage;
+        private readonly ILogger<SubscribedUsersRepository> _logger;
 
         public SubscribedUsersRepository(
-            ISubscribedUsersCache cache)
+            ILogger<SubscribedUsersRepository> logger,
+            ISubscribedUsersCache cache,
+            ISubscribedUsersPersistenceStorage persistenceStorage)
         {
             _cache = cache;
-            _subscribedUsers = 
-                new HashSet<SubscribedUser>();
+            _persistenceStorage = persistenceStorage;
+            _logger = logger;
+
+
         }
-        public void AddUser(SubscribedUser subscribedUser)
+        public Task AddUser(SubscribedUser subscribedUser)
         {
-            throw new System.NotImplementedException();
+
         }
 
-        public void DeleteUser(SubscribedUser seSubscribedUser)
+        public Task DeleteUser(SubscribedUser seSubscribedUser)
         {
             throw new System.NotImplementedException();
         }
@@ -45,5 +48,6 @@ namespace RozkladSubscribeModule.Persistence
         {
             throw new System.NotImplementedException();
         }
+
     }
 }
