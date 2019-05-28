@@ -11,12 +11,12 @@ namespace RozkladSubscribeModule.Tests
             string facultyShortName) {
             List<SubscribedUser> resultList = new List<SubscribedUser>(count);
 
-            for (int i = 0; i < count; i++) {
-                resultList.Add(new SubscribedUser {
-                    FacultyShortName = facultyShortName,
-                    GroupExternalId = groupExternalId,
-                    TelegramId = int.Parse($"{i}{i + i}{i * i}{i}")
-                });
+            for (int i = 1; i <= count; i++)
+            {
+                resultList.Add(new SubscribedUser(
+                    int.Parse($"{i}{i + i}{i * i}{i}"),
+                    groupExternalId,
+                    facultyShortName));
             }
 
             return resultList;

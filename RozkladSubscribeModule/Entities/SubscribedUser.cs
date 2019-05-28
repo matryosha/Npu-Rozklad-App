@@ -2,8 +2,23 @@
 {
     internal class SubscribedUser
     {
-        public int TelegramId { get; set; }
-        public int GroupExternalId { get; set; }
-        public string FacultyShortName { get; set; }
+        public SubscribedUser(
+            int telegramId, 
+            int groupExternalId, 
+            string facultyShortName)
+        {
+            TelegramId = telegramId;
+            GroupExternalId = groupExternalId;
+            FacultyShortName = facultyShortName;
+        }
+
+        public int TelegramId { get; }
+        public int GroupExternalId { get; }
+        public string FacultyShortName { get; }
+
+        public override int GetHashCode()
+        {
+            return TelegramId.GetHashCode() + GroupExternalId.GetHashCode() + FacultyShortName.GetHashCode();
+        }
     }
 }
