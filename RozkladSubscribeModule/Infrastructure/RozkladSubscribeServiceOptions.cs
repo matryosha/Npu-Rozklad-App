@@ -1,6 +1,6 @@
 ﻿namespace RozkladSubscribeModule.Infrastructure
 {
-    internal class RozkladSubscribeServiceOptions
+    public class RozkladSubscribeServiceOptions
     {
         public string SubscribedUsersDbConnectionString { get; set; }
     }
