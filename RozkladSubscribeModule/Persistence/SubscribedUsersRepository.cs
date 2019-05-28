@@ -22,34 +22,48 @@ namespace RozkladSubscribeModule.Persistence
             _persistenceStorage = persistenceStorage;
             _logger = logger;
 
-//            _cache.SetUsers(_persistenceStorage.GetUsers());
+            _cache.SetUsers(_persistenceStorage.GetUsersAsync().Result);
         }
         public async Task AddUserAsync(SubscribedUser subscribedUser)
         {
+            _logger.LogDebug(
+                $"Got user with id {subscribedUser.TelegramId} to add ");
             if (!await _cache.IsUserExistsAsync(subscribedUser))
             {
-
+                _logger.LogInformation(
+                    $"Adding new user with id {subscribedUser.TelegramId} to cache and persistence storage");
+                await _cache.AddUserAsync(subscribedUser)
+                    .ConfigureAwait(false);
+                await _persistenceStorage.AddUserAsync(subscribedUser)
+                    .ConfigureAwait(false);
             }
         }
 
-        public Task DeleteUserAsync(SubscribedUser seSubscribedUser)
+        public async Task DeleteUserAsync(SubscribedUser subscribedUser)
         {
-            throw new System.NotImplementedException();
+            _logger.LogDebug(
+                $"Got user with id {subscribedUser.TelegramId} to delete");
+
+            if (await _cache.IsUserExistsAsync(subscribedUser))
+            {
+                _logger.LogInformation(
+                    $"Deleting user with id {subscribedUser.TelegramId} from cache and persistence storage");
+                await _cache.DeleteUserAsync(subscribedUser)
+                    .ConfigureAwait(false);
+                await _persistenceStorage.DeleteUserAsync(subscribedUser)
+                    .ConfigureAwait(false);
+            }
         }
 
         public Task<ICollection<SubscribedUser>> GetUsersAsync()
         {
+            _logger.LogInformation("Getting all users from cache");
             return _cache.GetUsersAsync();
-        }
-
-        public SubscribedUser GetUser()
-        {
-            throw new System.NotImplementedException();
         }
 
         public Task<bool> IsUserExistsAsync(SubscribedUser subscribedUser)
         {
-            throw new System.NotImplementedException();
+            return _cache.IsUserExistsAsync(subscribedUser);
         }
 
     }
