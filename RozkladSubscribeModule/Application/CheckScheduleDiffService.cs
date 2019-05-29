@@ -109,10 +109,12 @@ namespace RozkladSubscribeModule.Application
                         //Last schedule does not have <lessonNumber>
                         result.AddDateWithNewSchedule(lessonNumberCurrentLessons.FirstOrDefault().LessonDate);
                     }
+                    else
+                    {
+                        //Current schedule does not have <lessonNumber>
+                        result.AddDateWithNewSchedule(lessonNumberLastLessons.FirstOrDefault().LessonDate);
+                    }
 
-                    //Current schedule does not have <lessonNumber>
-                    result.AddDateWithNewSchedule(lessonNumberLastLessons.FirstOrDefault().LessonDate);
-                    
                 }
 
             }
