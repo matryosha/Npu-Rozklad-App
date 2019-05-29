@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RozkladSubscribeModule.Entities;
 
 namespace RozkladSubscribeModule.Interfaces
 {
     internal interface ISectionLessonsBuilder
     {
-        SectionLessons BuildSection(DateTime startDate, DateTime endDate);
+        Task<SectionLessons> BuildSection(
+            DateTime startDate, 
+            DateTime endDate,
+            int groupExternalId,
+            string facultyShortName);
     }
 }
