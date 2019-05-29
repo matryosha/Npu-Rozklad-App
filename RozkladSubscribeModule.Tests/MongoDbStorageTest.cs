@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -92,12 +89,54 @@ namespace RozkladSubscribeModule.Tests
         {
             var databaseName = GetCallerMethodName();
             var mongoStorage = GetDefaultMongoDbStorage(databaseName);
-            var user =
-                new SubscribedUser(0, 0, "a");
-            await mongoStorage.DeleteUserAsync(user);
+            var newUsers = Helpers.CreateUsers(10, 1, "asd");
+            foreach (var subscribedUser in newUsers)
+            {
+                await mongoStorage.AddUserAsync(subscribedUser);
+            }
+
+            var certainUser = new SubscribedUser(123, 123, "fif");
+            await mongoStorage.AddUserAsync(certainUser);
+            await mongoStorage.DeleteUserAsync(certainUser);
             var users = await mongoStorage.GetUsersAsync();
 
-            Assert.Equal(0, users.Count);
+            Assert.Equal(10, users.Count);
+            var isCertainUserExists = users.Contains(certainUser);
+            Assert.False(isCertainUserExists);
+            await mongoStorage.DropDatabase(databaseName);
+        }
+
+        [Fact]
+        public async Task GettingUsers() {
+            var databaseName = GetCallerMethodName();
+            var mongoStorage = GetDefaultMongoDbStorage(databaseName);
+            var newUsers = Helpers.CreateUsers(10, 1, "asd");
+            foreach (var subscribedUser in newUsers)
+            {
+                await mongoStorage.AddUserAsync(subscribedUser);
+            }
+            var users = await mongoStorage.GetUsersAsync();
+
+            Assert.Equal(10, users.Count);
+            await mongoStorage.DropDatabase(databaseName);
+        }
+
+        [Fact]
+        public async Task IsUserExists() {
+            var databaseName = GetCallerMethodName();
+            var mongoStorage = GetDefaultMongoDbStorage(databaseName);
+            var newUsers = Helpers.CreateUsers(10, 1, "asd");
+            foreach (var subscribedUser in newUsers) {
+                await mongoStorage.AddUserAsync(subscribedUser);
+            }
+
+            var certainUser = new SubscribedUser(123, 123, "fif");
+            await mongoStorage.AddUserAsync(certainUser);
+            var users = await mongoStorage.GetUsersAsync();
+
+            Assert.Equal(11, users.Count);
+            var isCertainUserExists = await mongoStorage.IsUserExistsAsync(certainUser);
+            Assert.True(isCertainUserExists);
             await mongoStorage.DropDatabase(databaseName);
         }
 
