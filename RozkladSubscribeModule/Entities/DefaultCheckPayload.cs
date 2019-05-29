@@ -1,27 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using NpuTimetableParser;
+using RozkladSubscribeModule.Infrastructure.Entities;
+using RozkladSubscribeModule.Infrastructure.Enums;
 using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule.Entities
 {
     internal class DefaultCheckPayload : ICheckPayload
     {
-        private readonly HashSet<DateTime> _dateWithNewSchedule;
-        public DefaultCheckPayload()
-        {
-            _dateWithNewSchedule = new HashSet<DateTime>();
-        }
-        public bool IsDiff() => _dateWithNewSchedule.Any();
+        public List<UpdatedLesson> UpdatedLessons = new List<UpdatedLesson>();
 
-        public void AddDateWithNewSchedule(DateTime dateTime)
+        public bool IsDiff() => UpdatedLessons.Any();
+
+        public void AddNewLesson(Lesson newLesson)
         {
-            _dateWithNewSchedule.Add(dateTime);
+            UpdatedLessons.Add(
+                new UpdatedLesson(null, newLesson, UpdatedLessonType.AddedLesson));
         }
 
-        public List<DateTime> GetDatesWithNewSchedule()
+        public void AddDeletedLesson(Lesson deletedLesson)
         {
-            return new List<DateTime>(_dateWithNewSchedule);
+            UpdatedLessons.Add(
+                new UpdatedLesson(deletedLesson, null, UpdatedLessonType.DeletedLesson));
+        }
+
+        public void AddReplacedLesson(Lesson oldLesson, Lesson newLesson)
+        {
+            UpdatedLessons.Add(
+                new UpdatedLesson(oldLesson, newLesson, UpdatedLessonType.ReplacedLesson));
         }
     }
 }
