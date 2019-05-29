@@ -14,8 +14,6 @@ namespace RozkladSubscribeModule.Interfaces
             string facultyShortName);
 
         void UpdateLastSection(
-            SectionLessons sectionLessons,
-            int groupExternalId,
-            string facultyShortName);
+            SectionLessons sectionLessons);
     }
 }
