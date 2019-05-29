@@ -11,7 +11,7 @@ namespace RozkladSubscribeModule.Application
     internal class CheckScheduleDiffService :
         ICheckScheduleDiffService<DefaultCheckPayload>
     {
-        private const int MAX_LESSON_NUMBER = 8;
+        private const int MaxLessonNumber = 8;
         private readonly ILogger<CheckScheduleDiffService> _logger;
         private readonly ISectionLessonsManager _lessonsManager;
         private readonly IDateTimesForScheduleDiffCheckGiver _checkDatesGiver;
@@ -50,69 +50,77 @@ namespace RozkladSubscribeModule.Application
                     continue;
 
 
-                for (int lessonNumber = 1; lessonNumber < MAX_LESSON_NUMBER; lessonNumber++)
+                for (int lessonNumber = 1; lessonNumber < MaxLessonNumber; lessonNumber++)
                 {
-                    var lessonNumberCurrentLessons = 
+                    var lessonNumberNewLessons = 
                         currentLessons.Where(l => l.LessonNumber == lessonNumber).ToList();
 
-                    var lessonNumberLastLessons = 
+                    var lessonNumberOldLessons = 
                         lastLessons.Where(l => l.LessonNumber == lessonNumber).ToList();
 
-                    if(!lessonNumberCurrentLessons.Any() && !lessonNumberLastLessons.Any())
+                    if(!lessonNumberNewLessons.Any() && !lessonNumberOldLessons.Any())
                         continue;
 
-                    if (lessonNumberCurrentLessons.Any() && lessonNumberLastLessons.Any())
+                    if (lessonNumberNewLessons.Any() && lessonNumberOldLessons.Any())
                     {
                         foreach (var fraction in Enum.GetValues(typeof(Fraction)))
                         {
                             foreach (var group in Enum.GetValues(typeof(SubGroup)))
                             {
-                                var currentFractionGroupLesson =
-                                    lessonNumberCurrentLessons.FirstOrDefault(l =>
+                                var newFractionSubgroupLesson =
+                                    lessonNumberNewLessons.FirstOrDefault(l =>
                                         l.Fraction == (Fraction) Convert.ToInt32(fraction) &&
                                         l.SubGroup == (SubGroup) Convert.ToInt32(group));
 
-                                var lastFractionGroupLesson =
-                                    lessonNumberLastLessons.FirstOrDefault(l =>
+                                var oldFractionSubgroupLesson =
+                                    lessonNumberOldLessons.FirstOrDefault(l =>
                                         l.Fraction == (Fraction) Convert.ToInt32(fraction) &&
                                         l.SubGroup == (SubGroup) Convert.ToInt32(group));
 
 
-                                if (currentFractionGroupLesson == null)
+                                if (newFractionSubgroupLesson == null)
                                 {
-                                    if (lastFractionGroupLesson == null)
+                                    if (oldFractionSubgroupLesson == null)
                                         continue;
 
                                     // lastFractionGroupLesson -> null
-                                    result.AddDateWithNewSchedule(lastFractionGroupLesson.LessonDate);
+                                    result.AddDeletedLesson(oldFractionSubgroupLesson);
 
                                 } else
                                 {
-                                    if (lastFractionGroupLesson != null)
+                                    if (oldFractionSubgroupLesson != null)
                                     {
-                                        if(currentFractionGroupLesson.Subject.Id ==
-                                           lastFractionGroupLesson.Subject.Id)
+                                        if(newFractionSubgroupLesson.Subject.Id ==
+                                           oldFractionSubgroupLesson.Subject.Id)
                                             continue;
 
                                         // lastFractionGroupLesson -> currentFractionGroupLesson
-                                        result.AddDateWithNewSchedule(currentFractionGroupLesson.LessonDate);
+                                        result.AddReplacedLesson(
+                                            oldFractionSubgroupLesson ,
+                                            newFractionSubgroupLesson);
                                     }
 
                                     // null -> currentFractionGroupLesson
-                                    result.AddDateWithNewSchedule(currentFractionGroupLesson.LessonDate);
+                                    result.AddNewLesson(newFractionSubgroupLesson);
                                 }
                             }
                         }
                     }
-                    else if (lessonNumberCurrentLessons.Any())
+                    else if (lessonNumberNewLessons.Any())
                     {
                         //Last schedule does not have <lessonNumber>
-                        result.AddDateWithNewSchedule(lessonNumberCurrentLessons.FirstOrDefault().LessonDate);
+                        foreach (var lessonNumberCurrentLesson in lessonNumberNewLessons)
+                        {
+                            result.AddNewLesson(lessonNumberCurrentLesson);
+                        }
                     }
                     else
                     {
                         //Current schedule does not have <lessonNumber>
-                        result.AddDateWithNewSchedule(lessonNumberLastLessons.FirstOrDefault().LessonDate);
+                        foreach (var lessonNumberLastLesson in lessonNumberOldLessons)
+                        {
+                            result.AddDeletedLesson(lessonNumberLastLesson);
+                        }
                     }
 
                 }
