@@ -1,8 +1,10 @@
-﻿namespace RozkladSubscribeModule.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace RozkladSubscribeModule.Interfaces
 {
-    internal interface ICheckScheduleDiffService<out TCheckPayload>
+    internal interface ICheckScheduleDiffService<TCheckPayload>
         where TCheckPayload: ICheckPayload
     {
-        TCheckPayload CheckDiff(string facultyShortName, int groupExternalId);
+        Task<TCheckPayload> CheckDiff(string facultyShortName, int groupExternalId);
     }
 }

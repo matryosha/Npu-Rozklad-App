@@ -75,7 +75,7 @@ namespace RozkladSubscribeModule.Application
 
             foreach (var group in distinctGroups)
             {
-                var checkPayload = _scheduleDiffService.CheckDiff(group.FacultyShortName, group.GroupExternalId);
+                var checkPayload = await _scheduleDiffService.CheckDiff(group.FacultyShortName, group.GroupExternalId);
                 if (checkPayload.IsDiff())
                 {
                     var currentGroupUsers = subscribedUser.Where(

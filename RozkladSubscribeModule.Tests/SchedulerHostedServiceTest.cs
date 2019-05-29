@@ -198,13 +198,13 @@ namespace RozkladSubscribeModule.Tests
                     service => service.CheckDiff(
                         It.IsAny<string>(),
                         It.IsAny<int>()))
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsTrue)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse);
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsTrue)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse);
             return mockScheduleDiffService;
         }
 
@@ -214,13 +214,13 @@ namespace RozkladSubscribeModule.Tests
                     service => service.CheckDiff(
                         It.IsAny<string>(),
                         It.IsAny<int>()))
-                .Returns(_checkPayloadDiffReturnsTrue)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse)
-                .Returns(_checkPayloadDiffReturnsFalse);
+                .ReturnsAsync(_checkPayloadDiffReturnsTrue)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse)
+                .ReturnsAsync(_checkPayloadDiffReturnsFalse);
             return mockScheduleDiffService;
         }
 

@@ -38,7 +38,7 @@ namespace RozkladSubscribeModule.Tests
             var mock = GetMockICheckScheduleDiffServiceCheck;
             mock.Setup(service => 
                     service.CheckDiff(It.IsAny<string>(), It.IsAny<int>()))
-                .Returns(checkPayload);
+                .ReturnsAsync(checkPayload);
             return mock.Object;
         }
 
