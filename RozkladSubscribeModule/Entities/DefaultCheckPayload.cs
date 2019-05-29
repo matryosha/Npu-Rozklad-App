@@ -7,7 +7,7 @@ namespace RozkladSubscribeModule.Entities
 {
     internal class DefaultCheckPayload : ICheckPayload
     {
-        private HashSet<DateTime> _dateWithNewSchedule;
+        private readonly HashSet<DateTime> _dateWithNewSchedule;
         public DefaultCheckPayload()
         {
             _dateWithNewSchedule = new HashSet<DateTime>();
