@@ -18,5 +18,10 @@ namespace RozkladSubscribeModule.Entities
         {
             _dateWithNewSchedule.Add(dateTime);
         }
+
+        public List<DateTime> GetDatesWithNewSchedule()
+        {
+            return new List<DateTime>(_dateWithNewSchedule);
+        }
     }
 }
