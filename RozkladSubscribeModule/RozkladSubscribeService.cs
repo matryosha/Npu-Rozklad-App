@@ -1,24 +1,34 @@
 ﻿using NpuTimetableParser;
 using RozkladNpuAspNetCore.Entities;
+using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule
 {
-    public class RozkladSubscribeService : IRozkladSubscribeService
+    internal class RozkladSubscribeService : IRozkladSubscribeService
     {
+        private readonly IBackgroundUsersQueue _usersQueue;
+        private readonly ISubscribedUsersRepository _subscribedUsersRepository;
 
-        public RozkladSubscribeService()
+        public RozkladSubscribeService(
+            IBackgroundUsersQueue usersQueue,
+            ISubscribedUsersRepository subscribedUsersRepository)
         {
+            _usersQueue = usersQueue;
+            _subscribedUsersRepository = subscribedUsersRepository;
         }
 
-        public void SubscribeUser(RozkladUser user, Group group)
+        public void SubscribeUser(RozkladUser user, long chatId, Group group)
         {
-            throw new System.NotImplementedException();
+            var subscribedUser = 
+                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName);
+            _usersQueue.QueueNewUser(subscribedUser);
         }
 
-        public void UnsubscribeUser(RozkladUser user, Group group)
+        public void UnsubscribeUser(RozkladUser user, long chatId, Group group)
         {
-            throw new System.NotImplementedException();
+            _usersQueue.QueueUserToDelete(
+                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName));
         }
     }
 }
