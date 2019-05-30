@@ -3,9 +3,9 @@ using RozkladNpuAspNetCore.Entities;
 
 namespace RozkladSubscribeModule.Interfaces
 {
-    internal interface IRozkladSubscribeService
+    public interface IRozkladSubscribeService
     {
-        void SubscribeUser(RozkladUser user, Group group);
-        void UnsubscribeUser(RozkladUser user, Group group);
+        void SubscribeUser(RozkladUser user, long chatId, Group group);
+        void UnsubscribeUser(RozkladUser user, long chatId, Group group);
     }
 }
