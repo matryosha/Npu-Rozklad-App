@@ -4,14 +4,14 @@ using RozkladSubscribeModule.Entities;
 
 namespace RozkladSubscribeModule.Interfaces
 {
-    internal interface ILastGroupScheduleStorage
+    internal interface ILastSessionLessonsStorage
     {
-        SectionLessons GetSchedule(
+        SectionLessons Get(
             List<DateTime> dateTimes,
             string facultyShortName,
             int groupExternalId);
 
-        void SetSchedule(
+        void Set(
             List<DateTime> dateTimes,
             string facultyShortName,
             int groupExternalId,

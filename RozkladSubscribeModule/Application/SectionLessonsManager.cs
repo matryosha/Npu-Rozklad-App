@@ -14,18 +14,18 @@ namespace RozkladSubscribeModule.Application
         private readonly ILogger<SectionLessonsManager> _logger;
         private readonly IDateTimesForScheduleDiffCheckGiver _dateTimesForScheduleDiff;
         private readonly ISectionLessonsBuilder _sectionLessonsBuilder;
-        private readonly ILastGroupScheduleStorage _lastGroupScheduleStorage;
+        private readonly ILastSessionLessonsStorage _lastSessionLessonsStorage;
 
         public SectionLessonsManager(
             ILogger<SectionLessonsManager> logger,
             IDateTimesForScheduleDiffCheckGiver dateTimesForScheduleDiff,
             ISectionLessonsBuilder sectionLessonsBuilder,
-            ILastGroupScheduleStorage lastGroupScheduleStorage)
+            ILastSessionLessonsStorage lastSessionLessonsStorage)
         {
             _logger = logger;
             _dateTimesForScheduleDiff = dateTimesForScheduleDiff;
             _sectionLessonsBuilder = sectionLessonsBuilder;
-            _lastGroupScheduleStorage = lastGroupScheduleStorage;
+            _lastSessionLessonsStorage = lastSessionLessonsStorage;
         }
         public Task<SectionLessons> GetCurrentSectionLessons(int groupExternalId, string facultyShortName)
         {
@@ -37,14 +37,14 @@ namespace RozkladSubscribeModule.Application
             SectionLessons currentSectionLessons = null)
         {
             var sectionLessons =
-                _lastGroupScheduleStorage.GetSchedule(
+                _lastSessionLessonsStorage.Get(
                     _dateTimesForScheduleDiff.GetDates(), facultyShortName, groupExternalId);
 
             if (sectionLessons != null)
                 return sectionLessons;
 
             if (currentSectionLessons != null)
-                _lastGroupScheduleStorage.SetSchedule(
+                _lastSessionLessonsStorage.Set(
                     _dateTimesForScheduleDiff.GetDates(), facultyShortName, groupExternalId, currentSectionLessons);
 
             return new SectionLessons(facultyShortName, groupExternalId);
