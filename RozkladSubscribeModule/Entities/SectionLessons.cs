@@ -26,6 +26,7 @@ namespace RozkladSubscribeModule.Entities
 
         public string FacultyShortName { get; }
         public int GroupExternalId { get; }
+        [Obsolete]
         public List<DateTime> Dates { get; set; }
         public Dictionary<DateTime, List<Lesson>> Lessons { get; set; }
     }
