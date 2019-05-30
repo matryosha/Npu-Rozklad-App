@@ -37,7 +37,7 @@ namespace RozkladSubscribeModule.Application
 
             var lastSection =
                 _lessonsManager.GetLastSectionLessons(
-                    groupExternalId, facultyShortName);
+                    groupExternalId, facultyShortName, currentSection);
 
             var result = new DefaultCheckPayload();
 
