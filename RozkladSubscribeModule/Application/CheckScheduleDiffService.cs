@@ -41,6 +41,9 @@ namespace RozkladSubscribeModule.Application
 
             var result = new DefaultCheckPayload();
 
+            if (!lastSection.Lessons.Any())
+                return result;
+
             foreach (var date in checkDates)
             {
                 var currentLessons = currentSection[date];
