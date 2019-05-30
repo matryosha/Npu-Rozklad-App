@@ -96,7 +96,7 @@ namespace RozkladSubscribeModule.Tests
             Assert.True(checkScheduleResultPayload.IsDiff());
             Assert.NotNull(
                 checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(
-                    l => l.NewLesson.Subject.Id == 2));
+                    l => l.OldLesson.Subject.Id == 2));
             Assert.NotNull(
                 checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(
                     l => l.UpdateType == LessonUpdateType.DeletedLesson));
@@ -189,7 +189,7 @@ namespace RozkladSubscribeModule.Tests
                     It.IsAny<int>(), It.IsAny<string>()))
                 .ReturnsAsync(currentSection);
             mock.Setup(m => m.GetLastSectionLessons(
-                    It.IsAny<int>(), It.IsAny<string>()))
+                    It.IsAny<int>(), It.IsAny<string>(), It.IsAny<SectionLessons>()))
                 .Returns(lastSection);
 
             return mock.Object;
