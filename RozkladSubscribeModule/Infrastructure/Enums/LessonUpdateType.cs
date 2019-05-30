@@ -1,6 +1,6 @@
 ﻿namespace RozkladSubscribeModule.Infrastructure.Enums
 {
-    public enum UpdatedLessonType
+    public enum LessonUpdateType
     {
         AddedLesson,
         DeletedLesson,

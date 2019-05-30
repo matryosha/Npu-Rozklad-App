@@ -64,7 +64,7 @@ namespace RozkladSubscribeModule.Tests
 
             Assert.True(checkScheduleResultPayload.IsDiff());
             Assert.NotNull(checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(l =>
-                    l.UpdateType == UpdatedLessonType.AddedLesson));
+                    l.UpdateType == LessonUpdateType.AddedLesson));
             Assert.NotNull(checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(l => l.NewLesson.Subject.Id == 10));
         }
 
@@ -99,7 +99,7 @@ namespace RozkladSubscribeModule.Tests
                     l => l.NewLesson.Subject.Id == 2));
             Assert.NotNull(
                 checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(
-                    l => l.UpdateType == UpdatedLessonType.DeletedLesson));
+                    l => l.UpdateType == LessonUpdateType.DeletedLesson));
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace RozkladSubscribeModule.Tests
 
             Assert.True(checkScheduleResultPayload.IsDiff());
             Assert.Equal(2,
-                checkScheduleResultPayload.UpdatedLessons.Count(l => l.UpdateType == UpdatedLessonType.AddedLesson));
+                checkScheduleResultPayload.UpdatedLessons.Count(l => l.UpdateType == LessonUpdateType.AddedLesson));
             Assert.NotNull(checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(
                 l => l.NewLesson.Subject.Id == 1));
             Assert.NotNull(checkScheduleResultPayload.UpdatedLessons.FirstOrDefault(

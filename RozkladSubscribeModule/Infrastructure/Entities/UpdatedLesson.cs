@@ -10,33 +10,33 @@ namespace RozkladSubscribeModule.Infrastructure.Entities
         public UpdatedLesson(
             Lesson oldLesson, 
             Lesson newLesson,
-            UpdatedLessonType updateType)
+            LessonUpdateType updateType)
         {
             OldLesson = oldLesson;
             NewLesson = newLesson;
             UpdateType = updateType;
         }
 
-        public UpdatedLessonType UpdateType { get; set; }
+        public LessonUpdateType UpdateType { get; set; }
 
         public int LessonNumber =>
-            UpdateType == UpdatedLessonType.DeletedLesson
+            UpdateType == LessonUpdateType.DeletedLesson
                 ? OldLesson.LessonNumber
                 : NewLesson.LessonNumber;
 
 
         public Fraction Fraction =>
-            UpdateType == UpdatedLessonType.DeletedLesson
+            UpdateType == LessonUpdateType.DeletedLesson
                 ? OldLesson.Fraction
                 : NewLesson.Fraction;
 
         public SubGroup SubGroup =>
-            UpdateType == UpdatedLessonType.DeletedLesson
+            UpdateType == LessonUpdateType.DeletedLesson
                 ? OldLesson.SubGroup
                 : NewLesson.SubGroup;
 
         public DateTime LessonDate =>
-            UpdateType == UpdatedLessonType.DeletedLesson
+            UpdateType == LessonUpdateType.DeletedLesson
                 ? OldLesson.LessonDate
                 : NewLesson.LessonDate;
 

@@ -16,19 +16,19 @@ namespace RozkladSubscribeModule.Entities
         public void AddNewLesson(Lesson newLesson)
         {
             UpdatedLessons.Add(
-                new UpdatedLesson(null, newLesson, UpdatedLessonType.AddedLesson));
+                new UpdatedLesson(null, newLesson, LessonUpdateType.AddedLesson));
         }
 
         public void AddDeletedLesson(Lesson deletedLesson)
         {
             UpdatedLessons.Add(
-                new UpdatedLesson(deletedLesson, null, UpdatedLessonType.DeletedLesson));
+                new UpdatedLesson(deletedLesson, null, LessonUpdateType.DeletedLesson));
         }
 
         public void AddReplacedLesson(Lesson oldLesson, Lesson newLesson)
         {
             UpdatedLessons.Add(
-                new UpdatedLesson(oldLesson, newLesson, UpdatedLessonType.ReplacedLesson));
+                new UpdatedLesson(oldLesson, newLesson, LessonUpdateType.ReplacedLesson));
         }
     }
 }
