@@ -41,7 +41,7 @@ namespace RozkladSubscribeModule.Tests
 
             await GetDefaultHostedServiceTestSubscribedUser(users, () => notifyCount++)
                 .StartAsync(CancellationToken.None);
-            await Task.Delay(1000);
+            await Task.Delay(1500);
 
             Assert.Equal(35, notifyCount);
         }

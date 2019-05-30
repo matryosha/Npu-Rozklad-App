@@ -84,10 +84,10 @@ namespace RozkladSubscribeModule.Application
 
                     foreach (var user in currentGroupUsers)
                     {
-                        _userNotifyService.Notify(
+                        Task.Run(() => _userNotifyService.Notify(
                             user,
                             _checkToNotifyPayloadConverter.Convert(
-                                checkPayload));
+                                checkPayload)));
                     }
                 }
             }
