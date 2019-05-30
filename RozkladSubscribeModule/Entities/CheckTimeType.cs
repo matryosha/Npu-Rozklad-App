@@ -3,7 +3,7 @@
     /// <summary>
     /// Using for selecting timespan to check difference of schedule update
     /// </summary>
-    internal enum CheckTimeType
+    public enum CheckTimeType
     {
         LastDaysOfCurrentWeek,
         LastDaysOfCurrentWeekAndNextWeek,
