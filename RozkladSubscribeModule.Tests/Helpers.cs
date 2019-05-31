@@ -16,6 +16,7 @@ namespace RozkladSubscribeModule.Tests
                 resultList.Add(new SubscribedUser(
                     int.Parse($"{i}{i + i}{i * i}{i}"),
                     groupExternalId,
+                    int.Parse($"{i}{i + i}{i * i}{i}"),
                     facultyShortName));
             }
 
