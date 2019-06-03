@@ -32,7 +32,8 @@ namespace RozkladNpuBot.WebApi
             services.AddRozkladSubscribeService(options =>
             {
                 options.CheckTimeType = CheckTimeType.LastDaysOfCurrentWeek;
-                options.SubscribedUsersDbConnectionString = "mongodb://localhost:27017";
+                options.SubscribedUsersDbConnectionString =
+                    Configuration.GetSection("DbConfiguration")["ConnectionStringMongoDb"];
             });
 
             services.AddSingleton<IBotService, BotService>();
