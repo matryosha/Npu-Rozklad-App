@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NpuTimetableParser", "NpuTi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NpuTimetableParser.Tests", "NpuTimetableParser.Tests\NpuTimetableParser.Tests.csproj", "{EDEB4FFE-0BB9-4313-B88A-55A4C8BC1C94}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladSubscribeModule", "RozkladSubscribeModule\RozkladSubscribeModule.csproj", "{FDC1178D-D2CA-4FB3-9A59-077FF6E5F391}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladSubscribeModule.Tests", "RozkladSubscribeModule.Tests\RozkladSubscribeModule.Tests.csproj", "{4B65D37B-6C97-4C32-B4C4-FE601CAD8771}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{EDEB4FFE-0BB9-4313-B88A-55A4C8BC1C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDEB4FFE-0BB9-4313-B88A-55A4C8BC1C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDEB4FFE-0BB9-4313-B88A-55A4C8BC1C94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDC1178D-D2CA-4FB3-9A59-077FF6E5F391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDC1178D-D2CA-4FB3-9A59-077FF6E5F391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDC1178D-D2CA-4FB3-9A59-077FF6E5F391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDC1178D-D2CA-4FB3-9A59-077FF6E5F391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B65D37B-6C97-4C32-B4C4-FE601CAD8771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B65D37B-6C97-4C32-B4C4-FE601CAD8771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B65D37B-6C97-4C32-B4C4-FE601CAD8771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B65D37B-6C97-4C32-B4C4-FE601CAD8771}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
