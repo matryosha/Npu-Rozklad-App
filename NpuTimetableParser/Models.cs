@@ -24,6 +24,12 @@ namespace NpuTimetableParser
         {
             return Name;
         }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode() +
+                   Name.GetHashCode();
+        }
     }
 
     public class Group
@@ -36,6 +42,14 @@ namespace NpuTimetableParser
         {
             return ShortName;
         }
+        public override int GetHashCode()
+        {
+            return
+                ExternalId.GetHashCode() +
+                FacultyShortName.GetHashCode() +
+                FullName.GetHashCode() +
+                ShortName.GetHashCode();
+        }
     }
 
     public class Lecturer
@@ -46,6 +60,12 @@ namespace NpuTimetableParser
         {
             return FullName;
         }
+
+        public override int GetHashCode()
+        {
+            return ExternalId.GetHashCode() +
+                   FullName.GetHashCode();
+        }
     }
 
     public class Classroom
@@ -55,6 +75,12 @@ namespace NpuTimetableParser
         public override string ToString()
         {
             return Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return ExternalId.GetHashCode() +
+                   Name.GetHashCode();
         }
     }
 
@@ -79,6 +105,18 @@ namespace NpuTimetableParser
         public override string ToString()
         {
             return LessonNumber + " " + Subject.Name + " F:" + (int)Fraction + " S:" + (int)SubGroup;
+        }
+
+        public override int GetHashCode()
+        {
+            return Group.GetHashCode() +
+                   Subject.GetHashCode() +
+                   Classroom.GetHashCode() +
+                   Lecturer.GetHashCode() +
+                   LessonNumber.GetHashCode() +
+                   Fraction.GetHashCode() +
+                   SubGroup.GetHashCode() +
+                   LessonCount.GetHashCode();
         }
     }
 
