@@ -1,5 +1,5 @@
 ﻿using NpuTimetableParser;
-using RozkladNpuAspNetCore.Entities;
+using RozkladNpuBot.Domain.Entities;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 

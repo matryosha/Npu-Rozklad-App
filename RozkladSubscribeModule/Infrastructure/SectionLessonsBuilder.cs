@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using RozkladNpuAspNetCore.Interfaces;
+using RozkladNpuBot.Application.Interfaces;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 

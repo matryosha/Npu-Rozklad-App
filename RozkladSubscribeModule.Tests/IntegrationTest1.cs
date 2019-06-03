@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using Microsoft.Extensions.Options;
 using NpuTimetableParser;
-using RozkladNpuAspNetCore.Entities;
+using RozkladNpuBot.Domain.Entities;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Infrastructure;
 using RozkladSubscribeModule.Interfaces;

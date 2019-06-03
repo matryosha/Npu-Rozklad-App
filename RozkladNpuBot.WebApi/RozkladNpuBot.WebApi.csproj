@@ -15,6 +15,7 @@
     <ProjectReference Include="..\RozkladNpuBot.Domain\RozkladNpuBot.Domain.csproj" />
     <ProjectReference Include="..\RozkladNpuBot.Infrastructure\RozkladNpuBot.Infrastructure.csproj" />
     <ProjectReference Include="..\RozkladNpuBot.Persistence\RozkladNpuBot.Persistence.csproj" />
+    <ProjectReference Include="..\RozkladSubscribeModule\RozkladSubscribeModule.csproj" />
   </ItemGroup>
 
     <ItemGroup>

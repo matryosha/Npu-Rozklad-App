@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RozkladNpuBot.Common\RozkladNpuBot.Common.csproj" />
     <ProjectReference Include="..\RozkladSubscribeModule\RozkladSubscribeModule.csproj" />
   </ItemGroup>
 

@@ -10,6 +10,8 @@ using RozkladNpuBot.Application.Infrastructure;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Application.Services;
 using RozkladNpuBot.Persistence;
+using RozkladSubscribeModule;
+using RozkladSubscribeModule.Entities;
 
 namespace RozkladNpuBot.WebApi
 {
@@ -26,6 +28,13 @@ namespace RozkladNpuBot.WebApi
             {
                 conf.UseMySql(Configuration.GetSection("DbConfiguration")["ConnectionStringMySql"]);
             });
+
+            services.AddRozkladSubscribeService(options =>
+            {
+                options.CheckTimeType = CheckTimeType.LastDaysOfCurrentWeek;
+                options.SubscribedUsersDbConnectionString = "mongodb://localhost:27017";
+            });
+
             services.AddSingleton<IBotService, BotService>();
             services.AddSingleton<IUserService, DatabaseOnlyUserService>();
             services.AddSingleton<ILessonsProvider, NpuLessonsProvider>();
