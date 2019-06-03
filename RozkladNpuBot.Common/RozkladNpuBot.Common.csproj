@@ -8,8 +8,4 @@
     <PackageReference Include="Telegram.Bot" Version="14.10.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\NpuTimetableParser\NpuTimetableParser\NpuTimetableParser.csproj" />
-  </ItemGroup>
-
 </Project>
