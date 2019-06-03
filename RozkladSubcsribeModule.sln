@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladSubscribeModule", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladSubscribeModule.Runner", "RozkladSubscribeModule.Runner\RozkladSubscribeModule.Runner.csproj", "{3198D568-E27E-4C34-B7A2-951ED9D435B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladNpuAspNetCore", "..\RozkladNpuAspNetCore\RozkladNpuAspNetCore\RozkladNpuAspNetCore.csproj", "{64476E15-1652-4735-B2DC-DCEF39DA9CC3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RozkladSubscribeModule.Tests", "RozkladSubscribeModule.Tests\RozkladSubscribeModule.Tests.csproj", "{BCE3065A-984F-4230-A2B9-474DC2BECD69}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{3198D568-E27E-4C34-B7A2-951ED9D435B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3198D568-E27E-4C34-B7A2-951ED9D435B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3198D568-E27E-4C34-B7A2-951ED9D435B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64476E15-1652-4735-B2DC-DCEF39DA9CC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64476E15-1652-4735-B2DC-DCEF39DA9CC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64476E15-1652-4735-B2DC-DCEF39DA9CC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64476E15-1652-4735-B2DC-DCEF39DA9CC3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCE3065A-984F-4230-A2B9-474DC2BECD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCE3065A-984F-4230-A2B9-474DC2BECD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCE3065A-984F-4230-A2B9-474DC2BECD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
