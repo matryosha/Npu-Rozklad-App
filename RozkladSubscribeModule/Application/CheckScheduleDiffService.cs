@@ -130,6 +130,7 @@ namespace RozkladSubscribeModule.Application
 
             }
 
+            if (result.IsDiff()) _lessonsManager.UpdateLastSection(currentSection);
             return result;
         }
     }

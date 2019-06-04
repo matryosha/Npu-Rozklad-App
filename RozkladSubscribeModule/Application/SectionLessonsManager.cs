@@ -50,7 +50,10 @@ namespace RozkladSubscribeModule.Application
 
         public void UpdateLastSection(SectionLessons sectionLessons)
         {
-            throw new NotImplementedException();
+            _lastSessionLessonsStorage.Set(_dateTimesForScheduleDiff.GetDates(),
+                sectionLessons.FacultyShortName,
+                sectionLessons.GroupExternalId,
+                sectionLessons);
         }
     }
 }

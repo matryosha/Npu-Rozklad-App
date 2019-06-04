@@ -11,6 +11,7 @@ namespace RozkladSubscribeModule.Interfaces
             string facultyShortName,
             int groupExternalId);
 
+        //Remove faculty and group and get them from section
         void Set(
             List<DateTime> dateTimes,
             string facultyShortName,
