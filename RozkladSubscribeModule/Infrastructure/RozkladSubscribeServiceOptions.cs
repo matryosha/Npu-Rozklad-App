@@ -8,5 +8,6 @@ namespace RozkladSubscribeModule.Infrastructure
         public string SubscribedUsersDbConnectionString { get; set; }
         public CheckTimeType CheckTimeType { get; set; }
         public TimeSpan ProcessPeriod { get; set; } = TimeSpan.FromMinutes(10);
+        public TimeSpan ExpirationLastSectionTimeSpan { get; set; } = TimeSpan.FromMinutes(15);
     }
 }
