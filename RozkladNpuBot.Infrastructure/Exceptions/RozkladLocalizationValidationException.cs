@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RozkladNpuBot.Application.Exceptions
+namespace RozkladNpuBot.Infrastructure.Exceptions
 {
     public class RozkladLocalizationValidationException : Exception
     {

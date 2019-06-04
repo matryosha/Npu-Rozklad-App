@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using RozkladNpuBot.Application.Exceptions;
+using RozkladNpuBot.Infrastructure.Exceptions;
 
-namespace RozkladNpuBot.Application.Localization
+namespace RozkladNpuBot.Infrastructure.Localization
 {
     public static class RozkladLocalizationValidator
     {

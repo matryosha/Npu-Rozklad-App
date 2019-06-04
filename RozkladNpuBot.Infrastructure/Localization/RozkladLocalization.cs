@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace RozkladNpuBot.Application.Localization
+namespace RozkladNpuBot.Infrastructure.Localization
 {
     public class RozkladLocalization
     {

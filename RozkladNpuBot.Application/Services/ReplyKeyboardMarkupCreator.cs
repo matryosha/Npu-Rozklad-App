@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Interfaces;
+using RozkladNpuBot.Infrastructure.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RozkladNpuBot.Application.Services

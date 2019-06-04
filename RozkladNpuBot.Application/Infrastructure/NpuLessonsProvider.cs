@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Infrastructure;
+using RozkladNpuBot.Infrastructure.Interfaces;
 
 namespace RozkladNpuBot.Application.Infrastructure
 {

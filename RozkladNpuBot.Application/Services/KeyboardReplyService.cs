@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Infrastructure;
+using RozkladNpuBot.Infrastructure.Interfaces;
 using Telegram.Bot.Types;
 
 namespace RozkladNpuBot.Application.Services

@@ -1,4 +1,4 @@
-﻿using RozkladNpuBot.Application.Localization;
+﻿using RozkladNpuBot.Infrastructure.Localization;
 
 namespace RozkladNpuBot.Application.Extensions
 {

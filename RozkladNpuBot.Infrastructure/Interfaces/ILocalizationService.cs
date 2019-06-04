@@ -1,6 +1,6 @@
-﻿using RozkladNpuBot.Application.Localization;
+﻿using RozkladNpuBot.Infrastructure.Localization;
 
-namespace RozkladNpuBot.Application.Interfaces
+namespace RozkladNpuBot.Infrastructure.Interfaces
 {
     public interface ILocalizationService
     {

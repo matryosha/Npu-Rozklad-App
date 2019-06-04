@@ -10,6 +10,7 @@ using RozkladNpuBot.Application.Infrastructure;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Application.Services;
 using RozkladNpuBot.Infrastructure;
+using RozkladNpuBot.Infrastructure.Interfaces;
 using RozkladNpuBot.Persistence;
 using RozkladSubscribeModule;
 using RozkladSubscribeModule.Entities;

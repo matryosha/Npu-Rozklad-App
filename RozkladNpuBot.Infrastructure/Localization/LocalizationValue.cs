@@ -1,4 +1,4 @@
-﻿namespace RozkladNpuBot.Application.Localization
+﻿namespace RozkladNpuBot.Infrastructure.Localization
 {
     public class LocalizationValue
     {

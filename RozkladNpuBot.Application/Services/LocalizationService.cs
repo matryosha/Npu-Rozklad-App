@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using RozkladNpuBot.Application.Exceptions;
-using RozkladNpuBot.Application.Interfaces;
-using RozkladNpuBot.Application.Localization;
+using RozkladNpuBot.Infrastructure.Exceptions;
+using RozkladNpuBot.Infrastructure.Interfaces;
+using RozkladNpuBot.Infrastructure.Localization;
 
 namespace RozkladNpuBot.Application.Services
 {

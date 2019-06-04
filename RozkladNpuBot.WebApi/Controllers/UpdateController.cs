@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Infrastructure;
+using RozkladNpuBot.Infrastructure.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
