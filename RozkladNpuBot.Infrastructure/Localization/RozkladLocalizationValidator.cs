@@ -35,7 +35,8 @@ namespace RozkladNpuBot.Infrastructure.Localization
             "delete",
             "classes-on",
             "updated-on",
-            "group"
+            "group",
+            "menu-notification",
         };
         public static void Validate(
             RozkladLocalization rozkladLocalization)
