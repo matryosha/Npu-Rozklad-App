@@ -133,14 +133,19 @@ namespace RozkladNpuBot.Application.Services
                     spawnNewMenu: true);
                 return;
             }
-            else if (message.Text == _localization["ua", "menu-reply-keyboard"])
+            if (message.Text == _localization["ua", "menu-reply-keyboard"])
             {
                 user.LastAction = RozkladUser.LastActionType.Default;
                 await _userService.UpdateUser(user);
                 await _keyboardReplyService.ShowMainMenu(message);
                 return;
             }
-
+            if (message.Text == _localization["ua", "menu-notification"])
+            {
+                await _inlineKeyboardReplyService.ShowNotificationMenu(message, user)
+                    .ConfigureAwait(false);
+                return;
+            }
             await _botService.Client.SendStickerAsync(message.Chat.Id, _replyStickers.GetRandomStickerString());
             await _keyboardReplyService.ShowMainMenu(message);
         }
