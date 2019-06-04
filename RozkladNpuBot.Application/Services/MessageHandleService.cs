@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RozkladNpuBot.Application.Configurations;
 using RozkladNpuBot.Application.Interfaces;
@@ -19,6 +20,7 @@ namespace RozkladNpuBot.Application.Services
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
         private readonly ILocalizationService _localization;
         private readonly ReplyKeyboardMarkupCreator _replyKeyboardMarkupCreator;
+        private readonly ILogger<MessageHandleService> _logger;
         private readonly UnknownResponseConfiguration _replyStickers;
         public MessageHandleService(
             IBotService botService, 
@@ -28,7 +30,8 @@ namespace RozkladNpuBot.Application.Services
             IKeyboardReplyService keyboardReplyService,
             IInlineKeyboardReplyService inlineKeyboardReplyService,
             ILocalizationService localization,
-            ReplyKeyboardMarkupCreator replyKeyboardMarkupCreator)
+            ReplyKeyboardMarkupCreator replyKeyboardMarkupCreator,
+            ILogger<MessageHandleService> logger)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
@@ -37,6 +40,7 @@ namespace RozkladNpuBot.Application.Services
             _inlineKeyboardReplyService = inlineKeyboardReplyService;
             _localization = localization;
             _replyKeyboardMarkupCreator = replyKeyboardMarkupCreator;
+            _logger = logger;
             _replyStickers = idkStickers.Value;
         }
 
