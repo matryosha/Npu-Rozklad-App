@@ -272,5 +272,52 @@ namespace RozkladNpuBot.Application.Services
             
         }
 
+        public async Task<Message> ShowNotificationMenu(
+            Message message, RozkladUser user, bool spawnNewMenu = false)
+        {
+            var inlineKeyboard = new List<List<InlineKeyboardButton>>();
+            var rowButtons = new List<InlineKeyboardButton>();
+            
+            foreach (var group in user.Groups)
+            {
+                var button = new InlineKeyboardButton
+                {
+                    CallbackData =
+                        CallbackQueryDataConverters.GetGroupNotificationCallbackData(
+                            group, user.TelegramId),
+                    Text = group.ShortName
+                };
+                if (rowButtons.Count < 2)
+                {
+                    rowButtons.Add(button);
+                }
+                else
+                {
+                    inlineKeyboard.Add(rowButtons);
+                    rowButtons = new List<InlineKeyboardButton>();
+                    rowButtons.Add(button);
+                }
+            }
+            inlineKeyboard.Add(rowButtons);
+            
+            if (!spawnNewMenu &&
+                _userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
+            {
+                return await _botService.Client.EditMessageTextAsync(
+                    message.Chat.Id,
+                    messageId,
+                    text: _localization["ua", "choose-group-message"],
+                    replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
+            }
+            else
+            {
+                var sentMessage = await _botService.Client.SendTextMessageAsync(
+                    message.Chat.Id,
+                    _localization["ua", "choose-group-message"],
+                    replyMarkup: new InlineKeyboardMarkup(inlineKeyboard));
+                _userService.SetLastMessageId(message.Chat.Id, sentMessage.MessageId);
+                return sentMessage;
+            }
+        }
     }
 }
