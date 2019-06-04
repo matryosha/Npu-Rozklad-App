@@ -57,6 +57,7 @@ namespace RozkladSubscribeModule.Application
 
         private async void ProcessSubscribedUsers(object state)
         {
+            _logger.LogInformation("Start processing subscribed users");
             var subscribedUser = await _subscribedUsersRepository.GetUsersAsync()
                 .ConfigureAwait(false);
             var distinctGroups = subscribedUser.GroupBy(
