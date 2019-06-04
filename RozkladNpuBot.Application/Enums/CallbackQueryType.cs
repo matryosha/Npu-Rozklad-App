@@ -5,6 +5,7 @@
         AddGroup,
         ShowDetailGroupMenu,
         ShowScheduleMenu,
-        DeleteGroup
+        DeleteGroup,
+        SelectedGroupForNotification
     }
 }
