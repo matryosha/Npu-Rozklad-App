@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Moq;
 using RozkladSubscribeModule.Application;
 using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Infrastructure;
 using RozkladSubscribeModule.Interfaces;
 using Xunit;
 
@@ -66,7 +68,7 @@ namespace RozkladSubscribeModule.Tests
 
             var scheduler = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                mockCheckToNotifyPayloadConverter);
+                mockCheckToNotifyPayloadConverter, GetOptions());
 
             await scheduler.StartAsync(CancellationToken.None);
             await Task.Delay(1000);
@@ -94,7 +96,7 @@ namespace RozkladSubscribeModule.Tests
 
             var scheduler = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                mockCheckToNotifyPayloadConverter);
+                mockCheckToNotifyPayloadConverter, GetOptions());
 
             await scheduler.StartAsync(CancellationToken.None);
             await Task.Delay(1000);
@@ -122,7 +124,7 @@ namespace RozkladSubscribeModule.Tests
 
             var scheduler = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                mockCheckToNotifyPayloadConverter);
+                mockCheckToNotifyPayloadConverter, GetOptions());
 
             await scheduler.StartAsync(CancellationToken.None);
             await Task.Delay(1000);
@@ -150,7 +152,7 @@ namespace RozkladSubscribeModule.Tests
 
             var scheduler = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                mockCheckToNotifyPayloadConverter);
+                mockCheckToNotifyPayloadConverter, GetOptions());
 
             await scheduler.StartAsync(CancellationToken.None);
             await Task.Delay(1000);
@@ -184,7 +186,7 @@ namespace RozkladSubscribeModule.Tests
 
             var scheduler = new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService.Object, mockUserNotifyService.Object,
-                mockCheckToNotifyPayloadConverter);
+                mockCheckToNotifyPayloadConverter, GetOptions());
 
             await scheduler.StartAsync(CancellationToken.None);
             await Task.Delay(1000);
@@ -260,7 +262,13 @@ namespace RozkladSubscribeModule.Tests
 
             return new SchedulerHostedService<ICheckPayload, INotifyPayload>(
                 _emptyLogger, subscribedUsersRepo, mockScheduleDiffService, mockUserNotifyService,
-                mockCheckToNotifyPayloadConverter, TimeSpan.FromSeconds(0));
+                mockCheckToNotifyPayloadConverter, GetOptions());
+        }
+
+        private IOptions<RozkladSubscribeServiceOptions> GetOptions()
+        {
+            return Mock.Of<IOptions<RozkladSubscribeServiceOptions>>(o =>
+                o.Value.ProcessPeriod == TimeSpan.FromSeconds(10));
         }
     }
 }

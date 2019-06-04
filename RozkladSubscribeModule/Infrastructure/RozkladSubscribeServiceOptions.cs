@@ -1,5 +1,5 @@
-﻿using RozkladSubscribeModule.Entities;
-using RozkladSubscribeModule.Infrastructure.Enums;
+﻿using System;
+using RozkladSubscribeModule.Entities;
 
 namespace RozkladSubscribeModule.Infrastructure
 {
@@ -7,5 +7,6 @@ namespace RozkladSubscribeModule.Infrastructure
     {
         public string SubscribedUsersDbConnectionString { get; set; }
         public CheckTimeType CheckTimeType { get; set; }
+        public TimeSpan ProcessPeriod { get; set; } = TimeSpan.FromMinutes(10);
     }
 }

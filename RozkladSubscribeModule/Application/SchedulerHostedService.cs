@@ -4,13 +4,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using RozkladSubscribeModule.Infrastructure;
 using RozkladSubscribeModule.Interfaces;
 
 namespace RozkladSubscribeModule.Application
 {
     internal class SchedulerHostedService<TCheckPayload, TNotifyPayload> : IHostedService
-        where TCheckPayload: ICheckPayload
-        where TNotifyPayload: INotifyPayload
+        where TCheckPayload : ICheckPayload
+        where TNotifyPayload : INotifyPayload
     {
         private readonly ILogger<SchedulerHostedService<TCheckPayload, TNotifyPayload>> _logger;
         private readonly ISubscribedUsersRepository _subscribedUsersRepository;
@@ -27,19 +29,15 @@ namespace RozkladSubscribeModule.Application
             ICheckScheduleDiffService<TCheckPayload> scheduleDiffService,
             IUserNotifyService<TNotifyPayload> userNotifyService,
             ICheckToNotifyPayloadConverter<TCheckPayload, TNotifyPayload> checkToNotifyPayloadConverter,
-            TimeSpan processPeriod = default
-            )
+            IOptions<RozkladSubscribeServiceOptions> options
+        )
         {
             _logger = logger;
             _subscribedUsersRepository = subscribedUsersRepository;
-            _scheduleDiffService =  scheduleDiffService;
+            _scheduleDiffService = scheduleDiffService;
             _userNotifyService = userNotifyService;
             _checkToNotifyPayloadConverter = checkToNotifyPayloadConverter;
-
-            if (processPeriod == default)
-            {
-                _processPeriod = TimeSpan.FromMinutes(10);
-            }
+            _processPeriod = options.Value.ProcessPeriod;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
