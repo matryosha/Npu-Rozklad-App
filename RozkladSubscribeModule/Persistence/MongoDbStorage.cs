@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using RozkladSubscribeModule.Entities;
@@ -20,17 +21,7 @@ namespace RozkladSubscribeModule.Persistence
         private readonly MongoClient _client;
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<MongoSubscribedUser> _collection;
-
-        static MongoDbStorage()
-        {
-            BsonClassMap.RegisterClassMap<MongoSubscribedUser>(msu =>
-                {
-                    msu.AutoMap();
-                    msu.MapIdField(f => f.Id);
-                }
-            );
-        }
-
+        
         public MongoDbStorage(
             ILogger<MongoDbStorage> logger,
             IOptions<RozkladSubscribeServiceOptions> options,
@@ -44,7 +35,7 @@ namespace RozkladSubscribeModule.Persistence
             if (dropDbBeforeUse)
                 _client.DropDatabase(databaseName);
             _database = _client.GetDatabase(databaseName);
-            
+
             _collection = _database.GetCollection<MongoSubscribedUser>(collectionName);
         }
 
@@ -71,7 +62,7 @@ namespace RozkladSubscribeModule.Persistence
 
         public Task DeleteUserAsync(SubscribedUser subscribedUser)
         {
-            return _collection.DeleteOneAsync(user => user.Id == subscribedUser.GetHashCode());
+            return _collection.DeleteOneAsync(user => user.Id == Base64Coder.Encode(subscribedUser.ToString()));
         }
 
         public async Task<ICollection<SubscribedUser>> GetUsersAsync()
@@ -82,7 +73,10 @@ namespace RozkladSubscribeModule.Persistence
 
         public Task<bool> IsUserExistsAsync(SubscribedUser subscribedUser)
         {
-            return Task.FromResult(_collection.Find(u => u.Id == subscribedUser.GetHashCode()).Any());
+            return Task.FromResult(
+                _collection.Find(
+                    u => u.Id == Base64Coder.Encode(
+                             subscribedUser.ToString())).Any());
         }
 
         public Task DropDatabase(string databaseName)

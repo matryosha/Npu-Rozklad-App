@@ -35,5 +35,10 @@
                    FacultyShortName.GetHashCode() +
                    ChatId.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"{TelegramId}|{FacultyShortName}|{GroupExternalId}|{ChatId}";
+        }
     }
 }

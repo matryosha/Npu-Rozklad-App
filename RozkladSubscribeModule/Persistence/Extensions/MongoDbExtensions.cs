@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using MongoDB.Bson;
 using RozkladSubscribeModule.Entities;
+using RozkladSubscribeModule.Infrastructure;
 
 namespace RozkladSubscribeModule.Persistence.Extensions
 {
@@ -27,7 +29,7 @@ namespace RozkladSubscribeModule.Persistence.Extensions
         public static MongoSubscribedUser ToMongoSubscribedUser(this SubscribedUser subscribedUser) {
             return new MongoSubscribedUser
             {
-                Id = subscribedUser.GetHashCode(),
+                Id = Base64Coder.Encode(subscribedUser.ToString()),
                 SubscribedUser = subscribedUser
             };
         }
@@ -40,7 +42,7 @@ namespace RozkladSubscribeModule.Persistence.Extensions
             foreach (var subscribedUser in subscribedUsers) {
                 result.Add(new MongoSubscribedUser
                 {
-                    Id = subscribedUser.GetHashCode(),
+                    Id = Base64Coder.Encode(subscribedUser.ToString()),
                     SubscribedUser = subscribedUser
                 });
             }
