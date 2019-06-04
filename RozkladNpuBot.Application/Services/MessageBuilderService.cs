@@ -4,6 +4,7 @@ using System.Text;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Helpers;
 using RozkladNpuBot.Application.Interfaces;
+using RozkladNpuBot.Infrastructure;
 
 namespace RozkladNpuBot.Application.Services
 {

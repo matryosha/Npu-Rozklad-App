@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RozkladNpuBot.Application.Helpers;
+using RozkladNpuBot.Infrastructure;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Infrastructure;
 using RozkladSubscribeModule.Interfaces;

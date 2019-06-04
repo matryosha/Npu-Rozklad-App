@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RozkladNpuBot.Application.Helpers
+namespace RozkladNpuBot.Infrastructure
 {
     public static class LocalDateTime
     {
