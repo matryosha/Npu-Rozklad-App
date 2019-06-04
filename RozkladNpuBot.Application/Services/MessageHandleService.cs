@@ -142,7 +142,7 @@ namespace RozkladNpuBot.Application.Services
             }
             if (message.Text == _localization["ua", "menu-notification"])
             {
-                await _inlineKeyboardReplyService.ShowNotificationMenu(message, user)
+                await _inlineKeyboardReplyService.ShowNotificationMenu(message, user, true)
                     .ConfigureAwait(false);
                 return;
             }
