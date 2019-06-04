@@ -56,7 +56,8 @@ namespace RozkladNpuBot.Application.Services
         {
             return new[]
             {
-                new []{ $"{_localizationService["ua", "schedule-reply-keyboard"]}" }
+                new []{ $"{_localizationService["ua", "schedule-reply-keyboard"]}" },
+                new []{ $"{_localizationService["ua", "menu-notification"]}"}
             };
         }
     }
