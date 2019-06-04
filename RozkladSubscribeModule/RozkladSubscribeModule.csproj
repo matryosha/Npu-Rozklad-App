@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,9 +32,9 @@
   </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RozkladNpuBot.Application\RozkladNpuBot.Application.csproj" />
       <ProjectReference Include="..\RozkladNpuBot.Common\RozkladNpuBot.Common.csproj" />
       <ProjectReference Include="..\RozkladNpuBot.Domain\RozkladNpuBot.Domain.csproj" />
+      <ProjectReference Include="..\RozkladNpuBot.Infrastructure\RozkladNpuBot.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

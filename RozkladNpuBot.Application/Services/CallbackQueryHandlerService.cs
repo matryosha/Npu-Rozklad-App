@@ -5,6 +5,7 @@ using RozkladNpuBot.Application.Enums;
 using RozkladNpuBot.Application.Helpers;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Domain.Entities;
+using RozkladNpuBot.Infrastructure;
 using Telegram.Bot.Types;
 
 namespace RozkladNpuBot.Application.Services

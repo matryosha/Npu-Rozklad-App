@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Interfaces;
+using RozkladNpuBot.Infrastructure;
 
 namespace RozkladNpuBot.Application.Infrastructure
 {

@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace RozkladNpuBot.Application.Interfaces
+namespace RozkladNpuBot.Infrastructure
 {
     public interface IBotService
     {

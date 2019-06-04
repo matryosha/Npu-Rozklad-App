@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuTimetableParser;
 
-namespace RozkladNpuBot.Application.Interfaces
+namespace RozkladNpuBot.Infrastructure
 {
     public interface ILessonsProvider
     {

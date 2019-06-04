@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using RozkladNpuBot.Application.Interfaces;
+using RozkladNpuBot.Infrastructure;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 using Telegram.Bot.Types;

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using RozkladNpuBot.Application.Configurations;
 using RozkladNpuBot.Application.Interfaces;
+using RozkladNpuBot.Infrastructure;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using RozkladNpuBot.Application.Configurations;
 using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Domain.Entities;
+using RozkladNpuBot.Infrastructure;
 using Telegram.Bot.Types;
 
 namespace RozkladNpuBot.Application.Services
