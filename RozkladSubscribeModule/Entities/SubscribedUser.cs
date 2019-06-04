@@ -19,6 +19,15 @@
         public string FacultyShortName { get; }
         public long ChatId { get; }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if(obj.GetType() != typeof(SubscribedUser))
+                return false;
+
+            return GetHashCode() == ((SubscribedUser) obj).GetHashCode();
+        }
+
         public override int GetHashCode()
         {
             return TelegramId.GetHashCode() +
