@@ -10,17 +10,24 @@ namespace RozkladNpuBot.Application.Interfaces
     public interface IInlineKeyboardReplyService
     {
         Task<Message> ShowScheduleMenu(Message message, int telegramId);
+
         Task<Message> ShowScheduleMenu(
-            Message message, 
+            Message message,
             RozkladUser user,
             bool spawnNewMenu = false);
+
         Task<Message> ShowGroupMenu(
-            Message callbackQueryMessage, 
+            Message callbackQueryMessage,
             Group group,
             DayOfWeek dayOfWeek,
             ShowGroupSelectedWeek week,
             int userTelegramId,
             bool isSingleGroup = false,
             bool spawnNewMenu = false);
+
+        Task<Message> ShowNotificationMenu(
+            Message message,
+            RozkladUser user
+        );
     }
 }
