@@ -82,6 +82,15 @@ namespace RozkladNpuBot.Application.Helpers
                    $";{group.ToDataString()};{(int)dayOfWeek}" +
                    $";{(int)week};{userTelegramId}";
         }
+
+        public static string GetGroupNotificationCallbackData(
+            Group group,
+            int userTelegramId)
+        {
+            return (int)CallbackQueryType.SelectedGroupForNotification +
+                $";{group.ExternalId};{group.FacultyShortName}" + 
+                $";{userTelegramId}";
+        }
  
 
     }
