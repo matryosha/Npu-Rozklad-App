@@ -35,7 +35,7 @@ namespace RozkladSubscribeModule
             services.AddSingleton<ISectionLessonsBuilder, SectionLessonsBuilder>();
             services.AddSingleton<IUserNotifyService<DefaultNotifyPayload>, TelegramNotifier>();
 
-            return services.AddSingleton<RozkladSubscribeService>();
+            return services.AddSingleton<IRozkladSubscribeService, RozkladSubscribeService>();
         }
     }
 }
