@@ -27,7 +27,8 @@ namespace RozkladNpuBot.Application.Interfaces
 
         Task<Message> ShowNotificationMenu(
             Message message,
-            RozkladUser user
+            RozkladUser user,
+            bool spawnNewMenu = false
         );
     }
 }
