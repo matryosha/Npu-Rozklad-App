@@ -8,6 +8,7 @@ using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Domain.Entities;
 using RozkladNpuBot.Infrastructure;
 using RozkladNpuBot.Infrastructure.Interfaces;
+using RozkladSubscribeModule.Interfaces;
 using Telegram.Bot.Types;
 
 namespace RozkladNpuBot.Application.Services
@@ -18,17 +19,23 @@ namespace RozkladNpuBot.Application.Services
         private readonly IInlineKeyboardReplyService _inlineKeyboardReplyService;
         private readonly IUserService _userService;
         private readonly IBotService _botService;
+        private readonly IRozkladSubscribeService _subscribeService;
+        private readonly ILocalizationService _localizationService;
 
         public CallbackQueryHandlerService(
             IKeyboardReplyService keyboardReplyService,
             IInlineKeyboardReplyService inlineKeyboardReplyService,
             IUserService userService,
-            IBotService botService)
+            IBotService botService,
+            IRozkladSubscribeService subscribeService,
+            ILocalizationService localizationService)
         {
             _keyboardReplyService = keyboardReplyService;
             _inlineKeyboardReplyService = inlineKeyboardReplyService;
             _userService = userService;
             _botService = botService;
+            _subscribeService = subscribeService;
+            _localizationService = localizationService;
         }
 
         public async Task Handle(CallbackQuery callbackQuery)
@@ -84,15 +91,17 @@ namespace RozkladNpuBot.Application.Services
                     break;
                 }
 
-                case CallbackQueryType.SelectedGroupForNotification:
+                case CallbackQueryType.ShowNotificationMenuForGroup:
                 {
                     var groupExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]);
                     var facultyShortName = callbackQueryKeyValuePair.Value[1];
+                    var groupShortName = callbackQueryKeyValuePair.Value[2];
                     await _inlineKeyboardReplyService.ShowNotificationMenuForGroup(callbackQuery.Message,
                         new Group
                         {
                             ExternalId = groupExternalId,
-                            FacultyShortName = facultyShortName
+                            FacultyShortName = facultyShortName,
+                            ShortName = groupShortName
                         });
                     break;
                 }
@@ -105,16 +114,42 @@ namespace RozkladNpuBot.Application.Services
                         .ConfigureAwait(false);
                     break;
                 }
-                    
+
                 case CallbackQueryType.SubscribeToScheduleNotification:
                 {
-                    
+                    var group = new Group
+                    {
+                        ExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]),
+                        FacultyShortName = callbackQueryKeyValuePair.Value[1]
+                    };
+                    var user = await _userService.GetUser(callbackQuery.From.Id)
+                        .ConfigureAwait(false);
+
+                    _subscribeService.SubscribeUser(user, callbackQuery.Message.Chat.Id, group);
+
+                    await _botService.Client.SendTextMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            _localizationService["ua", "notifications-enabled-message"])
+                        .ConfigureAwait(false);
                     break;
                 }
 
                 case CallbackQueryType.UnsubscribeFromScheduleNotification:
                 {
-                    
+                    var group = new Group
+                    {
+                        ExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]),
+                        FacultyShortName = callbackQueryKeyValuePair.Value[1]
+                    };
+                    var user = await _userService.GetUser(callbackQuery.From.Id)
+                        .ConfigureAwait(false);
+
+                    _subscribeService.UnsubscribeUser(user, callbackQuery.Message.Chat.Id, group);
+
+                    await _botService.Client.SendTextMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            _localizationService["ua", "notifications-disabled-message"])
+                        .ConfigureAwait(false);
                     break;
                 }
             }
