@@ -28,6 +28,11 @@
       "classes-on":"Пари на",
       "updated-on":"Оновлено",
       "group":"група",
-      "menu-notification": "Сповіщення"
+      "menu-notification": "Сповіщення",
+      "notification-for": "Сповіщення для",
+      "turn-on": "Ввімкнути",
+      "turn-off": "Вимкнути",
+      "notifications-enabled-message": "Сповіщення було ввімкнуто",
+      "notifications-disabled-message": "Сповіщення було вимкнуто"
    }
 }
