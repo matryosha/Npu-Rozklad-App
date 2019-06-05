@@ -319,5 +319,38 @@ namespace RozkladNpuBot.Application.Services
                 return sentMessage;
             }
         }
+
+        public Task<Message> ShowNotificationMenuForGroup(Message message, Group group)
+        {
+            var text = $"{_localization["ua", "notification-for"]} {group.ShortName}";
+            var subscribeButton = new InlineKeyboardButton
+            {
+                Text = _localization["ua", "turn-on"],
+                CallbackData = 
+                    CallbackQueryDataConverters.GetSwitchingGroupSubscribeStatusCallbackData(
+                        CallbackQueryType.SubscribeToScheduleNotification, group)
+            };
+            var unsubscribeButton = new InlineKeyboardButton
+            {
+                Text = _localization["ua", "turn-off"],
+                CallbackData = 
+                    CallbackQueryDataConverters.GetSwitchingGroupSubscribeStatusCallbackData(
+                        CallbackQueryType.UnsubscribeFromScheduleNotification, group)
+            };
+            var inlineKeyboardMarkup = new[]
+            {
+                subscribeButton,
+                unsubscribeButton
+            };
+            if (_userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
+                return _botService.Client.EditMessageTextAsync(
+                    message.Chat.Id,
+                    messageId,
+                    text,
+                    replyMarkup: new InlineKeyboardMarkup(inlineKeyboardMarkup));
+            return _botService.Client.SendTextMessageAsync(
+                message.Chat.Id, text,
+                replyMarkup: new InlineKeyboardMarkup(inlineKeyboardMarkup));
+        }
     }
 }

@@ -30,5 +30,10 @@ namespace RozkladNpuBot.Application.Interfaces
             RozkladUser user,
             bool spawnNewMenu = false
         );
+
+        Task<Message> ShowNotificationMenuForGroup(
+            Message message,
+            Group group
+        );
     }
 }
