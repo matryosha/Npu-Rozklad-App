@@ -284,7 +284,7 @@ namespace RozkladNpuBot.Application.Services
                 {
                     CallbackData =
                         CallbackQueryDataConverters.GetGroupNotificationCallbackData(
-                            group, user.TelegramId),
+                            group),
                     Text = group.ShortName
                 };
                 if (rowButtons.Count < 2)
