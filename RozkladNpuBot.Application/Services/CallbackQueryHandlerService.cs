@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NpuTimetableParser;
 using RozkladNpuBot.Application.Enums;
 using RozkladNpuBot.Application.Helpers;
 using RozkladNpuBot.Application.Interfaces;
@@ -48,6 +49,7 @@ namespace RozkladNpuBot.Application.Services
                     await _keyboardReplyService.ShowFacultyList(callbackQuery.Message);
                     break;
                 }
+
                 case CallbackQueryType.ShowDetailGroupMenu:
                 {
                     await _inlineKeyboardReplyService.ShowGroupMenu(
@@ -58,12 +60,14 @@ namespace RozkladNpuBot.Application.Services
                         int.Parse(callbackQueryKeyValuePair.Value[5]));
                     break;
                 }
+
                 case CallbackQueryType.ShowScheduleMenu:
                 {
                     await _inlineKeyboardReplyService
                         .ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
                     break;
                 }
+
                 case CallbackQueryType.DeleteGroup:
                 {
                     var user = await _userService.GetUser(
@@ -77,6 +81,40 @@ namespace RozkladNpuBot.Application.Services
                     await _userService.UpdateUser(user);
                     await _inlineKeyboardReplyService
                         .ShowScheduleMenu(callbackQuery.Message, callbackQuery.From.Id);
+                    break;
+                }
+
+                case CallbackQueryType.SelectedGroupForNotification:
+                {
+                    var groupExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]);
+                    var facultyShortName = callbackQueryKeyValuePair.Value[1];
+                    await _inlineKeyboardReplyService.ShowNotificationMenuForGroup(callbackQuery.Message,
+                        new Group
+                        {
+                            ExternalId = groupExternalId,
+                            FacultyShortName = facultyShortName
+                        });
+                    break;
+                }
+
+                case CallbackQueryType.ShowNotificationsMenu:
+                {
+                    var user = await _userService.GetUser(callbackQuery.From.Id)
+                        .ConfigureAwait(false);
+                    await _inlineKeyboardReplyService.ShowNotificationMenu(callbackQuery.Message, user)
+                        .ConfigureAwait(false);
+                    break;
+                }
+                    
+                case CallbackQueryType.SubscribeToScheduleNotification:
+                {
+                    
+                    break;
+                }
+
+                case CallbackQueryType.UnsubscribeFromScheduleNotification:
+                {
+                    
                     break;
                 }
             }
