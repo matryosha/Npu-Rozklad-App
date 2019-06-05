@@ -21,14 +21,14 @@ namespace RozkladSubscribeModule
         public void SubscribeUser(RozkladUser user, long chatId, Group group)
         {
             var subscribedUser = 
-                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName);
+                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName, group.ShortName);
             _usersQueue.QueueNewUser(subscribedUser);
         }
 
         public void UnsubscribeUser(RozkladUser user, long chatId, Group group)
         {
             _usersQueue.QueueUserToDelete(
-                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName));
+                new SubscribedUser(user.TelegramId, group.ExternalId, chatId, group.FacultyShortName, group.ShortName));
         }
     }
 }
