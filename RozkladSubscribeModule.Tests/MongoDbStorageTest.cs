@@ -47,9 +47,9 @@ namespace RozkladSubscribeModule.Tests
             var databaseName = GetCallerMethodName();
             var mongoStorage = GetDefaultMongoDbStorage(databaseName);
             await mongoStorage.AddUserAsync(
-                new SubscribedUser(0,0,0, "a"));
+                new SubscribedUser(0,0,0, "a", "f"));
             await mongoStorage.AddUserAsync(
-                new SubscribedUser(0, 0,0, "a"));
+                new SubscribedUser(0, 0,0, "a", "f"));
             var users = await mongoStorage.GetUsersAsync();
 
             Assert.Equal(1, users.Count);
@@ -62,7 +62,7 @@ namespace RozkladSubscribeModule.Tests
             var databaseName = GetCallerMethodName();
             var mongoStorage = GetDefaultMongoDbStorage(databaseName);
             var user =
-                new SubscribedUser(0, 0,0, "a");
+                new SubscribedUser(0, 0,0, "a", "f");
             await mongoStorage.AddUserAsync(user);
             await mongoStorage.DeleteUserAsync(user);
             var users = await mongoStorage.GetUsersAsync();
@@ -76,7 +76,7 @@ namespace RozkladSubscribeModule.Tests
             var databaseName = GetCallerMethodName();
             var mongoStorage = GetDefaultMongoDbStorage(databaseName);
             var user =
-                new SubscribedUser(0, 0,0, "a");
+                new SubscribedUser(0, 0,0, "a", "f");
             await mongoStorage.DeleteUserAsync(user);
             var users = await mongoStorage.GetUsersAsync();
 
@@ -95,7 +95,7 @@ namespace RozkladSubscribeModule.Tests
                 await mongoStorage.AddUserAsync(subscribedUser);
             }
 
-            var certainUser = new SubscribedUser(123, 123,0, "fif");
+            var certainUser = new SubscribedUser(123, 123,0, "fif", "f");
             await mongoStorage.AddUserAsync(certainUser);
             await mongoStorage.DeleteUserAsync(certainUser);
             var users = await mongoStorage.GetUsersAsync();
@@ -130,7 +130,7 @@ namespace RozkladSubscribeModule.Tests
                 await mongoStorage.AddUserAsync(subscribedUser);
             }
 
-            var certainUser = new SubscribedUser(123, 123,0, "fif");
+            var certainUser = new SubscribedUser(123, 123,0, "fif", "f");
             await mongoStorage.AddUserAsync(certainUser);
             var users = await mongoStorage.GetUsersAsync();
 

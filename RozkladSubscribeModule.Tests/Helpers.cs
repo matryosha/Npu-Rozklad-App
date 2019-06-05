@@ -17,7 +17,8 @@ namespace RozkladSubscribeModule.Tests
                     i,
                     groupExternalId,
                     i,
-                    facultyShortName));
+                    facultyShortName,
+                    "f"));
             }
 
             return resultList;
