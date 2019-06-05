@@ -337,10 +337,22 @@ namespace RozkladNpuBot.Application.Services
                     CallbackQueryDataConverters.GetSwitchingGroupSubscribeStatusCallbackData(
                         CallbackQueryType.UnsubscribeFromScheduleNotification, group)
             };
+            var backButton = new InlineKeyboardButton
+            {
+                Text = _localization["ua", "back"],
+                CallbackData = ((int)CallbackQueryType.ShowNotificationsMenu).ToString()
+            };
             var inlineKeyboardMarkup = new[]
             {
-                subscribeButton,
-                unsubscribeButton
+                new[]
+                {
+                    subscribeButton,
+                    unsubscribeButton
+                },
+                new []
+                {
+                    backButton
+                }
             };
             if (_userService.TryGetLastMessageId(message.Chat.Id, out int messageId))
                 return _botService.Client.EditMessageTextAsync(
