@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using NpuTimetableParser;
-using RozkladNpuBot.Infrastructure;
 using RozkladNpuBot.Infrastructure.Interfaces;
 
-namespace RozkladNpuBot.Application.Services
+namespace RozkladNpuBot.Infrastructure
 {
     public class MessageBuilderService
     {
