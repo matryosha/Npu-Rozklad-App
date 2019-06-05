@@ -33,6 +33,8 @@
       "turn-on": "Ввімкнути",
       "turn-off": "Вимкнути",
       "notifications-enabled-message": "Сповіщення було ввімкнуто",
-      "notifications-disabled-message": "Сповіщення було вимкнуто"
+      "notifications-disabled-message": "Сповіщення було вимкнуто",
+      "schedule-was-updated-for": "Розклад був змінений для групи",
+      "dates-with-updated-schedule": "Дні з новим розкладом"
    }
 }

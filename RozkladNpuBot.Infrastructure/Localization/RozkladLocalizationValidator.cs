@@ -42,7 +42,8 @@ namespace RozkladNpuBot.Infrastructure.Localization
             "turn-off",
             "notifications-enabled-message",
             "notifications-disabled-message",
-            "schedule-was-updated-for"
+            "schedule-was-updated-for",
+            "dates-with-updated-schedule"
         };
         public static void Validate(
             RozkladLocalization rozkladLocalization)
