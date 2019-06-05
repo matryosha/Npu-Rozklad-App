@@ -39,7 +39,9 @@ namespace RozkladNpuBot.Infrastructure.Localization
             "menu-notification",
             "notification-for",
             "turn-on",
-            "turn-off"
+            "turn-off",
+            "notifications-enabled-message",
+            "notifications-disabled-message"
         };
         public static void Validate(
             RozkladLocalization rozkladLocalization)
