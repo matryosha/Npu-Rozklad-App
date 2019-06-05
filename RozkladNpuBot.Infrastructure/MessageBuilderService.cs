@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using NpuTimetableParser;
-using RozkladNpuBot.Application.Helpers;
-using RozkladNpuBot.Application.Interfaces;
 using RozkladNpuBot.Infrastructure;
 using RozkladNpuBot.Infrastructure.Interfaces;
 
