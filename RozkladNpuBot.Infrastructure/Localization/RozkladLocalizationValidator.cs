@@ -37,6 +37,9 @@ namespace RozkladNpuBot.Infrastructure.Localization
             "updated-on",
             "group",
             "menu-notification",
+            "notification-for",
+            "turn-on",
+            "turn-off"
         };
         public static void Validate(
             RozkladLocalization rozkladLocalization)
