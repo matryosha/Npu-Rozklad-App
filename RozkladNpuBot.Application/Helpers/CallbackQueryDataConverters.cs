@@ -91,8 +91,14 @@ namespace RozkladNpuBot.Application.Helpers
                 $";{group.ExternalId};{group.FacultyShortName}" + 
                 $";{userTelegramId}";
         }
- 
 
+        public static string GetSwitchingGroupSubscribeStatusCallbackData(
+            CallbackQueryType type,
+            Group group)
+        {
+            return (int) type +
+                   $";{group.ExternalId};{group.FacultyShortName}";
+        }
     }
 
 
