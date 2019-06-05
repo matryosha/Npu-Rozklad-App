@@ -6,6 +6,8 @@
         ShowDetailGroupMenu,
         ShowScheduleMenu,
         DeleteGroup,
-        SelectedGroupForNotification
+        SelectedGroupForNotification,
+        SubscribeToScheduleNotification,
+        UnsubscribeFromScheduleNotification
     }
 }
