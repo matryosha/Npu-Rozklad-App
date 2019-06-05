@@ -9,6 +9,7 @@ using RozkladNpuBot.Infrastructure.Interfaces;
 using RozkladSubscribeModule.Entities;
 using RozkladSubscribeModule.Interfaces;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace RozkladSubscribeModule.Application
 {
@@ -41,23 +42,25 @@ namespace RozkladSubscribeModule.Application
 
             var messageHeader =
                 $"{_localizationService["ua", "schedule-was-updated-for"]}" +
-                $" {subscribedUser.GroupShortName}{Environment.NewLine}";
+                $" *--{subscribedUser.GroupShortName}--*{Environment.NewLine}" +
+                $" {Environment.NewLine}";
 
             var datesString = new StringBuilder();
             datesString.Append(_localizationService["ua", "dates-with-updated-schedule"] + ':');
             datesString.Append(Environment.NewLine);
             foreach (var date in datesWithChangedSchedule)
             {
-                datesString.Append(_messageBuilderService.ConvertDayOfWeekToText(date.DayOfWeek));
+                datesString.Append($"*{_messageBuilderService.ConvertDayOfWeekToText(date.DayOfWeek)}*");
                 datesString.Append(' ');
-                datesString.Append(date.ToString("dd/MM"));
+                datesString.Append($"`{date.ToString("dd/MM")}`");
                 datesString.Append(Environment.NewLine);
             }
 
             var messageText = messageHeader + datesString;
             
             await _botService.Client.SendTextMessageAsync(
-                new ChatId(subscribedUser.ChatId), messageText);
+                new ChatId(subscribedUser.ChatId), messageText,
+                parseMode: ParseMode.Markdown);
         }
     }
 }
