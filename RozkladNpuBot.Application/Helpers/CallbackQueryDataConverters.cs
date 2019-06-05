@@ -84,12 +84,11 @@ namespace RozkladNpuBot.Application.Helpers
         }
 
         public static string GetGroupNotificationCallbackData(
-            Group group,
-            int userTelegramId)
+            Group group)
         {
-            return (int)CallbackQueryType.SelectedGroupForNotification +
+            return (int)CallbackQueryType.ShowNotificationMenuForGroup +
                 $";{group.ExternalId};{group.FacultyShortName}" + 
-                $";{userTelegramId}";
+                $";{group.ShortName}";
         }
 
         public static string GetSwitchingGroupSubscribeStatusCallbackData(

@@ -6,7 +6,7 @@
         ShowDetailGroupMenu,
         ShowScheduleMenu,
         DeleteGroup,
-        SelectedGroupForNotification,
+        ShowNotificationMenuForGroup,
         SubscribeToScheduleNotification,
         UnsubscribeFromScheduleNotification,
         ShowNotificationsMenu
