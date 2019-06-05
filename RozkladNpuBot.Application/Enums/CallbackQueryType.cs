@@ -8,6 +8,7 @@
         DeleteGroup,
         SelectedGroupForNotification,
         SubscribeToScheduleNotification,
-        UnsubscribeFromScheduleNotification
+        UnsubscribeFromScheduleNotification,
+        ShowNotificationsMenu
     }
 }
