@@ -120,7 +120,8 @@ namespace RozkladNpuBot.Application.Services
                     var group = new Group
                     {
                         ExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]),
-                        FacultyShortName = callbackQueryKeyValuePair.Value[1]
+                        FacultyShortName = callbackQueryKeyValuePair.Value[1],
+                        ShortName = callbackQueryKeyValuePair.Value[2]
                     };
                     var user = await _userService.GetUser(callbackQuery.From.Id)
                         .ConfigureAwait(false);
@@ -139,7 +140,8 @@ namespace RozkladNpuBot.Application.Services
                     var group = new Group
                     {
                         ExternalId = int.Parse(callbackQueryKeyValuePair.Value[0]),
-                        FacultyShortName = callbackQueryKeyValuePair.Value[1]
+                        FacultyShortName = callbackQueryKeyValuePair.Value[1],
+                        ShortName = callbackQueryKeyValuePair.Value[2]
                     };
                     var user = await _userService.GetUser(callbackQuery.From.Id)
                         .ConfigureAwait(false);

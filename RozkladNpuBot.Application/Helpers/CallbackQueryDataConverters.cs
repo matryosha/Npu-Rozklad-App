@@ -96,9 +96,10 @@ namespace RozkladNpuBot.Application.Helpers
             Group group)
         {
             return (int) type +
-                   $";{group.ExternalId};{group.FacultyShortName}";
+                   $";{group.ExternalId};{group.FacultyShortName}" +
+                   $";{group.ShortName}";
         }
+        
     }
-
-
+    
 }
