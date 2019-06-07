@@ -25,4 +25,11 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Properties\secret.$(Configuration).json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
