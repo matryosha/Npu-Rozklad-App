@@ -31,5 +31,4 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 .idea/
-secret.Development.json
-secret.Release.json
+secret.*.json
