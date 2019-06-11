@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+
+ENV ASPNETCORE_ENVIRONMENT=Release
+
+COPY ./release /app
+WORKDIR /app
+
+EXPOSE 1616/tcp
+
+ENTRYPOINT ["dotnet", "RozkladNpuBot.WebApi.dll"]
