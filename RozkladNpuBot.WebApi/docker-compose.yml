@@ -1,0 +1,6 @@
+version: "3.7"
+services:
+  rozklad-app:
+    build: .
+    ports:
+      - "1616:1616"
