@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 
-ENV ASPNETCORE_ENVIRONMENT=Release
+ENV ASPNETCORE_ENVIRONMENT=Docker
+ENV ASPNETCORE_URLS=http://*:1616
 
 COPY ./release /app
 WORKDIR /app
