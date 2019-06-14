@@ -22,7 +22,6 @@ namespace RozkladNpuBot.WebApi
                             $"Properties/secret.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json"),
                         optional: true, reloadOnChange: true);
                 })
-                .UseUrls("http://*:1616")
                 .UseStartup<Startup>();
         }
     }
