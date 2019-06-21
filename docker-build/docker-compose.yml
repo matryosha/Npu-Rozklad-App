@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+  rozklad-app:
+    build: ../RozkladNpuBot.WebApi/
+    depends_on:
+      - mysql_db
+      - mongo
+    env_file: 
+      - ./env-files/rozklad-app.env
+    ports:
+      - "1617:1617"
+  mysql_db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    env_file: 
+      - ./env-files/mysql-db.env
+  mongo:
+    image: mongo
+    restart: always
+    env_file: 
+      - ./env-files/mongo.env
+  web:
+    build: ./nginx/nginx-build/
+    restart: always
+    ports:
+      - "443:443"
