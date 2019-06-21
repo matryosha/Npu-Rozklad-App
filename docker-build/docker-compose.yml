@@ -15,11 +15,15 @@ services:
     restart: always
     env_file: 
       - ./env-files/mysql-db.env
+    volumes: 
+      - /var/lib/mysql
   mongo:
     image: mongo
     restart: always
     env_file: 
       - ./env-files/mongo.env
+    volumes:
+      - /data/db
   web:
     build: ./nginx/nginx-build/
     restart: always
