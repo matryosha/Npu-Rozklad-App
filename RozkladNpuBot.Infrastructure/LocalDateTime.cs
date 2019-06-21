@@ -8,8 +8,16 @@ namespace RozkladNpuBot.Infrastructure
 
         static LocalDateTime()
         {
-            LocalTimeZoneInfo = 
-                TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
+            try
+            {
+                LocalTimeZoneInfo =
+                    TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
+            }
+            catch (TimeZoneNotFoundException e)
+            {
+                LocalTimeZoneInfo = 
+                    TimeZoneInfo.FindSystemTimeZoneById("Europe/Kiev");
+            }
         }
         public static DateTime ToLocal(this DateTime date)
         {
