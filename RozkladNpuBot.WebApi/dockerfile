@@ -1,11 +1,8 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 
-ENV ASPNETCORE_ENVIRONMENT=Docker
-ENV ASPNETCORE_URLS=http://*:1616
+ENV ASPNETCORE_URLS=http://*:1617
 
 COPY ./release /app
 WORKDIR /app
-
-EXPOSE 1616/tcp
 
 ENTRYPOINT ["dotnet", "RozkladNpuBot.WebApi.dll"]
