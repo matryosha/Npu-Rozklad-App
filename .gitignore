@@ -33,3 +33,4 @@ packages/
 .idea/
 secret.*.json
 *.pem
+*.env
