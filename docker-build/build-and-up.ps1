@@ -48,18 +48,6 @@ if($dotnet -match '\w+\.cs\(.*error.*csproj]'){
     Exit
 }
 
-
-#nginx certs w/ config
-Write-Info("Copying nginx certs...")
-Write-Info("From: .\nginx\nginx-certs\$env\* To .\nginx\nginx-build\certs\`n")
-
-Copy-Item .\nginx\nginx-certs\$env\* -Destination .\nginx\nginx-build\certs\ -Recurse
-
-Write-Info("Copying nginx configs...")
-Write-Info("From: .\nginx\nginx-config\$env\* To .\nginx\nginx-build\`n")
-
-Copy-Item .\nginx\nginx-config\$env\*  -Destination .\nginx\nginx-build\ -Recurse
-
 #environment files
 
 Write-Info("Writing to rozklad-app.env file...`n")
@@ -78,6 +66,13 @@ if(![System.IO.File]::Exists("$environment_files_path\mongo.env"))
     Write-Error("Environment file for mongo does not exist")
     exit
 }
+
+#copy-secrets-to-windows-docker-vm
+Write-Info("Copy rozklad-app secrets to docker-host...")
+docker container run --rm -v /:/host -v /f/Docs/Projects/Sharp/RozkladNpuBot/RozkladNpuBot.WebApi/Properties:/rozklad-app-secrets/ ubuntu /bin/bash -c "rm -r /host/rozklad-app-secrets; mkdir /host/rozklad-app-secrets; cp /rozklad-app-secrets/secret.*.json /host/rozklad-app-secrets/"
+
+Write-Info("Copy nginx certs to docker-host...")
+docker container run --rm -v /:/host -v /f/Docs/Projects/Sharp/RozkladNpuBot/docker-build/nginx/nginx-certs/Development/:/rozklad-app-nginx-certs/ ubuntu /bin/bash -c "rm -r /host/rozklad-app-nginx-certs; mkdir /host/rozklad-app-nginx-certs; cp /rozklad-app-nginx-certs/* /host/rozklad-app-nginx-certs/"
 
 #docker-compose build
 
