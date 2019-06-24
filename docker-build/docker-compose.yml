@@ -9,6 +9,8 @@ services:
       - ./env-files/rozklad-app.env
     ports:
       - "1617:1617"
+    volumes:
+      - "/rozklad-app-secrets/:/secrets/"
   mysql_db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -29,3 +31,5 @@ services:
     restart: always
     ports:
       - "443:443"
+    volumes:
+      - "/rozklad-app-nginx-certs/:/certs/"
