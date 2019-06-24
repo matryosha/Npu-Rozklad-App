@@ -3,6 +3,8 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 ENV ASPNETCORE_URLS=http://*:1617
 
 COPY ./release /app
+COPY ./docker-entry-point.sh /app
 WORKDIR /app
 
-ENTRYPOINT ["docker-entry-point.sh"]
+RUN chmod +x /app/docker-entry-point.sh
+CMD /bin/bash /app/docker-entry-point.sh
