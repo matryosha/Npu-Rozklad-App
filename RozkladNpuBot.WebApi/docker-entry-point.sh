@@ -7,8 +7,8 @@
 
 cp /secrets/* /app/Properties/
 
-$run_cmd="dotnet RozkladNpuBot.WebApi.dll"
-exec run_cmd
+run_cmd="dotnet RozkladNpuBot.WebApi.dll"
+exec $run_cmd
 
 
 
