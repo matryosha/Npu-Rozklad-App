@@ -33,3 +33,5 @@ services:
       - "443:443"
     volumes:
       - "/rozklad-app-nginx-certs/:/certs/"
+    depends_on: 
+      - rozklad-app
