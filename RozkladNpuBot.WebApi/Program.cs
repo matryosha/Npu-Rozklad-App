@@ -3,30 +3,21 @@ using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using RozkladNpuBot.Persistence.Helpers;
 
 namespace RozkladNpuBot.WebApi
 {
     public class Program
     {
-        public static void Main(string[] args) {
-            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            ConfigureConfiguration(configurationBuilder);
-            IConfiguration configuration = configurationBuilder.Build();
-            var mysqlConnectionString = configuration.GetSection("DbConfiguration")["ConnectionStringMySql"];
-            var mongoConnectionString = configuration.GetSection("DbConfiguration")["ConnectionStringMongoDb"];
-
-            CheckDatabaseConnections.CheckDbConnections(mysqlConnectionString, 
-                mongoConnectionString);
+        public static void Main(string[] args)
+        {
             CreateWebHostBuilder(args).Build().Run();
-            
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) {
-            return WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(ConfigureConfiguration)
                 .UseStartup<Startup>();
-        }
+
         public static void ConfigureConfiguration(IConfigurationBuilder config)
         {
             config.SetBasePath(Directory.GetCurrentDirectory());
