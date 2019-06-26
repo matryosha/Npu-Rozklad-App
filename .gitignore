@@ -35,3 +35,4 @@ secret.*.json
 *.pem
 *.env
 /docker-build/nginx/nginx-build/default.conf
+publish*/
