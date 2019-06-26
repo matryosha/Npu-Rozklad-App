@@ -1,3 +1,14 @@
+Param(
+ [parameter(mandatory=$false)]
+ [switch]$Up,
+ [parameter(mandatory=$false)]
+ [switch]$Push,
+ [parameter(mandatory=$false)]
+ [switch]$Publish,
+ [parameter(mandatory=$false)]
+ [string]$Configuration
+)
+
 function Write-Info {
     param (
         [string]$message
@@ -13,15 +24,15 @@ function Write-Error {
 }
 
 
-$env=$args[0]
 $webapi_path= (Resolve-Path "..\RozkladNpuBot.WebApi\").Path
 $webapi_output_folder_name="release"
 $dotnet_configuraton = "Docker"
 $environment_files_path = (Resolve-Path(".\env-files")).Path
+$do_compose_up=$false
+$do_compose_push=$false
 
-if($env -ne 'Production')
+if($Configuration -ne 'Production')
 {
-    $env='Development'
     $dotnet_configuraton = "DockerDevel"
 }
 
@@ -74,12 +85,42 @@ docker container run --rm -v /:/host -v /f/Docs/Projects/Sharp/RozkladNpuBot/Roz
 Write-Info("Copy nginx certs to docker-host...")
 docker container run --rm -v /:/host -v /f/Docs/Projects/Sharp/RozkladNpuBot/docker-build/nginx/nginx-certs/Development/:/rozklad-app-nginx-certs/ ubuntu /bin/bash -c "rm -r /host/rozklad-app-nginx-certs; mkdir /host/rozklad-app-nginx-certs; cp /rozklad-app-nginx-certs/* /host/rozklad-app-nginx-certs/"
 
-#docker-compose build
+#docker-compose
 
 Write-Info("Docker compose build...`n")
 docker-compose.exe build 
 
-Write-Info("Docker compose up...`n")
-docker-compose.exe up 
+if ($Push -eq $true) {
+    if($Publish -ne $true){
+        Write-Info("Docker compose push...`n")
+        docker-compose.exe push 
+    }
+}
 
+if ($Up -eq $true) {
+    Write-Info("Docker compose up...`n")
+    docker-compose.exe up 
+}
+
+#publish
+
+if ($Publish -eq $true){
+    Write-Info("Docker compose push...`n")
+    docker-compose.exe push 
+
+    $current_dir_path = (Resolve-Path ".\").Path
+    if([System.IO.Directory]::Exists("$current_dir_path\publish")){
+        $removefile = Remove-Item -Path $current_dir_path/publish -Recurse
+    }
+    mkdir .\publish
+    $webapi_properties_path = "$webapi_path\Properties"
+    mkdir .\publish\rozklad-app-nginx-certs
+    mkdir .\publish\rozklad-app-secrets
+    Copy-Item -Path $webapi_properties_path\secret.*.json -Destination .\publish\rozklad-app-secrets\ 
+    Copy-Item -Path .\env-files -Destination .\publish -Recurse
+    Copy-Item -Path .\docker-compose.yml .\publish
+    Copy-Item -Path .\nginx\nginx-certs\$Configuration\* .\publish\rozklad-app-nginx-certs\
+    Copy-Item -Path .\prepare-host.sh .\publish\
+    
+}
 
