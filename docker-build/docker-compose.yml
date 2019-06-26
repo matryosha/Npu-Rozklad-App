@@ -1,16 +1,17 @@
 version: "3.7"
 services:
   rozklad-app:
+    image: matryoshka/rozklad-app
     build: ../RozkladNpuBot.WebApi/
     depends_on:
       - mysql_db
       - mongo
     env_file: 
       - ./env-files/rozklad-app.env
-    ports:
-      - "1617:1617"
     volumes:
       - "/rozklad-app-secrets/:/secrets/"
+    networks:
+      - rozklad-network
   mysql_db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -19,6 +20,8 @@ services:
       - ./env-files/mysql-db.env
     volumes: 
       - /var/lib/mysql
+    networks:
+      - rozklad-network    
   mongo:
     image: mongo
     restart: always
@@ -26,12 +29,18 @@ services:
       - ./env-files/mongo.env
     volumes:
       - /data/db
+    networks:
+      - rozklad-network
   web:
+    image: matryoshka/rozklad-nginx
     build: ./nginx/nginx-build/
     restart: always
     ports:
       - "443:443"
     volumes:
       - "/rozklad-app-nginx-certs/:/certs/"
-    depends_on: 
-      - rozklad-app
+    networks:
+      - rozklad-network
+networks:
+  rozklad-network:
+    attachable: true
