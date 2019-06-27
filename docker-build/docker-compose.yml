@@ -2,6 +2,7 @@ version: "3.7"
 services:
   rozklad-app:
     image: matryoshka/rozklad-app
+    restart: always
     depends_on:
       - mysql_db
       - mongo
