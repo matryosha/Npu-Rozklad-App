@@ -2,7 +2,7 @@
 
 rm -r /rozklad-app
 mkdir /rozklad-app
-cp ./docker-compose.yml /rozklad-app/
+cp ./docker-compose*.yml /rozklad-app/
 cp -r ./env-files /rozklad-app/
 
 

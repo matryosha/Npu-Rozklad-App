@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   rozklad-app:
-    build: ../RozkladNpuBot.WebApi/
+    image: matryoshka/rozklad-app:dev
     env_file: 
       - ./env-files/rozklad-app.env
     volumes:
@@ -16,6 +16,6 @@ services:
     - ./env-files/mongo.env
     
   web:
-    build: ./nginx/nginx-build/
+    image: matryoshka/rozklad-nginx:dev
     volumes:
       - "/f/Docs/Projects/Sharp/RozkladNpuBot/docker-build/nginx/nginx-certs/Development/:/certs/"

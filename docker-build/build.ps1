@@ -5,7 +5,7 @@ Param(
  [switch]$Push,
  [parameter(mandatory=$false)]
  [switch]$Publish,
- [parameter(mandatory=$false)]
+ [parameter(mandatory=$true)]
  [string]$Configuration
 )
 
@@ -86,25 +86,25 @@ docker container run --rm -v /:/host -v /f/Docs/Projects/Sharp/RozkladNpuBot/doc
 #docker-compose
 
 Write-Info("Docker compose build...`n")
-docker-compose.exe build 
+docker-compose.exe -f .\docker-compose.yml -f .\docker-compose.build-paths.yml -f .\docker-compose.$Configuration.yml build 
 
 if ($Push -eq $true) {
     if($Publish -ne $true){
         Write-Info("Docker compose push...`n")
-        docker-compose.exe push 
+        docker-compose.exe -f .\docker-compose.yml -f .\docker-compose.build-paths.yml -f .\docker-compose.$Configuration.yml push 
     }
 }
 
 if ($Up -eq $true) {
     Write-Info("Docker compose up...`n")
-    docker-compose.exe up 
+    docker-compose.exe -f .\docker-compose.yml -f .\docker-compose.build-paths.yml -f .\docker-compose.$Configuration.yml up 
 }
 
 #publish
 
 if ($Publish -eq $true){
     Write-Info("Docker compose push...`n")
-    docker-compose.exe push 
+    docker-compose.exe -f .\docker-compose.yml -f .\docker-compose.build-paths.yml -f .\docker-compose.$Configuration.yml push 
 
     $current_dir_path = (Resolve-Path ".\").Path
     if([System.IO.Directory]::Exists("$current_dir_path\publish")){
@@ -117,6 +117,7 @@ if ($Publish -eq $true){
     Copy-Item -Path $webapi_properties_path\secret.*.json -Destination .\publish\rozklad-app-secrets\ 
     Copy-Item -Path .\env-files -Destination .\publish -Recurse
     Copy-Item -Path .\docker-compose.yml .\publish
+    Copy-Item -Path .\docker-compose.$Configuration.yml .\publish\docker-compose.override.yml
     Copy-Item -Path .\nginx\nginx-certs\$Configuration\* .\publish\rozklad-app-nginx-certs\
     Copy-Item -Path .\prepare-host.sh .\publish\
     
