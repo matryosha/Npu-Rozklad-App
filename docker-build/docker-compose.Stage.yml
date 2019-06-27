@@ -3,7 +3,7 @@ services:
   rozklad-app:
     image: matryoshka/rozklad-app:stage
     environment: 
-      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_ENVIRONMENT: DockerDevel
     volumes:
       - "/rozklad-app-secrets/:/secrets/"
 

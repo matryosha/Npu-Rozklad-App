@@ -13,14 +13,14 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     volumes: 
-      - /var/lib/mysql
+      - "rozklad-mysql-db:/var/lib/mysql"
     networks:
       - rozklad-network    
   mongo:
     image: mongo
     restart: always
     volumes:
-      - /data/db
+      - "rozklad-mongo-db:/data/db"
     networks:
       - rozklad-network
   web:
@@ -32,6 +32,11 @@ services:
       - rozklad-network
     depends_on: 
       - rozklad-app
+
 networks:
   rozklad-network:
     attachable: true
+
+volumes:
+  rozklad-mongo-db:
+  rozklad-mysql-db:
