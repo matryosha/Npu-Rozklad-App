@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  rozklad-app:
+    build: ../RozkladNpuBot.WebApi/
+    env_file: 
+      - ./env-files/rozklad-app.env
+    volumes:
+      - "/f/Docs/Projects/Sharp/RozkladNpuBot/RozkladNpuBot.WebApi/Properties/:/secrets/"
+
+  mysql_db:
+    env_file: 
+      - ./env-files/mysql-db.env
+    
+  mongo:
+    env_file:
+    - ./env-files/mongo.env
+    
+  web:
+    build: ./nginx/nginx-build/
+    volumes:
+      - "/f/Docs/Projects/Sharp/RozkladNpuBot/docker-build/nginx/nginx-certs/Development/:/certs/"
