@@ -28,8 +28,6 @@ $webapi_path= (Resolve-Path "..\RozkladNpuBot.WebApi\").Path
 $webapi_output_folder_name="release"
 $dotnet_configuraton = "Docker"
 $environment_files_path = (Resolve-Path(".\env-files")).Path
-$do_compose_up=$false
-$do_compose_push=$false
 
 if($Configuration -ne 'Production')
 {
