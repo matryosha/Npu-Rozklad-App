@@ -36,3 +36,4 @@ secret.*.json
 *.env
 /docker-build/nginx/nginx-build/default.conf
 publish*/
+venv/
