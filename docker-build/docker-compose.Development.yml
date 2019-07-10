@@ -2,10 +2,10 @@ version: "3.7"
 services:
   rozklad-app:
     image: matryoshka/rozklad-app:dev
-    env_file: 
-      - ./env-files/rozklad-app.env
+    environment: 
+      ASPNETCORE_ENVIRONMENT: DockerDevel
     volumes:
-      - "/f/Docs/Projects/Sharp/RozkladNpuBot/RozkladNpuBot.WebApi/Properties/:/secrets/"
+      - "rozklad-app-dev-secrets:/secrets/"
 
   mysql_db:
     env_file: 
@@ -18,4 +18,10 @@ services:
   web:
     image: matryoshka/rozklad-nginx:dev
     volumes:
-      - "/f/Docs/Projects/Sharp/RozkladNpuBot/docker-build/nginx/nginx-certs/Development/:/certs/"
+      - "rozklad-nginx-dev-certs:/certs/"
+      
+volumes:
+  rozklad-app-dev-secrets:
+    external: true
+  rozklad-nginx-dev-certs:
+    external: true
