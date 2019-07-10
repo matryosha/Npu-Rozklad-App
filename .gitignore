@@ -37,3 +37,4 @@ secret.*.json
 /docker-build/nginx/nginx-build/default.conf
 publish*/
 venv/
+__pycache__/
