@@ -41,3 +41,5 @@ __pycache__/
 dist/
 build/
 build.spec
+docker-build/build
+docker-build/config.yaml
