@@ -138,7 +138,6 @@ def set_configuration_vars(configurations):
     global project_path, webapi_output_folder_name, dotnet_configuration, webapi_project_path, \
         script_work_dir, environment_files_path, nginx_certs_path
 
-    log.info("Loading configuration...")
     project_path = configurations['project_path']
     webapi_output_folder_name = configurations['webapi_output_folder_name']
     dotnet_configuration = configurations['dotnet_configuration']

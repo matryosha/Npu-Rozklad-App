@@ -38,3 +38,6 @@ secret.*.json
 publish*/
 venv/
 __pycache__/
+dist/
+build/
+build.spec
