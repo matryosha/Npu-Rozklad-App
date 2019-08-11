@@ -12,6 +12,7 @@ namespace NpuTimetableParser.Tests
     public class NpuParserTests
     {
         private static string _mockServerContentPath = "Infrastructure/MockServerContent";
+
         [TestMethod]
         public async Task SimpleLessonsTest()
         {
@@ -20,7 +21,7 @@ namespace NpuTimetableParser.Tests
             var groups = await parser.GetGroups("fi");
 
             //act
-            List<Lesson> testLessonsList = 
+            List<Lesson> testLessonsList =
                 await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 18));
 
             //assert
@@ -52,7 +53,7 @@ namespace NpuTimetableParser.Tests
         public async Task SimpleFractionTest()
         {
             var parser = GetParser();
-            List<Lesson> lessons = 
+            List<Lesson> lessons =
                 await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 21));
 
             Assert.AreEqual(2, lessons.Count);
@@ -72,7 +73,7 @@ namespace NpuTimetableParser.Tests
             Assert.AreEqual(1, classes3.Count);
             var class3 = classes3.FirstOrDefault();
             Assert.AreEqual(Fraction.Denominator, class3.Fraction);
-            Assert.AreEqual("Педагогіка", class3.Subject.Name);
+            Assert.AreEqual("РџРµРґР°РіРѕРіС–РєР°", class3.Subject.Name);
         }
 
         [TestMethod]
@@ -87,8 +88,33 @@ namespace NpuTimetableParser.Tests
             Assert.AreEqual(2, subGroupLessons.Count);
             var firstGroupLesson = subGroupLessons.FirstOrDefault(l => l.SubGroup == SubGroup.First);
             var secondGroupLesson = subGroupLessons.FirstOrDefault(l => l.SubGroup == SubGroup.Second);
-            Assert.AreEqual("Економіка та бізнес (за вибором)", firstGroupLesson.Subject.Name);
-            Assert.AreEqual("Політологія", secondGroupLesson.Subject.Name);
+            Assert.AreEqual("Р•РєРѕРЅРѕРјС–РєР° С‚Р° Р±С–Р·РЅРµСЃ (Р·Р° РІРёР±РѕСЂРѕРј)", firstGroupLesson.Subject.Name);
+            Assert.AreEqual("РџРѕР»С–С‚РѕР»РѕРіС–СЏ", secondGroupLesson.Subject.Name);
+        }
+
+        [TestMethod]
+        public void RealServer_FacultiesNotEmpty()
+        {
+            var parser = new NpuParser();
+            var faculties = parser.GetFaculties();
+            Assert.IsTrue(faculties.Any());
+        }
+
+        [TestMethod]
+        public async Task RealServer_GroupsNotEmpty()
+        {
+            var parser = new NpuParser();
+            var groups = await parser.GetGroups("fi");
+            Assert.IsTrue(groups.Any());
+        }
+
+        [TestMethod]
+        public async Task RealServer_LessonsNotEmpty()
+        {
+            var parser = new NpuParser();
+            var groups = await parser.GetGroups("fi");
+            var lessons = await parser.GetLessonsOnDate("fi", groups.First().ExternalId, new DateTime(2019, 4, 10));
+            Assert.IsTrue(lessons.Any());
         }
 
         public static string ReadMockContent(string fileName)
@@ -103,7 +129,8 @@ namespace NpuTimetableParser.Tests
                 CalendarRawContent = ReadMockContent($"{_mockServerContentPath}/CalendarRawContent.txt"),
                 GroupsRawContent = ReadMockContent($"{_mockServerContentPath}/GroupsRawContent.txt"),
                 LecturesRawContent = ReadMockContent($"{_mockServerContentPath}/LecturesRawContent.txt"),
-                ClassroomsRawContent = ReadMockContent($"{_mockServerContentPath}/ClassroomsRawContent.txt")
+                ClassroomsRawContent = ReadMockContent($"{_mockServerContentPath}/ClassroomsRawContent.txt"),
+                FacultiesRawContent = ReadMockContent($"{_mockServerContentPath}/FacultiesRawContent.txt")
             };
             var parser = new NpuParser();
             parser.SetClient(mockClient);

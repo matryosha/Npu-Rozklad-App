@@ -174,6 +174,11 @@ namespace NpuTimetableParser
             _faculty = faculty;
         }
 
+        public void SetClient(IRestClient client)
+        {
+            _client = client;
+        }
+
         /// <summary>
         /// Resolve all conflicts and put new lesson in right place
         /// </summary>

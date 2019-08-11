@@ -15,27 +15,25 @@ namespace NpuTimetableParser
         private ReaderWriterLockSlim _lessonsLock = new ReaderWriterLockSlim();
 
         private RawStringParser _parser;
-        //private NpuParserInstance _testInstance;
         private readonly NpuParserHelper _helper;
         private readonly Dictionary<string, NpuParserInstance> _npuInstances;
         private List<Faculty> _faculties;
 
         public NpuParser()
         {
-            _client = new RestClient("http://ei.npu.edu.ua");
+            _client = new RestClient("https://ei.npu.edu.ua");
             _parser = new RawStringParser();
             _helper = new NpuParserHelper(_client, _parser);
             _npuInstances = new Dictionary<string, NpuParserInstance>();
-            _faculties = _helper.GetFaculties();
         }
 
-        public List<Faculty> GetFaculties() => _faculties;
+        public List<Faculty> GetFaculties() => _faculties ?? (_faculties = _helper.GetFaculties());
 
         public Task<List<Group>> GetGroups(string facultyShortName)
         {
             if (!_npuInstances.ContainsKey(facultyShortName))
             {
-                if (_faculties.Any(f => f.ShortName == facultyShortName))
+                if (GetFaculties().Any(f => f.ShortName == facultyShortName))
                 {
                     _groupsLock.EnterWriteLock();
                     if (!_npuInstances.ContainsKey(facultyShortName))
@@ -59,7 +57,7 @@ namespace NpuTimetableParser
             date = new DateTime(date.Year, date.Month, date.Day, 0,0,0);
             if (!_npuInstances.ContainsKey(facultyShortName))
             {
-                if (_faculties.Any(f => f.ShortName == facultyShortName))
+                if (GetFaculties().Any(f => f.ShortName == facultyShortName))
                 {
                     _lessonsLock.EnterWriteLock();
                     if(!_npuInstances.ContainsKey(facultyShortName))
@@ -81,6 +79,7 @@ namespace NpuTimetableParser
         public void SetClient(IRestClient client)
         {
             _client = client;
+            _helper.SetClient(client);
         }
     }
 }
