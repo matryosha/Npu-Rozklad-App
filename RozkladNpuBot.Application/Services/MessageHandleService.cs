@@ -22,6 +22,7 @@ namespace RozkladNpuBot.Application.Services
         private readonly ILocalizationService _localization;
         private readonly ReplyKeyboardMarkupCreator _replyKeyboardMarkupCreator;
         private readonly ILogger<MessageHandleService> _logger;
+        private readonly IApplicationVersionGiver _applicationVersionGiver;
         private readonly UnknownResponseConfiguration _replyStickers;
         public MessageHandleService(
             IBotService botService, 
@@ -32,7 +33,8 @@ namespace RozkladNpuBot.Application.Services
             IInlineKeyboardReplyService inlineKeyboardReplyService,
             ILocalizationService localization,
             ReplyKeyboardMarkupCreator replyKeyboardMarkupCreator,
-            ILogger<MessageHandleService> logger)
+            ILogger<MessageHandleService> logger,
+            IApplicationVersionGiver applicationVersionGiver)
         {
             _botService = botService;
             _lessonsProvider = lessonsProvider;
@@ -42,6 +44,7 @@ namespace RozkladNpuBot.Application.Services
             _localization = localization;
             _replyKeyboardMarkupCreator = replyKeyboardMarkupCreator;
             _logger = logger;
+            _applicationVersionGiver = applicationVersionGiver;
             _replyStickers = idkStickers.Value;
         }
 
@@ -75,6 +78,12 @@ namespace RozkladNpuBot.Application.Services
                 user.IsDeleted = true;
                 user.Groups.Clear();
                 await _userService.UpdateUser(user);
+                return;
+            }
+            else if (message.Text == "/version")
+            {
+                await _botService.Client.SendTextMessageAsync(message.Chat.Id, _applicationVersionGiver.GetApplicationVersion(),
+                    replyMarkup: _replyKeyboardMarkupCreator.MainMenuMarkup());
                 return;
             }
 

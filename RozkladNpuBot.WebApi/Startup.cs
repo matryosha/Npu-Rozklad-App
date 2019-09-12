@@ -48,6 +48,7 @@ namespace RozkladNpuBot.WebApi
             services.AddScoped<IKeyboardReplyService, KeyboardReplyService>();
             services.AddScoped<IMessageHandleService, MessageHandleService>();
             services.AddScoped<ICallbackQueryHandlerService, CallbackQueryHandlerService>();
+            services.AddScoped<IApplicationVersionGiver, WebApiApplicationGiver>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<BotConfiguration>(options => Configuration.GetSection("BotConfiguration").Bind(options));
