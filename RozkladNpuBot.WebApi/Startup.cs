@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,7 @@ namespace RozkladNpuBot.WebApi
             } else {
 
             }
+            System.Console.WriteLine($"Current configuration is: \"{env.EnvironmentName}\"");
             context.Database.Migrate();
             app.Use(async (httpContext, next) => {
                 await next();
