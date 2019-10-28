@@ -146,7 +146,7 @@ namespace NpuTimetableParser
             var deleteOldLessons = new List<Lesson>(resultLessonsList);
             var currentWeekInt = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Monday) % 2;
             var currentWeek = Fraction.None;
-            if (currentWeekInt == 1)
+            if (currentWeekInt == 0)
             {
                 currentWeek = Fraction.Numerator;
             }
