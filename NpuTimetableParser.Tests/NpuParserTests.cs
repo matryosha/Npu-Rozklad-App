@@ -19,10 +19,11 @@ namespace NpuTimetableParser.Tests
             //arrange
             var parser = GetParser();
             var groups = await parser.GetGroups("fi");
-
+            
+            var group = groups.FirstOrDefault(g => g.ExternalId == 75);
             //act
             List<Lesson> testLessonsList =
-                await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 18));
+                await parser.GetLessonsOnDate("fi", group.ExternalId, new DateTime(2019, 3, 18));
 
             //assert
             Assert.AreEqual(3, testLessonsList.Count);
@@ -30,14 +31,14 @@ namespace NpuTimetableParser.Tests
             var assert1 = testLessonsList.Where(l => l.LessonNumber == 2).ToList();
             Assert.AreEqual(1, assert1.Count);
             var lesson1 = assert1[0];
-            Assert.AreEqual(389, lesson1.Lecturer.ExternalId);
+            Assert.AreEqual(896, lesson1.Lecturer.ExternalId);
             Assert.AreEqual(Fraction.None, lesson1.Fraction);
             Assert.AreEqual(SubGroup.None, lesson1.SubGroup);
 
             var assert2 = testLessonsList.Where(l => l.LessonNumber == 3).ToList();
             Assert.AreEqual(1, assert2.Count);
             var lesson2 = assert2[0];
-            Assert.AreEqual(389, lesson2.Lecturer.ExternalId);
+            Assert.AreEqual(896, lesson2.Lecturer.ExternalId);
             Assert.AreEqual(Fraction.None, lesson2.Fraction);
             Assert.AreEqual(SubGroup.None, lesson2.SubGroup);
 
@@ -53,37 +54,47 @@ namespace NpuTimetableParser.Tests
         public async Task SimpleFractionTest()
         {
             var parser = GetParser();
-            List<Lesson> lessons =
-                await parser.GetLessonsOnDate("fi", 75, new DateTime(2019, 3, 21));
+            var groups = await parser.GetGroups("fi");
 
-            Assert.AreEqual(2, lessons.Count);
+            var group = groups.FirstOrDefault(g => g.ExternalId == 411);
+            List<Lesson> lessons =
+                await parser.GetLessonsOnDate("fi", group.ExternalId, new DateTime(2019, 3, 18));
+
+            Assert.AreEqual(4, lessons.Count);
             var fractionLesson = lessons.FirstOrDefault(l => l.LessonNumber == 3);
-            Assert.AreEqual(Fraction.Denominator, fractionLesson.Fraction);
+            Assert.AreEqual(Fraction.Numerator, fractionLesson.Fraction);
         }
 
         [TestMethod]
         public async Task DoubleFractionTest()
         {
             var parser = GetParser();
+            var groups = await parser.GetGroups("fi");
+            var group = groups.FirstOrDefault(g => g.ExternalId == 86);
+
             List<Lesson> lessons =
-                await parser.GetLessonsOnDate("fi", 86, new DateTime(2019, 3, 19));
+                await parser.GetLessonsOnDate("fi", group.ExternalId, new DateTime(2019, 3, 19));
 
             Assert.AreEqual(2, lessons.Count);
             var classes3 = lessons.Where(l => l.LessonNumber == 3).ToList();
             Assert.AreEqual(1, classes3.Count);
             var class3 = classes3.FirstOrDefault();
-            Assert.AreEqual(Fraction.Denominator, class3.Fraction);
-            Assert.AreEqual("Педагогіка", class3.Subject.Name);
+            Assert.AreEqual(Fraction.Numerator, class3.Fraction);
+            Assert.AreEqual("Комп'ютерна графіка", class3.Subject.Name);
         }
 
         [TestMethod]
         public async Task SubGroupTest()
         {
             var parser = GetParser();
-            List<Lesson> lessons =
-                await parser.GetLessonsOnDate("fi", 490, new DateTime(2019, 3, 20));
+            var groups = await parser.GetGroups("fi");
 
-            Assert.AreEqual(4, lessons.Count);
+            var group = groups.FirstOrDefault(g => g.ExternalId == 490);
+
+            List<Lesson> lessons =
+                await parser.GetLessonsOnDate("fi", group.ExternalId, new DateTime(2019, 3, 20));
+
+            Assert.AreEqual(5, lessons.Count);
             var subGroupLessons = lessons.Where(l => l.LessonNumber == 4).ToList();
             Assert.AreEqual(2, subGroupLessons.Count);
             var firstGroupLesson = subGroupLessons.FirstOrDefault(l => l.SubGroup == SubGroup.First);
@@ -113,7 +124,7 @@ namespace NpuTimetableParser.Tests
         {
             var parser = new NpuParser();
             var groups = await parser.GetGroups("fi");
-            var lessons = await parser.GetLessonsOnDate("fi", groups.First().ExternalId, new DateTime(2019, 4, 10));
+            var lessons = await parser.GetLessonsOnDate("fi", groups[4].ExternalId, new DateTime(2019, 11, 5));
             Assert.IsTrue(lessons.Any());
         }
 
@@ -130,7 +141,8 @@ namespace NpuTimetableParser.Tests
                 GroupsRawContent = ReadMockContent($"{_mockServerContentPath}/GroupsRawContent.txt"),
                 LecturesRawContent = ReadMockContent($"{_mockServerContentPath}/LecturesRawContent.txt"),
                 ClassroomsRawContent = ReadMockContent($"{_mockServerContentPath}/ClassroomsRawContent.txt"),
-                FacultiesRawContent = ReadMockContent($"{_mockServerContentPath}/FacultiesRawContent.txt")
+                FacultiesRawContent = ReadMockContent($"{_mockServerContentPath}/FacultiesRawContent.txt"),
+                SettingsRawContent = ReadMockContent($"{_mockServerContentPath}/SettingsRawContent.txt")
             };
             var parser = new NpuParser();
             parser.SetClient(mockClient);
