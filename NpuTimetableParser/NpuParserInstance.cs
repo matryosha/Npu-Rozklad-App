@@ -118,6 +118,7 @@ namespace NpuTimetableParser
                 _lastLessonUpdateTime = DateTime.Now;
             }
 
+            var isOddDay = _helper.IsOddDayWeek(date);
             var startPoint = date.AddDays(_deltaGapInDays);
             List<Lesson> resultLessonsList = new List<Lesson>();
 
@@ -146,14 +147,7 @@ namespace NpuTimetableParser
             var deleteOldLessons = new List<Lesson>(resultLessonsList);
             var currentWeekInt = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Monday) % 2;
             var currentWeek = Fraction.None;
-            if (currentWeekInt == 0)
-            {
-                currentWeek = Fraction.Numerator;
-            }
-            else
-            {
-                currentWeek = Fraction.Denominator;
-            }
+            currentWeek = isOddDay ? Fraction.Numerator : Fraction.Denominator;
 
             foreach (var lesson in resultLessonsList)
             {
