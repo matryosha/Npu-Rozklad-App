@@ -21,6 +21,7 @@ namespace NpuTimeTableParserTest.Infrastructure
         public string LecturesRawContent { get; set; }
         public string ClassroomsRawContent { get; set; }
         public string FacultiesRawContent { get; set; }
+        public string SettingsRawContent { get; set; }
 
         public IRestResponse Execute(IRestRequest request)
         {
@@ -38,6 +39,8 @@ namespace NpuTimeTableParserTest.Infrastructure
                     return new MockRestResponse(ClassroomsRawContent);
                 case "get faculties":
                     return new MockRestResponse(FacultiesRawContent);
+                case "get settings":
+                    return new MockRestResponse(SettingsRawContent);
             }
             throw new Exception("There is no such a code");
         }

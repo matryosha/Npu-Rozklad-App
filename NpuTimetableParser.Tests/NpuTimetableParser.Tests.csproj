@@ -31,6 +31,9 @@
     <Content Include="Infrastructure\MockServerContent\LecturesRawContent.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Infrastructure\MockServerContent\SettingsRawContent.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Infrastructure\MockServerContent\testcalendar.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
