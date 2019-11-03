@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NpuTimetableParser;
 using RozkladNpuBot.Application.Enums;
+using RozkladNpuBot.Common;
 using RozkladNpuBot.Infrastructure;
 
 namespace RozkladNpuBot.Application.Helpers
