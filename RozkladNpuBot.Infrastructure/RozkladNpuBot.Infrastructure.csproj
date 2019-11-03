@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NpuTimetableParser\NpuTimetableParser.csproj" />
     <ProjectReference Include="..\RozkladNpuBot.Common\RozkladNpuBot.Common.csproj" />
   </ItemGroup>
 
