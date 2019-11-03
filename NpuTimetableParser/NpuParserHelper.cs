@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using RestSharp;
+using RozkladNpuBot.Common;
 
 namespace NpuTimetableParser
 {
@@ -169,6 +170,34 @@ namespace NpuTimetableParser
                 _faculty);
         }
 
+        public bool IsOddDayWeek(DateTime date)
+        {
+            var clientResponse = SiteRequest("get settings", "fi");
+            // alg from CalendarPreparator.js:452
+            var (oddEvenDay, isOddDay) = _rawParser.GetSettings(clientResponse);
+            var startWeekDate = GetStartWeekDate(date.ToLocal());
+
+            var distanceToOddEvenDay = (oddEvenDay - startWeekDate).Days;
+            if ((distanceToOddEvenDay % 14 == 0))
+                return isOddDay;
+
+            return !isOddDay;
+        }
+
+        private DateTime GetStartWeekDate(DateTime date)
+        {
+            // rozlad client code adapted to c#
+            // DynamicOIL.js:141
+            // 1 IQ moves
+            if (date.DayOfWeek ==  DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday)
+            {
+                date = date.AddDays(7);
+            }
+	
+            var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+            return date.AddDays(-1 * diff).Date;
+        }
+        
         public void SetFaculty(string faculty)
         {
             _faculty = faculty;

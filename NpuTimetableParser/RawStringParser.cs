@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NpuTimetableParser
 {
@@ -185,6 +187,20 @@ namespace NpuTimetableParser
             }
 
             return result;
+        }
+
+        public (DateTime date, bool IsOddDay) GetSettings(string rawString)
+        {
+            var values = GetValues(rawString);
+            var rawValues = JsonConvert.DeserializeObject(rawString) as JObject;
+
+            var oddEvenDaySettingItemAsString = rawValues["response"][4].ToString();
+            var separatedStringValues = oddEvenDaySettingItemAsString.Split('|');
+
+            var dateValue = DateTime.Parse(separatedStringValues[0]);
+            var boolValue = bool.Parse(separatedStringValues[1]);
+            
+            return (dateValue, boolValue);
         }
 
         private static IEnumerable<List<string>> GetValues(string rawString)
