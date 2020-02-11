@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>NpuRozklad.Subscribtion.Abstractions</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\NpuRozklad.Core\NpuRozklad.Core.csproj" />
+    </ItemGroup>
+
+</Project>
