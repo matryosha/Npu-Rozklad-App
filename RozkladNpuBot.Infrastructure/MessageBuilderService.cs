@@ -111,6 +111,10 @@ namespace RozkladNpuBot.Infrastructure
                     return "15:30 - 16:50";
                 case 7:
                     return "17:00 - 18:20";
+                case 8:
+                    return "18:30 - 19:50";
+                case 9:
+                    return "20:00 - 21:20";
                 default: return number.ToString();
             }
         }
