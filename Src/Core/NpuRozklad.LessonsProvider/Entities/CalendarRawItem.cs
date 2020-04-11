@@ -1,4 +1,4 @@
-namespace NpuRozklad.Parser.Entities
+namespace NpuRozklad.LessonsProvider.Entities
 {
     internal class CalendarRawItem
     {
