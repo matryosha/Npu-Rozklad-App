@@ -4,13 +4,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NpuRozklad.Parser.Entities;
+using NpuRozklad.Core.Entities;
+using NpuRozklad.LessonsProvider.Entities;
+using Group = NpuRozklad.Core.Entities.Group;
 
-namespace NpuRozklad.Parser
+namespace NpuRozklad.LessonsProvider
 {
-    internal sealed class RawStringParser : IRozkladValuesDeserializer
+    internal static class RawStringParser
     {
-        public List<CalendarRawItem> DeserializeCalendar(string rawString)
+        public static List<CalendarRawItem> DeserializeCalendar(string rawString)
         {
             var result = new List<CalendarRawItem>();
             var rawValues = GetValues(rawString);
@@ -21,19 +23,14 @@ namespace NpuRozklad.Parser
 
                 var item = new CalendarRawItem();
 
-                var groupId = -1;
-                var lectureId = -1;
-                var classroomId = -1;
-                var lessonCount = -1;
-                var lessonNumber = -1;
-                var fraction = -1;
-                var subgroup = -1;
+                int groupId, lectureId, classroomId, lessonCount, lessonNumber, fraction, subgroup;
+                groupId = lectureId = classroomId = lessonCount = lessonNumber = fraction = subgroup = -1;
 
                 try
                 {
                     int.TryParse(rawValue[0], out groupId);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -41,7 +38,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[2], out lectureId);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -49,7 +46,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[3], out classroomId);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -57,7 +54,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[5], out lessonCount);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -65,7 +62,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[6], out lessonNumber);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -73,7 +70,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[7], out fraction);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -81,7 +78,7 @@ namespace NpuRozklad.Parser
                 {
                     int.TryParse(rawValue[8], out subgroup);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -100,7 +97,7 @@ namespace NpuRozklad.Parser
                 {
                     item.LessonSetDate = rawValue[4];
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
 
@@ -115,22 +112,18 @@ namespace NpuRozklad.Parser
             return result;
         }
 
-        public static List<Group> DeserializeGroups(
-            string rawString,
-            string facultyShortName)
+        public static List<Group> DeserializeGroups(string rawString)
         {
             var result = new List<Group>();
             var rawValues = GetValues(rawString);
 
             foreach (var rawValue in rawValues)
             {
-                var item = new Group
-                {
-                    ExternalId = int.Parse(rawValue[0]),
-                    ShortName = Regex.Unescape(rawValue[1]),
-                    FacultyShortName = facultyShortName
-                };
-                result.Add(item);
+                var typeId = rawValue[0];
+                var name = Regex.Unescape(rawValue[1]);
+
+                result.Add(new Group(typeId,
+                    string.IsNullOrWhiteSpace(name) ? "No name group" : name));
             }
 
             return result;
@@ -143,12 +136,10 @@ namespace NpuRozklad.Parser
 
             foreach (var rawValue in rawValues)
             {
-                var item = new Lecturer
-                {
-                    ExternalId = int.Parse(rawValue[0]),
-                    FullName = Regex.Unescape(rawValue[1])
-                };
-                result.Add(item);
+                var typeId = rawValue[0];
+                var name = Regex.Unescape(rawValue[1]);
+
+                result.Add(new Lecturer(typeId, name));
             }
 
             return result;
@@ -161,12 +152,10 @@ namespace NpuRozklad.Parser
 
             foreach (var rawValue in rawValues)
             {
-                var item = new Classroom
-                {
-                    ExternalId = int.Parse(rawValue[0]),
-                    Name = Regex.Unescape(rawValue[1])
-                };
-                result.Add(item);
+                var typeId = rawValue[0];
+                var name = Regex.Unescape(rawValue[1]);
+
+                result.Add(new Classroom(typeId, name));
             }
 
             return result;
@@ -179,12 +168,10 @@ namespace NpuRozklad.Parser
 
             foreach (var rawValue in rawValues)
             {
-                var item = new Faculty
-                {
-                    ShortName = Regex.Unescape(rawValue[0]),
-                    FullName = Regex.Unescape(rawValue[1])
-                };
-                result.Add(item);
+                var shortName = Regex.Unescape(rawValue[0]);
+                var fullName = Regex.Unescape(rawValue[1]);
+
+                result.Add(new Faculty(shortName, fullName));
             }
 
             return result;
@@ -239,16 +226,6 @@ namespace NpuRozklad.Parser
                 }
 
             return values;
-        }
-
-        public List<T> DeserializeValues<T>(string rawString) where T : class, new()
-        {
-            var t = typeof(T);
-            if (t == typeof(Group)) return DeserializeGroups(rawString);
-
-
-
-
         }
     }
 }
