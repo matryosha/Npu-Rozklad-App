@@ -1,19 +1,21 @@
+using System;
+
 namespace NpuRozklad.Core.Entities
 {
     public class Group : TypeIdTrait
     {
-        public string FullName { get; }
-        public string ShortName { get; }
+        public string Name { get; }
 
         public override string ToString()
         {
-            return ShortName;
+            return Name;
         }
 
-        public Group(string typeId, string fullName, string shortName) : base(typeId)
+        public Group(string typeId, string name) : base(typeId)
         {
-            ShortName = shortName ?? string.Empty;
-            FullName = fullName ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Group name cannot be null or empty");
+            Name = name;
         }
     }
 }
