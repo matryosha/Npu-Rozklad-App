@@ -4,7 +4,7 @@ namespace NpuRozklad.Core.Entities
 {
     public class Classroom : TypeIdTrait
     {
-        public Classroom(string name, string typeId) : base(typeId)
+        public Classroom(string typeId, string name) : base(typeId)
         {
             Name = name ?? string.Empty;
         }
