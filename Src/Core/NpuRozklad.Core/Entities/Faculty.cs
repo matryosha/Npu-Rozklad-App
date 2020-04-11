@@ -14,9 +14,8 @@ namespace NpuRozklad.Core.Entities
             return FullName + " " + ShortName;
         }
 
-        public Faculty(string typeId, string shortName, string fullName) : base(typeId)
+        public Faculty(string shortName, string fullName) : base(shortName)
         {
-            if (string.IsNullOrWhiteSpace(shortName)) throw new ArgumentNullException(shortName);
             ShortName = shortName;
             FullName = fullName ?? string.Empty;
         }
