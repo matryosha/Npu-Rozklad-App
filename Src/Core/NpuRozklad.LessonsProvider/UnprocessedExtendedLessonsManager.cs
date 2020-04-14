@@ -51,30 +51,31 @@ namespace NpuRozklad.LessonsProvider
             if (isKeyPresent)
             {
                 result = new List<ExtendedLesson>(_unprocessedLessonsCache[faculty]);
-                _cacheLock.Leave();
+            }
+            else
+            {
                 facultyLock.Leave();
-                return result;
+                _cacheLock.Leave();
+            
+                _cacheLock.Enter(true);
+                facultyLock.Enter(true);
+            
+                var calendarRawItems = 
+                    await _calendarRawItemHolder.GetCalendarItems()
+                        .ConfigureAwait(false);
+                
+                var facultyRawLessons = 
+                    await Transform(calendarRawItems, faculty)
+                        .ConfigureAwait(false);
+                
+                _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
+                result = new List<ExtendedLesson>(facultyRawLessons);
             }
             
-            facultyLock.Leave();
-            _cacheLock.Leave();
-            
-            _cacheLock.Enter(true);
-            facultyLock.Enter(true);
-            
-            var calendarRawItems = 
-                await _calendarRawItemHolder.GetCalendarItems()
-                    .ConfigureAwait(false);
-                
-            var facultyRawLessons = 
-                await Transform(calendarRawItems, faculty)
-                    .ConfigureAwait(false);
-                
-            _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
-                
             _cacheLock.Leave();
             facultyLock.Leave();
-            return new List<ExtendedLesson>(facultyRawLessons);
+            
+            return result;
         }
         
         
