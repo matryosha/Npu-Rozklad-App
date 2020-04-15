@@ -46,32 +46,30 @@ namespace NpuRozklad.LessonsProvider
             var facultyLock = _facultyLocks.GetOrAdd(faculty, new OneManyLock());
             facultyLock.Enter(false);
             
-            var isKeyPresent = _unprocessedLessonsCache.ContainsKey(faculty);
-
-            if (isKeyPresent)
-            {
-                result = new List<ExtendedLesson>(_unprocessedLessonsCache[faculty]);
-            }
-            else
+            if(!_unprocessedLessonsCache.ContainsKey(faculty))
             {
                 facultyLock.Leave();
                 _cacheLock.Leave();
-            
-                _cacheLock.Enter(true);
+                
                 facultyLock.Enter(true);
-            
-                var calendarRawItems = 
-                    await _calendarRawItemHolder.GetCalendarItems()
-                        .ConfigureAwait(false);
-                
-                var facultyRawLessons = 
-                    await Transform(calendarRawItems, faculty)
-                        .ConfigureAwait(false);
-                
-                _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
-                result = new List<ExtendedLesson>(facultyRawLessons);
+
+                if (!_unprocessedLessonsCache.ContainsKey(faculty))
+                {
+                    var calendarRawItems = 
+                        await _calendarRawItemHolder.GetCalendarItems()
+                            .ConfigureAwait(false);
+                    
+                    var facultyRawLessons = 
+                        await Transform(calendarRawItems, faculty)
+                            .ConfigureAwait(false);
+                    
+                    _cacheLock.Enter(true);
+                    _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
+                }
             }
-            
+
+
+            result = new List<ExtendedLesson>(_unprocessedLessonsCache[faculty]);
             _cacheLock.Leave();
             facultyLock.Leave();
             
