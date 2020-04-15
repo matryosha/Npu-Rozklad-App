@@ -41,20 +41,21 @@ namespace NpuRozklad.LessonsProvider
             // return value
             ICollection<ExtendedLesson> result;
             
-            _cacheLock.Enter(false);
-            
             var facultyLock = _facultyLocks.GetOrAdd(faculty, new OneManyLock());
             facultyLock.Enter(false);
-            
+            _cacheLock.Enter(false);
+
             if(!_unprocessedLessonsCache.ContainsKey(faculty))
             {
                 facultyLock.Leave();
                 _cacheLock.Leave();
-                
                 facultyLock.Enter(true);
-
+                _cacheLock.Enter(false);
+                
                 if (!_unprocessedLessonsCache.ContainsKey(faculty))
                 {
+                    _cacheLock.Leave();
+                    
                     var calendarRawItems = 
                         await _calendarRawItemHolder.GetCalendarItems()
                             .ConfigureAwait(false);
@@ -67,7 +68,6 @@ namespace NpuRozklad.LessonsProvider
                     _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
                 }
             }
-
 
             result = new List<ExtendedLesson>(_unprocessedLessonsCache[faculty]);
             _cacheLock.Leave();
