@@ -6,6 +6,6 @@ namespace NpuRozklad.Core.Interfaces
 {
     public interface IFacultyGroupsProvider
     {
-        Task<ICollection<Group>> GetFacultyGroups(string facultyTypeId);
+        Task<ICollection<Group>> GetFacultyGroups(Faculty faculty);
     }
 }
