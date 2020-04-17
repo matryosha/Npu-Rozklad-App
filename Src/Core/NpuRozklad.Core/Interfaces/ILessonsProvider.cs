@@ -7,6 +7,6 @@ namespace NpuRozklad.Core.Interfaces
 {
     public interface ILessonsProvider
     {
-        Task<ICollection<Lesson>> GetLessonsOnDate(string groupTypeId, DateTime date);
+        Task<ICollection<Lesson>> GetLessonsOnDate(Group facultyGroup, DateTime date);
     }
 }
