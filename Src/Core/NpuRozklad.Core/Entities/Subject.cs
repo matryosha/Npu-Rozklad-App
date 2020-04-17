@@ -9,9 +9,9 @@ namespace NpuRozklad.Core.Entities
             return Name;
         }
 
-        public Subject(string typeId, string name) : base(typeId)
+        public Subject(string name) : base(name)
         {
-            Name = name ?? string.Empty;
+            Name = name;
         }
     }
 }
