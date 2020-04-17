@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -128,7 +128,7 @@ namespace NpuRozklad.LessonsProvider
             return result;
         }
 
-        public static (DateTime date, bool IsOddDay) GetSettings(string rawString)
+        public static (DateTime date, bool IsOddDay) DeserializeSettings(string rawString)
         {
             var values = GetValues(rawString);
             var rawValues = JsonConvert.DeserializeObject(rawString) as JObject;
