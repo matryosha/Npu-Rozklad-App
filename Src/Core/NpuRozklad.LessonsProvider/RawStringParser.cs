@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,6 +12,8 @@ namespace NpuRozklad.LessonsProvider
 {
     internal static class RawStringParser
     {
+        private const string NpuDateFormat = "yyyy-MM-dd";
+
         public static List<CalendarRawItem> DeserializeCalendar(string rawString)
         {
             var result = new List<CalendarRawItem>();
@@ -21,91 +23,39 @@ namespace NpuRozklad.LessonsProvider
             {
                 if (rawValue.Count < 1) continue;
 
-                var item = new CalendarRawItem();
-
-                int groupId, lectureId, classroomId, lessonCount, lessonNumber, fraction, subgroup;
-                groupId = lectureId = classroomId = lessonCount = lessonNumber = fraction = subgroup = -1;
-
+                CalendarRawItem item;
                 try
                 {
-                    int.TryParse(rawValue[0], out groupId);
+                    item = new CalendarRawItem
+                    {
+                        GroupId = rawValue[0],
+                        LecturerId = rawValue[2],
+                        ClassroomId = rawValue[3],
+                        LessonCount = rawValue[5],
+                        LessonNumber = rawValue[6],
+                        Fraction = Convert.ToInt32(rawValue[7]),
+                        SubGroup = Convert.ToInt32(rawValue[8])
+                    };
                 }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[2], out lectureId);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[3], out classroomId);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[5], out lessonCount);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[6], out lessonNumber);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[7], out fraction);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                try
-                {
-                    int.TryParse(rawValue[8], out subgroup);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-
-                item.GroupId = groupId;
+                catch (FormatException) {continue;}
+                catch (OverflowException) {continue;}
+                
                 try
                 {
                     item.SubjectName = Regex.Unescape(rawValue[1]);
                 }
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
                 }
-
-                item.LectureId = lectureId;
-                item.ClassroomId = classroomId;
+                
                 try
                 {
-                    item.LessonSetDate = rawValue[4];
+                    item.LessonSetDate = DateTime.ParseExact(rawValue[4], NpuDateFormat, null);
                 }
                 catch (ArgumentOutOfRangeException)
                 {
                 }
-
-                item.LessonCount = lessonCount;
-                item.LessonNumber = lessonNumber;
-                item.Fraction = fraction;
-                item.SubGroup = subgroup;
-
+                
                 result.Add(item);
             }
 
