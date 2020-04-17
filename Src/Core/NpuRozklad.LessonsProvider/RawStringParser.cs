@@ -62,7 +62,7 @@ namespace NpuRozklad.LessonsProvider
             return result;
         }
 
-        public static List<Group> DeserializeGroups(string rawString)
+        public static List<Group> DeserializeGroups(string rawString, Faculty groupFaculty)
         {
             var result = new List<Group>();
             var rawValues = GetValues(rawString);
@@ -73,7 +73,8 @@ namespace NpuRozklad.LessonsProvider
                 var name = Regex.Unescape(rawValue[1]);
 
                 result.Add(new Group(typeId,
-                    string.IsNullOrWhiteSpace(name) ? "No name group" : name));
+                    string.IsNullOrWhiteSpace(name) ? "No name group" : name,
+                    groupFaculty));
             }
 
             return result;
