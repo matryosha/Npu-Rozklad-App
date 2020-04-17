@@ -1,14 +1,17 @@
+using System;
+
 namespace NpuRozklad.LessonsProvider.Entities
 {
-    internal class CalendarRawItem
+    public class CalendarRawItem
     {
-        public int GroupId { get; set; }
+        //todo to string
+        public string GroupId { get; set; }
         public string SubjectName { get; set; }
-        public int LectureId { get; set; }
-        public int ClassroomId { get; set; }
-        public int LessonCount { get; set; }
-        public string LessonSetDate { get; set; } //TODO: Deserialize into DateTime at once
-        public int LessonNumber { get; set; }
+        public string LecturerId { get; set; }
+        public string ClassroomId { get; set; }
+        public string LessonCount { get; set; }
+        public DateTime LessonSetDate { get; set; } //TODO: Deserialize into DateTime at once
+        public string LessonNumber { get; set; }
         public int Fraction { get; set; }
         public int SubGroup { get; set; }
     }
