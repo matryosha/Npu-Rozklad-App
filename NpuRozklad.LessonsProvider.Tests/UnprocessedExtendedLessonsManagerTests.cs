@@ -13,73 +13,9 @@ namespace NpuRozklad.LessonsProvider.Tests
 {
     public class UnprocessedExtendedLessonsManagerTests
     {
-        // private UnprocessedExtendedLessonsManager _manager;
-        
-        [SetUp]
-        public void Setup()
-        {
-            // var groupsHolderStub = CreateIGroupsHolderStub();
-            // var lecturerHolderStub = CreateILecturersHolder();
-            // var classroomsHolderStub = CreateIClassroomsHolder();
-            // var calendarRawItemHolderStub = CreateICalendarRawItemHolder();
-            //
-            //  _manager = new UnprocessedExtendedLessonsManager(
-            //      groupsHolderStub, lecturerHolderStub, classroomsHolderStub, calendarRawItemHolderStub);
-        }
-        
         [TestCase(1)]
         [TestCase(10)]
         [TestCase(100)]
-        [TestCase(101)]
-        [TestCase(102)]
-        [TestCase(103)]
-        [TestCase(104)]
-        [TestCase(105)]
-        [TestCase(106)]
-        [TestCase(107)]
-        [TestCase(108)]
-        [TestCase(109)]
-        [TestCase(110)]
-        [TestCase(111)]
-        [TestCase(112)]
-        [TestCase(113)]
-        [TestCase(114)]
-        [TestCase(115)]
-        [TestCase(116)]
-        [TestCase(117)]
-        [TestCase(118)]
-        [TestCase(119)]
-        [TestCase(120)]
-        [TestCase(121)]
-        [TestCase(122)]
-        [TestCase(123)]
-        [TestCase(124)]
-        [TestCase(125)]
-        [TestCase(126)]
-        [TestCase(127)]
-        [TestCase(128)]
-        [TestCase(129)]
-        [TestCase(130)]
-        [TestCase(131)]
-        [TestCase(132)]
-        [TestCase(133)]
-        [TestCase(134)]
-        [TestCase(135)]
-        [TestCase(136)]
-        [TestCase(137)]
-        [TestCase(138)]
-        [TestCase(139)]
-        [TestCase(140)]
-        [TestCase(141)]
-        [TestCase(142)]
-        [TestCase(143)]
-        [TestCase(144)]
-        [TestCase(145)]
-        [TestCase(146)]
-        [TestCase(147)]
-        [TestCase(148)]
-        [TestCase(149)]
-        [TestCase(150)]
         [Timeout(60000)]
         public async Task MultipleSameFacultyLessonsRequest_FirstRun_ShouldFetchCalendarItemsOnlyOnce(int taskCount)
         {
@@ -123,56 +59,7 @@ namespace NpuRozklad.LessonsProvider.Tests
         [TestCase(10)]
         [TestCase(100)]
         [TestCase(101)]
-        [TestCase(102)]
-        [TestCase(103)]
-        [TestCase(104)]
-        [TestCase(105)]
-        [TestCase(106)]
-        [TestCase(107)]
-        [TestCase(108)]
-        [TestCase(109)]
-        [TestCase(110)]
-        [TestCase(111)]
-        [TestCase(112)]
-        [TestCase(113)]
-        [TestCase(114)]
-        [TestCase(115)]
-        [TestCase(116)]
-        [TestCase(117)]
-        [TestCase(118)]
-        [TestCase(119)]
-        [TestCase(120)]
-        [TestCase(121)]
-        [TestCase(122)]
-        [TestCase(123)]
-        [TestCase(124)]
-        [TestCase(125)]
-        [TestCase(126)]
-        [TestCase(127)]
-        [TestCase(128)]
-        [TestCase(129)]
-        [TestCase(130)]
-        [TestCase(131)]
-        [TestCase(132)]
-        [TestCase(133)]
-        [TestCase(134)]
-        [TestCase(135)]
-        [TestCase(136)]
-        [TestCase(137)]
-        [TestCase(138)]
-        [TestCase(139)]
-        [TestCase(140)]
-        [TestCase(141)]
-        [TestCase(142)]
-        [TestCase(143)]
-        [TestCase(144)]
-        [TestCase(145)]
-        [TestCase(146)]
-        [TestCase(147)]
-        [TestCase(148)]
-        [TestCase(149)]
-        [TestCase(150)]
-        [Timeout(10000)]
+        [Timeout(60000)]
         public async Task MultipleSeveralFacultyLessonsRequests_FirstRun_ShouldFetchCalendarItemsOnlyOnce(int taskCount)
         {
             var getCalendarItemsCallCount = 0;
@@ -239,14 +126,5 @@ namespace NpuRozklad.LessonsProvider.Tests
                 .ReturnsAsync(new List<Classroom>());
             return stub.Object;
         }
-        
-        private ICalendarRawItemHolder CreateICalendarRawItemHolder()
-        {
-            var stub = new Mock<ICalendarRawItemHolder>();
-            stub.Setup(g => g.GetCalendarItems())
-                .ReturnsAsync(new List<CalendarRawItem>());
-            return stub.Object;
-        }
-        
     }
 }
