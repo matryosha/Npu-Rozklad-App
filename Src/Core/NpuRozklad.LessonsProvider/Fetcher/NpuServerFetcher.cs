@@ -65,11 +65,11 @@ namespace NpuRozklad.LessonsProvider.Fetcher
                 new KeyValuePair<string, string>(_options.RequestOptions.Params.Key, _options.RequestOptions.Params.Value),
                 new KeyValuePair<string, string>(_options.RequestOptions.LoginPass.Key, _options.RequestOptions.LoginPass.Value),
                 new KeyValuePair<string, string>(_options.RequestOptions.Code, code),
-                new KeyValuePair<string, string>(_options.RequestOptions.Faculty, faculty),
+                new KeyValuePair<string, string>(_options.RequestOptions.Faculty, faculty)
             });
         }
         
-        private string NpuRequestTypeToCode(NpuRequestType requestType) =>
+        private static string NpuRequestTypeToCode(NpuRequestType requestType) =>
             requestType switch
             {
                 NpuRequestType.GetCalendar => "get calendar",
