@@ -130,7 +130,6 @@ namespace NpuRozklad.LessonsProvider
 
         public static (DateTime date, bool IsOddDay) DeserializeSettings(string rawString)
         {
-            var values = GetValues(rawString);
             var rawValues = JsonConvert.DeserializeObject(rawString) as JObject;
 
             var oddEvenDaySettingItemAsString = rawValues["response"][4].ToString();
