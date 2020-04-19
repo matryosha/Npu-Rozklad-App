@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.LessonsProvider.Entities;
@@ -11,6 +10,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 namespace NpuRozklad.LessonsProvider
 {
     public class UnprocessedExtendedLessonsManager : 
+        PeriodicOperationExecutor,
         IUnprocessedExtendedLessonsHolder, ICalendarRawToFacultyUnprocessedLessons
     {
         private readonly IGroupsHolder _groupsHolder;
@@ -23,6 +23,8 @@ namespace NpuRozklad.LessonsProvider
         private readonly ConcurrentDictionary<Faculty, OneManyLock> _facultyLocks =
             new ConcurrentDictionary<Faculty, OneManyLock>();
         private readonly OneManyLock _cacheLock = new OneManyLock();
+        // to options
+        private int _cacheLifeTimeInMinutes = 10;
         
         public UnprocessedExtendedLessonsManager(IGroupsHolder groupsHolder, ILecturersHolder lecturersHolder,
             IClassroomsHolder classroomsHolder, ICalendarRawItemHolder calendarRawItemHolder)
@@ -31,6 +33,9 @@ namespace NpuRozklad.LessonsProvider
             _lecturersHolder = lecturersHolder;
             _classroomsHolder = classroomsHolder;
             _calendarRawItemHolder = calendarRawItemHolder;
+
+            PeriodicCallIntervalInSeconds = _cacheLifeTimeInMinutes * 60;
+            PeriodicAction = ClearCache;
         }
         
         public async Task<ICollection<ExtendedLesson>> GetFacultyUnprocessedLessons(Faculty faculty)
@@ -56,14 +61,8 @@ namespace NpuRozklad.LessonsProvider
                 {
                     _cacheLock.Leave();
                     
-                    var calendarRawItems = 
-                        await _calendarRawItemHolder.GetCalendarItems()
-                            .ConfigureAwait(false);
-                    
-                    var facultyRawLessons = 
-                        await Transform(calendarRawItems, faculty)
-                            .ConfigureAwait(false);
-                    
+                    var facultyRawLessons = await GetFacultyRawLessonsInternal(faculty);
+
                     _cacheLock.Enter(true);
                     _unprocessedLessonsCache.Add(faculty, facultyRawLessons);
                 }
@@ -75,8 +74,20 @@ namespace NpuRozklad.LessonsProvider
             
             return result;
         }
-        
-        
+
+        private async Task<ICollection<ExtendedLesson>> GetFacultyRawLessonsInternal(Faculty faculty)
+        {
+            var calendarRawItems =
+                await _calendarRawItemHolder.GetCalendarItems()
+                    .ConfigureAwait(false);
+
+            var facultyRawLessons =
+                await Transform(calendarRawItems, faculty)
+                    .ConfigureAwait(false);
+            return facultyRawLessons;
+        }
+
+
         /*
          * Some legacy
          */
@@ -88,7 +99,7 @@ namespace NpuRozklad.LessonsProvider
             {
                 var lesson = new ExtendedLesson();
                 //Set lesson date
-                lesson.LessonDate = calendarRawItem.LessonSetDate;
+                lesson.LessonSetUpDate = calendarRawItem.LessonSetDate;
                 //Set subject
                 if (!string.IsNullOrEmpty(calendarRawItem.SubjectName))
                 {
@@ -124,7 +135,14 @@ namespace NpuRozklad.LessonsProvider
 
             return resultList;
         }
+        
+        private Task ClearCache()
+        {
+            _cacheLock.Enter(true);
+            _unprocessedLessonsCache.Clear();
+            _cacheLock.Leave();
+            
+            return Task.CompletedTask;
+        }
     }
-    
-    
 }
