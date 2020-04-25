@@ -18,8 +18,13 @@ namespace NpuRozklad.LessonsProvider
         
         public async Task<ICollection<Group>> GetFacultyGroups(Faculty faculty)
         {
-            var allGroups = await _groupsHolder.GetFacultiesGroups().ConfigureAwait(false);
+            var allGroups = await GetFacultyGroups().ConfigureAwait(false);
             return allGroups.Where(g => g.Faculty.Equals(faculty)).ToList();
+        }
+
+        public Task<ICollection<Group>> GetFacultyGroups()
+        {
+            return _groupsHolder.GetFacultiesGroups();
         }
     }
 }
