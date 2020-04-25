@@ -37,13 +37,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.Telegram", "Src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.LessonsProvider", "Src\Core\NpuRozklad.LessonsProvider\NpuRozklad.LessonsProvider.csproj", "{98D93493-AF27-4AB6-B7D9-B8F680E765A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.Persistance", "Src\NpuRozklad.Persistance\NpuRozklad.Persistance.csproj", "{3617634C-4B55-44FE-93CE-A74ED894AFED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.Persistence", "Src\NpuRozklad.Persistence\NpuRozklad.Persistence.csproj", "{3617634C-4B55-44FE-93CE-A74ED894AFED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.Web", "Src\NpuRozklad.Web\NpuRozklad.Web.csproj", "{BA6DCE0B-CD43-488A-8A98-A9A38E4F605B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{498AF23C-750D-4CBA-B02D-97B92369FA59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.LessonsProvider.Tests", "NpuRozklad.LessonsProvider.Tests\NpuRozklad.LessonsProvider.Tests.csproj", "{5C6B968E-493D-4929-AE2A-06912AAEA238}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpuRozklad.Persistence.Tests", "NpuRozklad.Persistence.Tests\NpuRozklad.Persistence.Tests.csproj", "{84BCA96A-106B-4404-B1A0-4F5757FC9622}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +129,10 @@ Global
 		{5C6B968E-493D-4929-AE2A-06912AAEA238}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C6B968E-493D-4929-AE2A-06912AAEA238}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C6B968E-493D-4929-AE2A-06912AAEA238}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84BCA96A-106B-4404-B1A0-4F5757FC9622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84BCA96A-106B-4404-B1A0-4F5757FC9622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84BCA96A-106B-4404-B1A0-4F5757FC9622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84BCA96A-106B-4404-B1A0-4F5757FC9622}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,5 +150,6 @@ Global
 		{3617634C-4B55-44FE-93CE-A74ED894AFED} = {10BB0DCF-8A84-4879-9B8A-B275217E0750}
 		{BA6DCE0B-CD43-488A-8A98-A9A38E4F605B} = {10BB0DCF-8A84-4879-9B8A-B275217E0750}
 		{5C6B968E-493D-4929-AE2A-06912AAEA238} = {498AF23C-750D-4CBA-B02D-97B92369FA59}
+		{84BCA96A-106B-4404-B1A0-4F5757FC9622} = {498AF23C-750D-4CBA-B02D-97B92369FA59}
 	EndGlobalSection
 EndGlobal
