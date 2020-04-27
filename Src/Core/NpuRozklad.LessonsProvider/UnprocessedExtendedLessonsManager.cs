@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
+using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.LessonsProvider.Entities;
 using NpuRozklad.LessonsProvider.Holders.Interfaces;
 

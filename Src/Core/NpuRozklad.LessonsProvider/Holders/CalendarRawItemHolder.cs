@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.LessonsProvider.Entities;
 using NpuRozklad.LessonsProvider.Fetcher;
 using NpuRozklad.LessonsProvider.Holders.Interfaces;

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace NpuRozklad.LessonsProvider
+namespace NpuRozklad.Core.Infrastructure
 {
     public abstract class PeriodicOperationExecutor
     {

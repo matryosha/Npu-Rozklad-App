@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
+using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.LessonsProvider.Fetcher;
 using NpuRozklad.LessonsProvider.Holders.Interfaces;
 

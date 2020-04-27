@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.LessonsProvider.Fetcher;
 using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
