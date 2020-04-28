@@ -45,8 +45,9 @@ namespace NpuRozklad.Persistence
 
         public Task Delete(RozkladUser rozkladUser)
         {
-            var wrapper = new RozkladUserWrapper(rozkladUser) {IsDeleted = true};
-            wrapper.FacultyGroupsTypeIds.Clear();
+            rozkladUser.IsDeleted = true;
+            rozkladUser.FacultyGroups.Clear();
+            var wrapper = new RozkladUserWrapper(rozkladUser);
             _dbContext.RozkladUserWrappers.Update(wrapper);
             return _dbContext.SaveChangesAsync();
         }
