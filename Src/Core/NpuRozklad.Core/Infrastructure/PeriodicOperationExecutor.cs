@@ -24,7 +24,10 @@ namespace NpuRozklad.Core.Infrastructure
             // exception kills calling
             while (true)
             {
-                await Task.Delay(TimeSpan.FromSeconds(PeriodicCallIntervalInSeconds));
+                var delayTime = TimeSpan.FromSeconds(PeriodicCallIntervalInSeconds);
+                if (delayTime.TotalMilliseconds <= 0) return;
+                
+                await Task.Delay(delayTime);
                 await _asyncDelegate();
             }
         }
