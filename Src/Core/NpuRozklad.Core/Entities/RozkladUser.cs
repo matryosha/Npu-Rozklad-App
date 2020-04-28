@@ -14,7 +14,7 @@ namespace NpuRozklad.Core.Entities
             FacultyGroups = origin.FacultyGroups;
         }
         public string Guid { get; } = System.Guid.NewGuid().ToString();
-        public List<Group> FacultyGroups { get; } = new List<Group>();
+        public List<Group> FacultyGroups { get; protected set; } = new List<Group>();
         public bool IsDeleted { get; set; }
     }
 }
