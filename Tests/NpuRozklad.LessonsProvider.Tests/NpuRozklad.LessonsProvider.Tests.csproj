@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Src\Core\NpuRozklad.LessonsProvider\NpuRozklad.LessonsProvider.csproj" />
+      <ProjectReference Include="..\..\Src\NpuRozklad.LessonsProvider\NpuRozklad.LessonsProvider.csproj" />
     </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Core\NpuRozklad.Core\NpuRozklad.Core.csproj" />
+      <ProjectReference Include="..\NpuRozklad.Core\NpuRozklad.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
