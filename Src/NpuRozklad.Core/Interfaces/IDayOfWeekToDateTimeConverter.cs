@@ -5,7 +5,7 @@ namespace NpuRozklad.Core.Interfaces
     /// <summary>
     /// Converter for simple day of week navigation
     /// </summary>
-    public interface IDayOfWeekToDateTime
+    public interface IDayOfWeekToDateTimeConverter
     {
         /// <summary>
         /// Converts <see cref="System.DayOfWeek"/> to local <see cref="System.DateTime"/>
@@ -21,6 +21,6 @@ namespace NpuRozklad.Core.Interfaces
         /// <param name="asNextWeekDate">When true returned datetime will be for next week</param>
         /// <returns>Relative to current day <see cref="System.DateTime"/> for which <see cref="System.DayOfWeek"/>
         /// is <paramref name="dayOfWeek"/></returns>
-        DateTime GetDate(DayOfWeek dayOfWeek, bool asNextWeekDate = false);
+        DateTime Convert(DayOfWeek dayOfWeek, bool asNextWeekDate = false);
     }
 }

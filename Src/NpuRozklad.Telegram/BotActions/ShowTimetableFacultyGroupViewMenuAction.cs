@@ -12,7 +12,7 @@ namespace NpuRozklad.Telegram.BotActions
     public class ShowTimetableFacultyGroupViewMenuAction
     {
         private readonly TimetableFacultyGroupViewInlineMenuCreator _menuCreator;
-        private readonly IDayOfWeekToDateTime _dayOfWeekToDateTime;
+        private readonly IDayOfWeekToDateTimeConverter _dayOfWeekToDateTimeConverter;
         private readonly ILessonsProvider _lessonsProvider;
         private readonly OneDayLessonsToTelegramMessageText _lessonsToTelegramMessageText;
         private readonly ITelegramBotService _telegramBotService;
@@ -20,14 +20,14 @@ namespace NpuRozklad.Telegram.BotActions
 
         public ShowTimetableFacultyGroupViewMenuAction(
             TimetableFacultyGroupViewInlineMenuCreator menuCreator,
-            IDayOfWeekToDateTime dayOfWeekToDateTime,
+            IDayOfWeekToDateTimeConverter dayOfWeekToDateTimeConverter,
             ILessonsProvider lessonsProvider,
             OneDayLessonsToTelegramMessageText lessonsToTelegramMessageText,
             ITelegramBotService telegramBotService,
             ICurrentTelegramUserService currentUserService)
         {
             _menuCreator = menuCreator;
-            _dayOfWeekToDateTime = dayOfWeekToDateTime;
+            _dayOfWeekToDateTimeConverter = dayOfWeekToDateTimeConverter;
             _lessonsProvider = lessonsProvider;
             _lessonsToTelegramMessageText = lessonsToTelegramMessageText;
             _telegramBotService = telegramBotService;
@@ -48,7 +48,7 @@ namespace NpuRozklad.Telegram.BotActions
                     IsNextWeekActive = isNextWeekSelected
                 });
 
-            var lessonsDateTime = _dayOfWeekToDateTime.GetDate(dayOfWeek, isNextWeekSelected);
+            var lessonsDateTime = _dayOfWeekToDateTimeConverter.Convert(dayOfWeek, isNextWeekSelected);
 
             var lessons = await _lessonsProvider.GetLessonsOnDate(facultyGroup, lessonsDateTime);
 
