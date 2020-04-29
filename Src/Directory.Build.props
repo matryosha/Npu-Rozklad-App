@@ -1,0 +1,5 @@
+<Project>
+    <ItemGroup>
+        <LocalizationsFiles Include="$(MSBuildThisFileDirectory)Resources\Localization\**\*.json" />
+    </ItemGroup>
+</Project>
