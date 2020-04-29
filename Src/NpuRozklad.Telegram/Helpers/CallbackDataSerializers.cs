@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using NpuRozklad.Core.Entities;
 
@@ -5,14 +6,14 @@ namespace NpuRozklad.Telegram.Helpers
 {
     internal static class TimetableFacultyGroupViewMenuCallbackDataSerializer
     {
-        internal static string ToCallbackData(bool isNextWeek, int dayNumber, Group facultyGroup)
+        internal static string ToCallbackData(bool isNextWeek, DayOfWeek dayOfWeek, Group facultyGroup)
         {
             var builder = new StringBuilder();
 
             builder.AppendWithSeparator(
                 CallbackDataFormatter.ToCallBackData(CallbackQueryActionType.ShowTimetableFacultyGroupViewMenu));
             builder.AppendWithSeparator((isNextWeek ? 0 : 1).ToString());
-            builder.AppendWithSeparator(dayNumber.ToString());
+            builder.AppendWithSeparator(((int) dayOfWeek).ToString());
             builder.AppendWithSeparator(
                 CallbackDataFormatter.ToCallBackData(facultyGroup));
 
