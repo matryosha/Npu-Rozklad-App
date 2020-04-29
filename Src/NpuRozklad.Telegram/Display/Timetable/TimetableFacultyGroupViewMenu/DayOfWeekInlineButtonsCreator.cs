@@ -4,6 +4,7 @@ using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
+using static NpuRozklad.Core.Infrastructure.NpuDateTimeHelper;
 using static NpuRozklad.Telegram.Display.Common.Text.TextDecoration;
 using static NpuRozklad.Telegram.Helpers.TimetableFacultyGroupViewMenuCallbackDataSerializer;
 
@@ -36,8 +37,9 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
             var result = _inlineKeyboardButtonsCreator.Create(new InlineKeyboardButtonsCreatorOptions
             {
                 NumberOfButtons = 7,
-                ButtonTextFunc = i => _localizationService[Lang, (DayOfWeek) i],
-                CallbackDataFunc = i => ToCallbackData(isNextWeek, i, facultyGroup)
+                ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)],
+                CallbackDataFunc = i =>
+                    ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup)
             });
 
             if (shouldMarkDayOfWeek)
