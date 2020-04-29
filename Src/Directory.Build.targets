@@ -1,0 +1,18 @@
+<Project>
+    <Target Name="LoadLocalizationFiles" Outputs="%(LocalizationFilesOutputDir.Identity)">
+        
+        <PropertyGroup>
+            <LocalizationOutDir>%(LocalizationFilesOutputDir.Identity)</LocalizationOutDir>
+        </PropertyGroup>
+        
+        <Error
+                Text="LocalizationFilesOutputDir item must be set"
+                Condition="'$(LocalizationOutDir)' == ''" />
+        
+        <Copy SourceFiles="@(LocalizationsFiles)"
+              DestinationFiles="@(LocalizationsFiles->'$(LocalizationOutDir)\%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true"
+              Retries="3"/>
+    </Target>
+</Project>
