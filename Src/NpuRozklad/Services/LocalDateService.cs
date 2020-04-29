@@ -14,7 +14,7 @@ namespace NpuRozklad.Services
                 LocalTimeZoneInfo =
                     TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
             }
-            catch (TimeZoneNotFoundException e)
+            catch (TimeZoneNotFoundException _)
             {
                 LocalTimeZoneInfo = 
                     TimeZoneInfo.FindSystemTimeZoneById("Europe/Kiev");
