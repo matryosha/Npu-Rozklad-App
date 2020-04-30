@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NpuRozklad.Telegram.Persistence
 {
-    internal class TelegramDbContext : DbContext
+    public class TelegramDbContext : DbContext
     {
         internal DbSet<TelegramRozkladUser> TelegramRozkladUsers { get; set; }
 
