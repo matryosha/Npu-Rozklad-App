@@ -29,6 +29,8 @@ namespace NpuRozklad.LessonsProvider
             var rawLessons =
                 await _rawLessonsHolder.GetFacultyUnprocessedLessons(facultyGroup.Faculty).ConfigureAwait(false);
 
+            rawLessons = rawLessons.Where(l => l.Group != null && l.Group.Equals(facultyGroup)).ToList();
+            
             foreach (var lesson in rawLessons)
             {
                 lesson.LessonDate = date;
@@ -47,7 +49,7 @@ namespace NpuRozklad.LessonsProvider
             {
                 var point = startPoint;
                 var moreRecentLessonsList = rawLessons
-                    .Where(lesson => lesson.Group != null && lesson.LessonSetUpDate == point)
+                    .Where(lesson => lesson.LessonSetUpDate == point)
                     .ToList();
 
                 if (moreRecentLessonsList.Any())
