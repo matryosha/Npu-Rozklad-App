@@ -36,7 +36,7 @@ namespace NpuRozklad.LessonsProvider.Holders
             {
                 _cacheLock.Leave();
                 _cacheLock.Enter(true);
-                if (_groupsCache.Any())
+                if (!_groupsCache.Any())
                 {
                     var facultiesGroups = await GetFacultiesGroupsInternal();
 
