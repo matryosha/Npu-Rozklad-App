@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -65,6 +65,9 @@ namespace NpuRozklad.LessonsProvider
         public static List<Group> DeserializeGroups(string rawString, Faculty groupFaculty)
         {
             var result = new List<Group>();
+            
+            if (rawString == null) return result;
+            
             var rawValues = GetValues(rawString);
 
             foreach (var rawValue in rawValues)
