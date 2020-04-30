@@ -4,7 +4,7 @@ using NpuRozklad.Core.Entities;
 
 namespace NpuRozklad.LessonsProvider.Holders.Interfaces
 {
-    public interface IGroupsHolder
+    internal interface IGroupsHolder
     {
         Task<ICollection<Group>> GetFacultiesGroups();
     }

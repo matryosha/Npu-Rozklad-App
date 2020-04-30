@@ -3,7 +3,7 @@ using NpuRozklad.Core.Entities;
 
 namespace NpuRozklad.LessonsProvider.Entities
 {
-    public class ExtendedLesson : Lesson
+    internal class ExtendedLesson : Lesson
     {
         /// <summary>
         /// Contains date when lesson has been set up. Not actual date

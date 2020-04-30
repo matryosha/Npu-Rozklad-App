@@ -9,7 +9,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public class LessonProvider : ILessonsProvider
+    internal class LessonProvider : ILessonsProvider
     {
         private readonly IUnprocessedExtendedLessonsHolder _rawLessonsHolder;
         private readonly IOddDayWeekChecker _oddDayWeekChecker;

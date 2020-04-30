@@ -4,7 +4,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public class OddDayWeekChecker : IOddDayWeekChecker
+    internal class OddDayWeekChecker : IOddDayWeekChecker
     {
         private readonly ISettingsHolder _settingsHolder;
 

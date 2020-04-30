@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NpuRozklad.LessonsProvider.Holders.Interfaces
 {
-    public interface ISettingsHolder
+    internal interface ISettingsHolder
     {
         Task<(DateTime date, bool IsOddDay)> GetSettings();
     }

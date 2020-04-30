@@ -4,7 +4,7 @@ using NpuRozklad.LessonsProvider.Entities;
 
 namespace NpuRozklad.LessonsProvider.Holders.Interfaces
 {
-    public interface ICalendarRawItemHolder
+    internal interface ICalendarRawItemHolder
     {
         Task<ICollection<CalendarRawItem>> GetCalendarItems();
     }

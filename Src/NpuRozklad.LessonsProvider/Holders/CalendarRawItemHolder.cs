@@ -8,7 +8,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider.Holders
 {
-    public class CalendarRawItemHolder : PeriodicOperationExecutor, ICalendarRawItemHolder
+    internal class CalendarRawItemHolder : PeriodicOperationExecutor, ICalendarRawItemHolder
     {
         private readonly INpuServerFetcher _fetcher;
         private List<CalendarRawItem> _calendarRawItemsCache = new List<CalendarRawItem>();

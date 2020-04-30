@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NpuRozklad.LessonsProvider.Fetcher
 {
-    public class NpuServerFetcher : INpuServerFetcher
+    internal class NpuServerFetcher : INpuServerFetcher
     {
         private readonly NpuServerFetcherOptions _options;
         private readonly HttpClient _httpClient;

@@ -2,7 +2,7 @@ using System;
 
 namespace NpuRozklad.LessonsProvider.Entities
 {
-    public class CalendarRawItem
+    internal class CalendarRawItem
     {
         //todo to string
         public string GroupId { get; set; }

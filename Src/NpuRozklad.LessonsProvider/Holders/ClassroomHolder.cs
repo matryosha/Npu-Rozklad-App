@@ -8,7 +8,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider.Holders
 {
-    public class ClassroomHolder : PeriodicOperationExecutor, IClassroomsHolder
+    internal class ClassroomHolder : PeriodicOperationExecutor, IClassroomsHolder
     {
         private readonly INpuServerFetcher _fetcher;
         private readonly Dictionary<Faculty, List<Classroom>> _classroomsCache =

@@ -5,7 +5,7 @@ using NpuRozklad.LessonsProvider.Entities;
 
 namespace NpuRozklad.LessonsProvider.Holders.Interfaces
 {
-    public interface IUnprocessedExtendedLessonsHolder
+    internal interface IUnprocessedExtendedLessonsHolder
     {
         Task<ICollection<ExtendedLesson>> GetFacultyUnprocessedLessons(Faculty faculty);
     }

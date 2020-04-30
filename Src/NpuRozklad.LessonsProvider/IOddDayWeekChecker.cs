@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public interface IOddDayWeekChecker
+    internal interface IOddDayWeekChecker
     {
         Task<bool> IsOddDayWeek(DateTime dateTime);
     }

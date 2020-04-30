@@ -6,7 +6,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider.Holders
 {
-    public class SettingsHolder : PeriodicOperationExecutor, ISettingsHolder
+    internal class SettingsHolder : PeriodicOperationExecutor, ISettingsHolder
     {
         private readonly INpuServerFetcher _fetcher;
         private (DateTime date, bool isOddDay) _settingsCache;

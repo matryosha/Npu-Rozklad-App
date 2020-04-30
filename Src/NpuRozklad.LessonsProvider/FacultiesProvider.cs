@@ -13,7 +13,7 @@ namespace NpuRozklad.LessonsProvider
     /// string with faculties and deserialize with <see cref="NpuRozklad.LessonsProvider.RawStringParser"/>
     /// to get collection of <see cref="NpuRozklad.Core.Entities.Faculty"/>. Caches values and auto updates.
     /// </summary>
-    public class FacultiesProvider : PeriodicOperationExecutor, IFacultiesProvider
+    internal class FacultiesProvider : PeriodicOperationExecutor, IFacultiesProvider
     {
         private readonly INpuServerFetcher _fetcher;
         private readonly List<Faculty> _facultiesCache = new List<Faculty>();

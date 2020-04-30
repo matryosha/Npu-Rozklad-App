@@ -9,7 +9,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider.Holders
 {
-    public class GroupsHolder : PeriodicOperationExecutor, IGroupsHolder
+    internal class GroupsHolder : PeriodicOperationExecutor, IGroupsHolder
     {
         private readonly INpuServerFetcher _fetcher;
         private readonly IFacultiesProvider _facultiesProvider;

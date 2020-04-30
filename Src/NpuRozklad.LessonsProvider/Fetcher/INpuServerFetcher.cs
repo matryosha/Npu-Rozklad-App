@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace NpuRozklad.LessonsProvider.Fetcher
 {
-    public interface INpuServerFetcher
+    internal interface INpuServerFetcher
     {
         Task<string> FetchCalendar();
         Task<string> FetchSettings();

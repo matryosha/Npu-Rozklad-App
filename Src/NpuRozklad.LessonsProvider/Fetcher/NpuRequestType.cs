@@ -1,6 +1,6 @@
 namespace NpuRozklad.LessonsProvider.Fetcher
 {
-    public enum NpuRequestType
+    internal enum NpuRequestType
     {
         GetCalendar,
         GetLecturers,

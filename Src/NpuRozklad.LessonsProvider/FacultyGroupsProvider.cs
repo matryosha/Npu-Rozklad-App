@@ -7,7 +7,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public class FacultyGroupsProvider : IFacultyGroupsProvider
+    internal class FacultyGroupsProvider : IFacultyGroupsProvider
     {
         private readonly IGroupsHolder _groupsHolder;
 

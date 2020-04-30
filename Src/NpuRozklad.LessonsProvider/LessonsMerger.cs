@@ -5,7 +5,7 @@ using NpuRozklad.LessonsProvider.Entities;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public static class LessonsMerger
+    internal static class LessonsMerger
     {
          /// <summary>
         /// Resolve all conflicts and put new lesson in right place

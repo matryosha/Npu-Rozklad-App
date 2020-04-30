@@ -6,7 +6,7 @@ namespace NpuRozklad.LessonsProvider.Tests.Infrastructure
 {
     public static class StubNpuServerFetcher
     {
-        public static INpuServerFetcher Fetcher;
+        internal static INpuServerFetcher Fetcher;
 
         static StubNpuServerFetcher()
         {

@@ -5,7 +5,7 @@ using NpuRozklad.LessonsProvider.Entities;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public interface ICalendarRawToFacultyUnprocessedLessons
+    internal interface ICalendarRawToFacultyUnprocessedLessons
     {
         Task<ICollection<ExtendedLesson>> Transform(ICollection<CalendarRawItem> calendarRawList, Faculty faculty);
     }

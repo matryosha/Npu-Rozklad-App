@@ -4,7 +4,7 @@ using NpuRozklad.Core.Entities;
 
 namespace NpuRozklad.LessonsProvider.Holders.Interfaces
 {
-    public interface IClassroomsHolder
+    internal interface IClassroomsHolder
     {
         Task<ICollection<Classroom>> GetClassrooms(Faculty faculty);
     }

@@ -10,7 +10,7 @@ using NpuRozklad.LessonsProvider.Holders.Interfaces;
 
 namespace NpuRozklad.LessonsProvider
 {
-    public class UnprocessedExtendedLessonsManager : 
+    internal class UnprocessedExtendedLessonsManager : 
         PeriodicOperationExecutor,
         IUnprocessedExtendedLessonsHolder, ICalendarRawToFacultyUnprocessedLessons
     {
