@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -13,52 +14,45 @@ namespace NpuRozklad.LessonsProvider
     internal static class RawStringParser
     {
         private const string NpuDateFormat = "yyyy-MM-dd";
+        public static int NumberOfCalendarItemsToTake = 1000;
 
         public static List<CalendarRawItem> DeserializeCalendar(string rawString)
         {
             var result = new List<CalendarRawItem>();
-            var rawValues = GetValues(rawString);
-
-            foreach (var rawValue in rawValues)
+            
+            var jArrayWithCalendarValues = (JArray) JObject.Parse(rawString)["response"][0];
+            var jTokenList = jArrayWithCalendarValues.Skip(jArrayWithCalendarValues.Count - NumberOfCalendarItemsToTake);
+            
+            foreach (var token in jTokenList)
             {
-                if (rawValue.Count < 1) continue;
-
+                if (!token.HasValues) continue;
+                var tokenAsJArray = token as JArray;
                 CalendarRawItem item;
                 try
                 {
                     item = new CalendarRawItem
                     {
-                        GroupId = rawValue[0],
-                        LecturerId = rawValue[2],
-                        ClassroomId = rawValue[3],
-                        LessonCount = rawValue[5],
-                        LessonNumber = rawValue[6],
-                        Fraction = Convert.ToInt32(rawValue[7]),
-                        SubGroup = Convert.ToInt32(rawValue[8])
+                        GroupId = tokenAsJArray[0].Value<string>(),
+                        LecturerId = tokenAsJArray[2].Value<string>(),
+                        ClassroomId = tokenAsJArray[3].Value<string>(),
+                        LessonCount = tokenAsJArray[5].Value<string>(),
+                        LessonNumber = tokenAsJArray[6].Value<string>(),
+                        Fraction = tokenAsJArray[7].Value<int>(),
+                        SubGroup = tokenAsJArray[8].Value<int>(),
+                        SubjectName = tokenAsJArray[1].Value<string>(),
+                        LessonSetDate = DateTime.ParseExact(tokenAsJArray[4].Value<string>(), NpuDateFormat, null)
                     };
-                }
-                catch (FormatException) {continue;}
-                catch (OverflowException) {continue;}
-                
-                try
-                {
-                    item.SubjectName = Regex.Unescape(rawValue[1]);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-                
-                try
-                {
-                    item.LessonSetDate = DateTime.ParseExact(rawValue[4], NpuDateFormat, null);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                }
-                
-                result.Add(item);
-            }
 
+                }
+                catch (Exception _)
+                {
+                    // ignored
+                    continue;
+                }
+
+                result.Add(item);
+
+            }
             return result;
         }
 
@@ -144,6 +138,7 @@ namespace NpuRozklad.LessonsProvider
             return (dateValue, boolValue);
         }
 
+        // Start using JObject?
         private static IEnumerable<List<string>> GetValues(string rawString)
         {
             var values = new List<List<string>>();
