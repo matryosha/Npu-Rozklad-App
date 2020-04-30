@@ -17,4 +17,25 @@
       <ProjectReference Include="..\..\Src\NpuRozklad.LessonsProvider\NpuRozklad.LessonsProvider.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="Infrastructure\StubContent\CalendarRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Infrastructure\StubContent\ClassroomsRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Infrastructure\StubContent\FacultiesRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Infrastructure\StubContent\GroupsRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Infrastructure\StubContent\LecturesRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Infrastructure\StubContent\SettingsRawContent.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
