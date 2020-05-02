@@ -35,6 +35,8 @@
       "notifications-enabled-message": "Сповіщення було ввімкнуто",
       "notifications-disabled-message": "Сповіщення було вимкнуто",
       "schedule-was-updated-for": "Розклад був змінений для групи",
-      "dates-with-updated-schedule": "Дні з новим розкладом"
+      "dates-with-updated-schedule": "Дні з новим розкладом",
+      "incorrect-input": "Неправильний ввід",
+      "faculty-group-has-been-added": "Групу додано"
    }
 }
