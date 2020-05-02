@@ -5,11 +5,11 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 {
     public class LongLastingUserActionHandlerFactory : ILongLastingUserActionHandlerFactory
     {
-        private readonly IExternalServiceFactory _serviceFactory;
+        private readonly IExternalServiceProvider _serviceProvider;
 
-        public LongLastingUserActionHandlerFactory(IExternalServiceFactory serviceFactory)
+        public LongLastingUserActionHandlerFactory(IExternalServiceProvider serviceProvider)
         {
-            _serviceFactory = serviceFactory;
+            _serviceProvider = serviceProvider;
         }
         
         public ILongLastingUserActionHandler GetHandler(LongLastingUserActionArguments actionArguments)
@@ -17,9 +17,9 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
             switch (actionArguments.UserActionType)
             {
                 case LongLastingUserActionType.TimetableSelectingFaculty:
-                    return _serviceFactory.GetService<TimetableSelectingFacultyActionHandler>();
+                    return _serviceProvider.GetService<TimetableSelectingFacultyActionHandler>();
                 case LongLastingUserActionType.TimetableSelectingFacultyGroupToAdd:
-                    return _serviceFactory.GetService<TimetableSelectingFacultyGroupToAddActionHandler>();
+                    return _serviceProvider.GetService<TimetableSelectingFacultyGroupToAddActionHandler>();
                 default:
                     throw new NotImplementedException();
             }

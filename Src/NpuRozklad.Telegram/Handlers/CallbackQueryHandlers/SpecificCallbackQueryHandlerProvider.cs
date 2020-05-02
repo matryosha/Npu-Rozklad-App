@@ -6,11 +6,11 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
 {
     internal class SpecificCallbackQueryHandlerProvider
     {
-        private readonly IExternalServiceFactory _serviceFactory;
+        private readonly IExternalServiceProvider _serviceProvider;
 
-        public SpecificCallbackQueryHandlerProvider(IExternalServiceFactory serviceFactory)
+        public SpecificCallbackQueryHandlerProvider(IExternalServiceProvider serviceProvider)
         {
-            _serviceFactory = serviceFactory;
+            _serviceProvider = serviceProvider;
         }
         
         internal ISpecificCallbackQueryHandler GetHandler(CallbackQueryActionType actionType)
@@ -18,11 +18,11 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
             switch (actionType)
             {
                 case CallbackQueryActionType.AddGroup:
-                    return _serviceFactory.GetService<AddGroupCallbackHandler>();
+                    return _serviceProvider.GetService<AddGroupCallbackHandler>();
                 case CallbackQueryActionType.ShowTimetableFacultyGroupViewMenu:
-                    return _serviceFactory.GetService<ShowTimetableFacultyGroupViewMenuCallbackHandler>();
+                    return _serviceProvider.GetService<ShowTimetableFacultyGroupViewMenuCallbackHandler>();
                 case CallbackQueryActionType.ShowTimetableFacultyGroupsMenu:
-                    return _serviceFactory.GetService<ShowTimetableFacultyGroupsMenuCallbackHandler>();
+                    return _serviceProvider.GetService<ShowTimetableFacultyGroupsMenuCallbackHandler>();
                 case CallbackQueryActionType.ShowScheduleMenu:
                     break;
                 case CallbackQueryActionType.DeleteGroup:

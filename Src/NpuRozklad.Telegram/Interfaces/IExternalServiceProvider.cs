@@ -1,6 +1,6 @@
 namespace NpuRozklad.Telegram.Interfaces
 {
-    public interface IExternalServiceFactory
+    public interface IExternalServiceProvider
     {
         T GetService<T>();
     }
