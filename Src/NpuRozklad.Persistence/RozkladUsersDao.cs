@@ -17,11 +17,14 @@ namespace NpuRozklad.Persistence
             _dbContext = dbContext;
             _facultyGroupsProvider = facultyGroupsProvider;
         }
-        
+
         public async Task Add(RozkladUser rozkladUser)
         {
-            var alreadyExistedUser = 
-                await _dbContext.RozkladUserWrappers.FindAsync(rozkladUser.Guid);
+            var alreadyExistedUser =
+                await _dbContext.RozkladUserWrappers
+                    .AsNoTracking()
+                    .Where(u => u.Guid == rozkladUser.Guid)
+                    .FirstOrDefaultAsync();
 
             if (alreadyExistedUser == null)
             {
@@ -31,6 +34,7 @@ namespace NpuRozklad.Persistence
             else
             {
                 alreadyExistedUser.IsDeleted = false;
+                _dbContext.RozkladUserWrappers.Update(alreadyExistedUser);
             }
             
             await _dbContext.SaveChangesAsync();
@@ -54,7 +58,12 @@ namespace NpuRozklad.Persistence
 
         public async Task<RozkladUser> Find(string guid)
         {
-            var rozkladUserWrapper = await _dbContext.RozkladUserWrappers.FindAsync(guid);
+            var rozkladUserWrapper =
+                await _dbContext.RozkladUserWrappers
+                    .AsNoTracking()
+                    .Where(u => u.Guid == guid)
+                    .FirstOrDefaultAsync();
+
             if (rozkladUserWrapper == null) return null;
             var facultyGroups = await _facultyGroupsProvider.GetFacultyGroups();
 
