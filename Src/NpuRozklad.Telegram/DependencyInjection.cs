@@ -71,6 +71,8 @@ namespace NpuRozklad.Telegram
             services.AddTransient<ICurrentUserInitializerService, CurrentUserInitializerService>();
             services.AddTelegramBotClient(options.BotApiToken);
             services.AddSingleton<ITelegramBotActions, TelegramBotActions>();
+            services.AddScoped<TimetableSelectingFacultyActionHandler>();
+            services.AddScoped<TimetableSelectingFacultyGroupToAddActionHandler>();
             
             services.AddTelegramDbContext(options.ConnectionString);
 
