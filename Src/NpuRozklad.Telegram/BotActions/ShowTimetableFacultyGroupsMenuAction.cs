@@ -43,7 +43,7 @@ namespace NpuRozklad.Telegram.BotActions
 
         private ICollection<Group> GetFacultyGroups(ShowTimetableFacultyGroupsMenuOptions options)
         {
-            var facultyGroups = options.FacultyGroups;
+            var facultyGroups = options?.FacultyGroups;
             return facultyGroups ?? _currentTelegramUserService.TelegramRozkladUser.FacultyGroups;
         }
     }
