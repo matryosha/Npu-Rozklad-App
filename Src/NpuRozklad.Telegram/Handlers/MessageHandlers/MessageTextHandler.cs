@@ -23,17 +23,16 @@ namespace NpuRozklad.Telegram.Handlers.MessageHandlers
         }
         public async Task<bool> Handle(Message message)
         {
-            bool isHandled = false;
-
             var messageText = message.Text;
             
             if (messageText == _localizationService[UserLang, "schedule-reply-keyboard"])
             {
                 await _telegramBotActions.ShowTimetableFacultyGroupsMenu();
-                isHandled = true;
+                return true;
             }
 
-            return isHandled;
+            await _telegramBotActions.ShowMainMenu();
+            return true;
         }
     }
 }
