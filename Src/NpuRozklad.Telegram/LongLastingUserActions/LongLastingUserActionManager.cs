@@ -8,8 +8,8 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 {
     public class LongLastingUserActionManager : PeriodicOperationExecutor, ILongLastingUserActionManager
     {
-        private readonly ConcurrentDictionary<TelegramRozkladUser, ArgumentsWrapper> _actionCache =
-            new ConcurrentDictionary<TelegramRozkladUser, ArgumentsWrapper>();
+        private readonly ConcurrentDictionary<int, ArgumentsWrapper> _actionCache =
+            new ConcurrentDictionary<int, ArgumentsWrapper>();
         
         public LongLastingUserActionManager(int cacheTimeClearInMinutes = 5)
         {
@@ -25,28 +25,28 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
                 Arguments = arguments
             };
 
-            _actionCache[arguments.TelegramRozkladUser] = wrapper;
+            _actionCache[arguments.TelegramRozkladUser.TelegramId] = wrapper;
             
             return Task.CompletedTask;
         }
 
         public Task ClearUserAction(TelegramRozkladUser rozkladUser)
         {
-            _actionCache.TryRemove(rozkladUser, out _);
+            _actionCache.TryRemove(rozkladUser.TelegramId, out _);
             return Task.CompletedTask;
         }
 
         public Task<LongLastingUserActionArguments> GetUserLongLastingAction(TelegramRozkladUser telegramRozkladUser)
         {
-            return _actionCache.TryGetValue(telegramRozkladUser, out var value)
+            return _actionCache.TryGetValue(telegramRozkladUser.TelegramId, out var value)
                 ? Task.FromResult(value.Arguments)
                 : Task.FromResult<LongLastingUserActionArguments>(null);
         }
 
         public Task ClearOldValues()
         {
-            var allValues = new Dictionary<TelegramRozkladUser, ArgumentsWrapper>(_actionCache);
-            var usersToClear = new List<TelegramRozkladUser>();
+            var allValues = new Dictionary<int, ArgumentsWrapper>(_actionCache);
+            var telegramIdsToClear = new List<int>();
             var currentDate = DateTimeOffset.UtcNow;
 
             foreach (var value in allValues)
@@ -55,12 +55,12 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
                 var timeSpan = argumentDate.Subtract(currentDate);
                 
                 if (timeSpan.TotalSeconds > PeriodicCallIntervalInSeconds)
-                    usersToClear.Add(value.Key);
+                    telegramIdsToClear.Add(value.Key);
             }
 
-            foreach (var user in usersToClear)
+            foreach (var id in telegramIdsToClear)
             {
-                _actionCache.TryRemove(user, out _);
+                _actionCache.TryRemove(id, out _);
             }
             
             return Task.CompletedTask;
