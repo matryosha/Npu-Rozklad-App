@@ -36,7 +36,8 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
             
             var keyboardMarkupMenuOptions = new KeyboardMarkupMenuOptions
             {
-                Items = new List<ICollection<string>>{menuItemsText}
+                Items = new List<ICollection<string>>{menuItemsText},
+                OneTimeKeyboard = true
             };
             
             return _keyboardMarkupMenuCreator.CreateMenu(keyboardMarkupMenuOptions);
