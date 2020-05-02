@@ -23,7 +23,8 @@ namespace NpuRozklad.Telegram.Display.Timetable.SelectingFacultyGroupToAddMenu
             var keyboardMarkupMenuOptions = new KeyboardMarkupMenuOptions
             {
                 Items = new List<ICollection<string>>(facultyGroupsNames.Count),
-                AdditionalButtons = new List<KeyboardButton> {_keyboardMarkupMenuCreator.CreateBackButton()}
+                AdditionalButtons = new List<KeyboardButton> {_keyboardMarkupMenuCreator.CreateBackButton()},
+                OneTimeKeyboard = true
             };
             
             foreach (var name in facultyGroupsNames)
