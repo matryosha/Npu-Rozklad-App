@@ -8,5 +8,6 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
         public ICollection<ICollection<string>> Items { get; set; }
         public ICollection<KeyboardButton> AdditionalButtons { get; set; } = new List<KeyboardButton>();
         public bool OneTimeKeyboard { get; set; }
+        public bool ResizeKeyboard { get; set; }
     }
 }
