@@ -24,7 +24,8 @@ namespace NpuRozklad.Telegram.Display.Timetable.SelectingFacultyMenu
             var keyboardMarkupMenuOptions = new KeyboardMarkupMenuOptions
             {
                 Items = new List<ICollection<string>>(1),
-                AdditionalButtons = new List<KeyboardButton> {_keyboardMarkupMenuCreator.CreateBackButton()}
+                AdditionalButtons = new List<KeyboardButton> {_keyboardMarkupMenuCreator.CreateBackButton()},
+                OneTimeKeyboard = true
             };
 
             foreach (var name in facultiesNames)
