@@ -4,8 +4,10 @@ namespace NpuRozklad.Core.Entities
 {
     public class RozkladUser
     {
-        public RozkladUser()
-        { }
+        public RozkladUser(string guid = null)
+        {
+            Guid = string.IsNullOrWhiteSpace(guid) ? System.Guid.NewGuid().ToString() : guid;
+        }
 
         protected RozkladUser(RozkladUser origin)
         {
@@ -13,7 +15,7 @@ namespace NpuRozklad.Core.Entities
             IsDeleted = origin.IsDeleted;
             FacultyGroups = origin.FacultyGroups;
         }
-        public string Guid { get; } = System.Guid.NewGuid().ToString();
+        public string Guid { get; private set; }
         public List<Group> FacultyGroups { get; protected set; } = new List<Group>();
         public bool IsDeleted { get; set; }
     }
