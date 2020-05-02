@@ -19,19 +19,25 @@ namespace NpuRozklad.Telegram.Display.Timetable.SelectingFacultyMenu
         public ReplyKeyboardMarkup CreateMarkup(TimetableFacultyListKeyboardOptions options)
         {
             var faculties = options.Faculties;
+            var facultiesNames = FacultiesToNameArray(faculties);
 
             var keyboardMarkupMenuOptions = new KeyboardMarkupMenuOptions
             {
-                Items = new List<ICollection<string>>(new[] {FacultiesToNameArray(faculties)}),
+                Items = new List<ICollection<string>>(1),
                 AdditionalButtons = new List<KeyboardButton> {_keyboardMarkupMenuCreator.CreateBackButton()}
             };
 
+            foreach (var name in facultiesNames)
+            {
+                keyboardMarkupMenuOptions.Items.Add(new[] {name});
+            }
+            
             return _keyboardMarkupMenuCreator.CreateMenu(keyboardMarkupMenuOptions);
         }
 
         private static ICollection<string> FacultiesToNameArray(ICollection<Faculty> faculties)
         {
-            return new List<string>(faculties.Select(f => f.FullName).ToList());
+            return new List<string>(faculties.Select(f => f.FullName).ToArray());
         }
     }
 }
