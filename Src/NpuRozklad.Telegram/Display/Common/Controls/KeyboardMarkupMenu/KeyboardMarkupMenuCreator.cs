@@ -27,7 +27,7 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
 
             foreach (var rowItems in items)
             {
-                currentRowButtons.Add(rowItems.Select(CreateButton).Single());
+                currentRowButtons.AddRange(rowItems.Select(CreateButton));
 
                 rows.Add(currentRowButtons);
                 currentRowButtons = new List<KeyboardButton>();
