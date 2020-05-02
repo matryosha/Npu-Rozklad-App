@@ -21,6 +21,7 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
         {
             var items = options.Items;
             var additionalButtons = options.AdditionalButtons;
+            var oneTimeKeyboard = options.OneTimeKeyboard;
             
             var rows = new List<ICollection<KeyboardButton>>(items.Count);
             var currentRowButtons = new List<KeyboardButton>();
@@ -34,8 +35,12 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
             }
             
             rows.Add(additionalButtons);
-            
-            return new ReplyKeyboardMarkup(rows);
+
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = rows,
+                OneTimeKeyboard = oneTimeKeyboard
+            };
         }
         
         public KeyboardButton CreateBackButton() => new KeyboardButton
