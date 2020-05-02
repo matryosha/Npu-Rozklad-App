@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NpuRozklad.Core.Interfaces;
 
 namespace NpuRozklad.Telegram.Persistence
@@ -8,15 +10,20 @@ namespace NpuRozklad.Telegram.Persistence
         private readonly TelegramDbContext _dbContext;
         private readonly IRozkladUsersDao _rozkladUsersDao;
 
-        internal TelegramRozkladUserDao(TelegramDbContext dbContext,
+        public TelegramRozkladUserDao(TelegramDbContext dbContext,
             IRozkladUsersDao rozkladUsersDao)
         {
             _dbContext = dbContext;
             _rozkladUsersDao = rozkladUsersDao;
         }
+        
         public async Task<TelegramRozkladUser> FindByTelegramId(int telegramId)
         {
-            var telegramRozkladUser = await _dbContext.TelegramRozkladUsers.FindAsync(telegramId);
+            var telegramRozkladUser =
+                await _dbContext.TelegramRozkladUsers
+                    .AsNoTracking()
+                    .Where(r => r.TelegramId == telegramId)
+                    .FirstOrDefaultAsync();
 
             if (telegramRozkladUser == null) return null;
 
@@ -27,7 +34,11 @@ namespace NpuRozklad.Telegram.Persistence
 
         public async Task Add(TelegramRozkladUser telegramRozkladUser)
         {
-            var alreadyExistedUser = await _dbContext.TelegramRozkladUsers.FindAsync(telegramRozkladUser.TelegramId);
+            var alreadyExistedUser =
+                await _dbContext.TelegramRozkladUsers
+                    .AsNoTracking()
+                    .Where(u => u.TelegramId == telegramRozkladUser.TelegramId)
+                    .FirstOrDefaultAsync();
 
             if (alreadyExistedUser == null)
             {
@@ -38,8 +49,8 @@ namespace NpuRozklad.Telegram.Persistence
             {
                 _dbContext.TelegramRozkladUsers.Update(telegramRozkladUser);
                 await _rozkladUsersDao.Update(telegramRozkladUser);
-                await _dbContext.SaveChangesAsync();
             }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task Delete(TelegramRozkladUser telegramRozkladUser)
