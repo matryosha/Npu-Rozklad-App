@@ -22,7 +22,7 @@ namespace NpuRozklad.Telegram.BotActions
         
         public Task Execute(ShowIncorrectInputMessageOptions options = null)
         {
-            var messageText = _localizationService[_currentUserService.Language, "incorrect-message"];
+            var messageText = _localizationService[_currentUserService.Language, "incorrect-input"];
 
             return _telegramBotService.Client.SendTextMessageAsync(
                 _currentUserService.ChatId,
