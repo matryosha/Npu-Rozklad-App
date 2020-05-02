@@ -26,7 +26,7 @@ namespace NpuRozklad.Services.Localization
 
         private void Init(LocalizationLoaderOptions options)
         {
-            if (string.IsNullOrWhiteSpace(_localizationFilesPath))
+            if (string.IsNullOrWhiteSpace(options.PathToLocalizationsFiles))
                 throw new ArgumentNullException(nameof(options.PathToLocalizationsFiles),
                     "Path to localization files is empty");
 
