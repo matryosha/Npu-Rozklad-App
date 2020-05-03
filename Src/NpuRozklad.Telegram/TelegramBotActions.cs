@@ -61,5 +61,10 @@ namespace NpuRozklad.Telegram
         {
             return _externalServiceProvider.GetService<ShowApplicationVersionAction>().Execute();
         }
+
+        public Task ShowTimetableFacultyGroupsRemoveMenu()
+        {
+            return _externalServiceProvider.GetService<ShowTimetableFacultyGroupsRemoveMenuAction>().Execute();
+        }
     }
 }

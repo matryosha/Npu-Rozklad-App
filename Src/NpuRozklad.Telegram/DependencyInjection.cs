@@ -39,6 +39,7 @@ namespace NpuRozklad.Telegram
             services.AddScoped<ShowTimetableFacultyGroupViewMenuAction>();
             services.AddScoped<ShowTimetableSelectingFacultyGroupToAddMenuAction>();
             services.AddScoped<ShowTimetableSelectingFacultyMenuAction>();
+            services.AddScoped<ShowTimetableFacultyGroupsRemoveMenuAction>();
 
             services.AddSingleton<IFacultyGroupsInlineMenuCreator, FacultyGroupsInlineMenuCreator>();
             services.AddScoped<KeyboardMarkupMenuCreator>();
