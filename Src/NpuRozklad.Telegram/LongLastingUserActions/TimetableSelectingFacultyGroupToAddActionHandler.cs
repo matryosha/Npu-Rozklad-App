@@ -39,7 +39,7 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
             // check for back/main button
             
             var facultyGroups = await GetFacultyGroups(userActionArguments);
-            var facultyGroup = facultyGroups.FirstOrDefault(f => f.TypeId == selectedFacultyGroupTypeId);
+            var facultyGroup = facultyGroups.FirstOrDefault(f => f.Name == selectedFacultyGroupTypeId);
 
             if (facultyGroup == null)
             {
