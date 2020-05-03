@@ -26,6 +26,7 @@ namespace NpuRozklad.LessonsProvider
 
         public async Task<ICollection<Lesson>> GetLessonsOnDate(Group facultyGroup, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, 0,0,0);
             var rawLessons =
                 await _rawLessonsHolder.GetFacultyUnprocessedLessons(facultyGroup.Faculty).ConfigureAwait(false);
 
