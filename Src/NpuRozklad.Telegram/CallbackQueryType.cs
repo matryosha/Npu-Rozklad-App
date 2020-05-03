@@ -7,7 +7,7 @@
         ShowTimetableFacultyGroupsMenu,
         TimetableFacultyGroupsMenuGroupSelected,
         ShowScheduleMenu,
-        DeleteGroup,
+        RemoveGroup,
         ShowNotificationMenuForGroup,
         SubscribeToScheduleNotification,
         UnsubscribeFromScheduleNotification,
