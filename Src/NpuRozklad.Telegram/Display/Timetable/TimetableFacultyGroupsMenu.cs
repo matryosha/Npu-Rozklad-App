@@ -30,7 +30,7 @@ namespace NpuRozklad.Telegram.Display.Timetable
             var facultyGroupsInlineMenuOptions = new FacultyGroupsInlineMenuOptions
             {
                 FacultyGroups = facultyGroups,
-                CallbackActionType = ShowTimetableFacultyGroupsMenu,
+                CallbackActionType = TimetableFacultyGroupsMenuGroupSelected,
                 AdditionalButtons = new []{CreateAddGroupButton()}
             };
 
