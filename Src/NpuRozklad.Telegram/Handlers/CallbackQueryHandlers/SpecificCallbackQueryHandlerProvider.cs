@@ -25,6 +25,9 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
                     return _serviceProvider.GetService<ShowTimetableFacultyGroupsMenuCallbackHandler>();
                 case CallbackQueryActionType.TimetableFacultyGroupsMenuGroupSelected:
                     return _serviceProvider.GetService<TimetableFacultyGroupsMenuGroupSelectedHandler>();
+                case CallbackQueryActionType.RemoveGroup:
+                    return _serviceProvider.GetService<RemoveGroupCallbackHandler>();
+                    break;
                 case CallbackQueryActionType.ShowScheduleMenu:
                     break;
                 case CallbackQueryActionType.ShowNotificationMenuForGroup:

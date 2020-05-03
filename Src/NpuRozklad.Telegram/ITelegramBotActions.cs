@@ -15,5 +15,6 @@ namespace NpuRozklad.Telegram
         Task ShowFacultyGroupsForFacultyDoesNotExistMessage(
             ShowFacultyGroupsForFacultyDoesNotExistMessageOptions options = null);
         Task ShowApplicationVersion();
+        Task ShowTimetableFacultyGroupsRemoveMenu();
     }
 }

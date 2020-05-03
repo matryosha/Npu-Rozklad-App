@@ -76,7 +76,8 @@ namespace NpuRozklad.Telegram
             services.AddTransient<TimetableSelectingFacultyActionHandler>();
             services.AddTransient<TimetableSelectingFacultyGroupToAddActionHandler>();
             services.AddTransient<TimetableFacultyGroupsMenuGroupSelectedHandler>();
-            
+            services.AddTransient<RemoveGroupCallbackHandler>();
+
             services.AddTelegramDbContext(options.ConnectionString);
 
             return services;
