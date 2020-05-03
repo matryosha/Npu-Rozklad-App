@@ -31,7 +31,7 @@ namespace NpuRozklad.Telegram.Display.Timetable
             {
                 FacultyGroups = facultyGroups,
                 CallbackActionType = TimetableFacultyGroupsMenuGroupSelected,
-                AdditionalButtons = new []{CreateAddGroupButton()}
+                AdditionalButtons = new []{CreateAddGroupButton(), CreateRemoveGroupButton()}
             };
 
             return _facultyGroupsInlineMenuCreator.CreateMenu(facultyGroupsInlineMenuOptions);
@@ -43,6 +43,15 @@ namespace NpuRozklad.Telegram.Display.Timetable
             {
                 Text = _localizationService[_currentTelegramUser.Language, "add-group"],
                 CallbackData = ToCallBackData(AddGroup)
+            };
+        }
+
+        private InlineKeyboardButton CreateRemoveGroupButton()
+        {
+            return new InlineKeyboardButton()
+            {
+                Text = _localizationService[_currentTelegramUser.Language, "remove-group"],
+                CallbackData = ToCallBackData(RemoveGroup)
             };
         }
     }
