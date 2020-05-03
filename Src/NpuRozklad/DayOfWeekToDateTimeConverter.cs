@@ -1,4 +1,5 @@
 using System;
+using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.Core.Interfaces;
 
 namespace NpuRozklad
@@ -17,18 +18,13 @@ namespace NpuRozklad
             var currentDay = _localDateService.LocalDateTime;
             var firstDayOfCurrentWeek = GetFirstDayOfWeek(currentDay);
 
-            var resultDate = firstDayOfCurrentWeek.AddDays(DayOfWeekToLocal(dayOfWeek));
+            var resultDate = firstDayOfCurrentWeek.AddDays(NpuDateTimeHelper.DayOfWeekToLocal(dayOfWeek));
             if (asNextWeekDate) resultDate = resultDate.AddDays(7);
 
             return resultDate;
         }
 
-        private int DayOfWeekToLocal(DayOfWeek dayOfWeek)
-        {
-            return dayOfWeek == DayOfWeek.Sunday
-                ? 6
-                : (int) dayOfWeek - 1;
-        }
+
         
         // From https://github.com/FluentDateTime/FluentDateTime/blob/dba3f481fda3b9ee3c1b5ed717999bdad532c38e/src/FluentDateTime/DateTime/DateTimeExtensions.cs#L659
         public static DateTime GetFirstDayOfWeek(DateTime dateTime)

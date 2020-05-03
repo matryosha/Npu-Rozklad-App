@@ -23,5 +23,12 @@ namespace NpuRozklad.Core.Infrastructure
                 ? DayOfWeek.Sunday
                 : (DayOfWeek) (dayOfWeekNumber + 1);
         }
+        
+        public static int DayOfWeekToLocal(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek == DayOfWeek.Sunday
+                ? 6
+                : (int) dayOfWeek - 1;
+        }
     }
 }
