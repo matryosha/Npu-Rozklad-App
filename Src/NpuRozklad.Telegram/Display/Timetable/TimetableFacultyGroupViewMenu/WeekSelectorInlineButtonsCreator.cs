@@ -36,7 +36,7 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
             {
                 NumberOfButtons = 2,
                 ButtonTextFunc = i => buttonsText[i],
-                CallbackDataFunc = i => ToCallbackData(isNextWeekActive, (DayOfWeek) activeDayOfWeek, facultyGroup)
+                CallbackDataFunc = i => ToCallbackData(i == 0 ? false : true, (DayOfWeek) activeDayOfWeek, facultyGroup)
             });
 
             var buttonIndexToChange = isNextWeekActive ? 1 : 0;
