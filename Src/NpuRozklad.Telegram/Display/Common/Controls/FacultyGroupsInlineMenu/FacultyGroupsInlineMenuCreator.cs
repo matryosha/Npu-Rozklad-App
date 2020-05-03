@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using NpuRozklad.Core.Entities;
 using Telegram.Bot.Types.ReplyMarkups;
 using static NpuRozklad.Telegram.Helpers.CallbackDataFormatter;
 
@@ -9,41 +7,29 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.FacultyGroupsInlineMenu
 {
     public class FacultyGroupsInlineMenuCreator : IFacultyGroupsInlineMenuCreator
     {
-        private int _maxButtonsInRow = 2;
-        public InlineKeyboardMarkup CreateMenu(FacultyGroupsInlineMenuOptions options)
+        private readonly InlineKeyboardButtonsCreator _inlineKeyboardButtonsCreator;
+        private int _maxButtonsInRow = 3;
+        public FacultyGroupsInlineMenuCreator(InlineKeyboardButtonsCreator inlineKeyboardButtonsCreator)
         {
-            var groups = options.FacultyGroups;
-            var callbackActionType = options.CallbackActionType;
-            
-            var result = new List<List<InlineKeyboardButton>>();
-            var rowButtons = new List<InlineKeyboardButton>(2);
-
-            foreach (var facultyGroup in groups)
-            {
-                var button = CreateFacultyGroupButton(callbackActionType, facultyGroup);
-
-                if (rowButtons.Count > _maxButtonsInRow)
-                {
-                    result.Add(rowButtons);
-                    rowButtons = new List<InlineKeyboardButton>(_maxButtonsInRow);
-                }
-
-                rowButtons.Add(button);
-            }
-            
-            result.Add(rowButtons);
-            result.Add(options.AdditionalButtons.ToList());
-
-            return new InlineKeyboardMarkup(result);
+            _inlineKeyboardButtonsCreator = inlineKeyboardButtonsCreator;
         }
         
-        private static InlineKeyboardButton CreateFacultyGroupButton(CallbackQueryActionType callbackQueryActionType, Group facultyGroup)
+        public InlineKeyboardMarkup CreateMenu(FacultyGroupsInlineMenuOptions options)
         {
-            return new InlineKeyboardButton
+            var facultyGroups = options.FacultyGroups.ToArray();
+            var callbackActionType = options.CallbackActionType;
+            var additionalButtons = options.AdditionalButtons;
+
+            var result = _inlineKeyboardButtonsCreator.Create(o =>
             {
-                Text = facultyGroup.Name,
-                CallbackData = ToCallBackData(callbackQueryActionType, facultyGroup)
-            };
+                o.MaxButtonsInRow = _maxButtonsInRow;
+                o.AdditionalButtons = additionalButtons;
+                o.ItemsNumber = facultyGroups.Length;
+                o.ButtonTextFunc = i => facultyGroups[i].Name;
+                o.CallbackDataFunc = i => ToCallBackData(callbackActionType, facultyGroups[i]);
+            });
+
+            return new InlineKeyboardMarkup(result);
         }
     }
 }
