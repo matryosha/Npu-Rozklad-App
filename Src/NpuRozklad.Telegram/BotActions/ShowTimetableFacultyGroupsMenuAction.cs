@@ -33,7 +33,7 @@ namespace NpuRozklad.Telegram.BotActions
             var inlineMenu = _timetableFacultyGroupsMenu.CreateInlineMenu(facultyGroups);
             var textMessage = _localizationService[_currentTelegramUserService.Language, "choose-group-message"];
 
-            return _telegramBotService.Client.SendTextMessageAsync(
+            return _telegramBotService.SendOrEditMessageAsync(
                 _currentTelegramUserService.ChatId,
                 textMessage,
                 ParseMode.Markdown,

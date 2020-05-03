@@ -60,7 +60,7 @@ namespace NpuRozklad.Telegram.BotActions
                     OneDayLessons = lessons
                 });
 
-            await _telegramBotService.Client.SendTextMessageAsync(
+            await _telegramBotService.SendOrEditMessageAsync(
                 _currentUserService.ChatId,
                 messageText,
                 ParseMode.Html,
