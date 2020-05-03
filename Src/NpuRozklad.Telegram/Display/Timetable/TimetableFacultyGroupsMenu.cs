@@ -51,7 +51,7 @@ namespace NpuRozklad.Telegram.Display.Timetable
             return new InlineKeyboardButton()
             {
                 Text = _localizationService[_currentTelegramUser.Language, "remove-group"],
-                CallbackData = ToCallBackData(RemoveGroup)
+                CallbackData = ToCallBackData(OpenRemoveGroupsMenu)
             };
         }
     }

@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 
 namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
 {
-    public class RemoveGroupCallbackHandler : ISpecificCallbackQueryHandler
+    public class OpenRemoveGroupsMenuCallbackHandler : ISpecificCallbackQueryHandler
     {
         private readonly ITelegramBotActions _botActions;
 
-        public RemoveGroupCallbackHandler(ITelegramBotActions botActions)
+        public OpenRemoveGroupsMenuCallbackHandler(ITelegramBotActions botActions)
         {
             _botActions = botActions;
         }
