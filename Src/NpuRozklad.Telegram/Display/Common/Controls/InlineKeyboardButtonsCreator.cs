@@ -11,29 +11,41 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
         {
             var options = new InlineKeyboardButtonsCreatorOptions();
             optionsBuilder(options);
-            
+
             var itemsNumber = options.ItemsNumber;
             var callbackDataFunc = options.CallbackDataFunc;
             var buttonTextFunc = options.ButtonTextFunc;
             var maxButtonsInRow = options.MaxButtonsInRow;
             var additionalButtons = options.AdditionalButtons;
 
-            var isShouldAppendAdditionalButtons = additionalButtons.Any();
-            
-            var rowsCount = (int) Math.Ceiling((double) itemsNumber / maxButtonsInRow);
-            if (isShouldAppendAdditionalButtons) rowsCount++;
+            var isShouldAppendAdditionalButtons = additionalButtons?.Any() ?? false;
 
-            var result = new InlineKeyboardButton[rowsCount][];
+            var rowsCount = (int) Math.Ceiling((double) itemsNumber / maxButtonsInRow);
+
+            var result = new InlineKeyboardButton[isShouldAppendAdditionalButtons ? rowsCount + 1 : rowsCount][];
             var loopsIteration = 0;
 
             for (var rowNumber = 0; rowNumber < rowsCount; rowNumber++)
             {
-                var numberOfItemsInCurrentRow = maxButtonsInRow > itemsNumber
-                    ? itemsNumber
-                    : maxButtonsInRow;
-                
+                // ˢʳʸ ᶠᵒʳ ᵗʰᵃᵗ •ㅅ•
+                int numberOfItemsInCurrentRow;
+
+                if (maxButtonsInRow > itemsNumber)
+                {
+                    numberOfItemsInCurrentRow = itemsNumber;
+                }
+                else
+                {
+                    var numberOfProcessedItems = loopsIteration;
+                    var subtractionDifference = itemsNumber - numberOfProcessedItems;
+
+                    numberOfItemsInCurrentRow = subtractionDifference < maxButtonsInRow
+                        ? subtractionDifference
+                        : maxButtonsInRow;
+                }
+
                 result[rowNumber] = new InlineKeyboardButton[numberOfItemsInCurrentRow];
-                
+
                 for (var rowItemNumber = 0; rowItemNumber < numberOfItemsInCurrentRow; rowItemNumber++)
                 {
                     result[rowNumber][rowItemNumber] = new InlineKeyboardButton
@@ -44,8 +56,8 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
                     loopsIteration++;
                 }
             }
-            
-            if(isShouldAppendAdditionalButtons)
+
+            if (isShouldAppendAdditionalButtons)
                 result[result.Length - 1] = additionalButtons.ToArray();
 
             return result;
