@@ -36,7 +36,7 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
 
             var result = _inlineKeyboardButtonsCreator.Create(new InlineKeyboardButtonsCreatorOptions
             {
-                NumberOfButtons = 7,
+                NumberOfButtons = 5,
                 ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)],
                 CallbackDataFunc = i =>
                     ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup)
