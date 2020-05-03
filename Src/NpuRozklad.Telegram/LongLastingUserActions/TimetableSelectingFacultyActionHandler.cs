@@ -53,6 +53,7 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 
             if (!facultyGroups.Any())
             {
+                await _longLastingUserActionManager.ClearUserAction(userActionArguments.TelegramRozkladUser);
                 await _botActions.ShowFacultyGroupsForFacultyDoesNotExistMessage();
                 return isHandled;
             }
