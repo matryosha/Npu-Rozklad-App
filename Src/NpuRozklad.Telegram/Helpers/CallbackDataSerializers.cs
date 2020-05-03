@@ -12,7 +12,7 @@ namespace NpuRozklad.Telegram.Helpers
 
             builder.AppendWithSeparator(
                 CallbackDataFormatter.ToCallBackData(CallbackQueryActionType.ShowTimetableFacultyGroupViewMenu));
-            builder.AppendWithSeparator((isNextWeek ? 0 : 1).ToString());
+            builder.AppendWithSeparator(isNextWeek ? "1" : "0");
             builder.AppendWithSeparator(((int) dayOfWeek).ToString());
             builder.AppendWithSeparator(
                 CallbackDataFormatter.ToCallBackData(facultyGroup));
