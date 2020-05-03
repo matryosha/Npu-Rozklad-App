@@ -14,6 +14,7 @@ using NpuRozklad.Telegram.Handlers;
 using NpuRozklad.Telegram.Handlers.CallbackQueryHandlers;
 using NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers;
 using NpuRozklad.Telegram.Handlers.MessageHandlers;
+using NpuRozklad.Telegram.Interfaces;
 using NpuRozklad.Telegram.LongLastingUserActions;
 using NpuRozklad.Telegram.Persistence;
 using NpuRozklad.Telegram.Services;
@@ -69,6 +70,7 @@ namespace NpuRozklad.Telegram
 
             services.AddScoped<ICurrentTelegramUserService, CurrentTelegramUserService>();
             services.AddTransient<ICurrentUserInitializerService, CurrentUserInitializerService>();
+            services.AddScoped<ICurrentScopeMessageIdProvider, CurrentScopeMessageIdProvider>();
             services.AddTelegramBotClient(options.BotApiToken);
             services.AddSingleton<ITelegramBotActions, TelegramBotActions>();
             services.AddTransient<TimetableSelectingFacultyActionHandler>();
@@ -85,9 +87,11 @@ namespace NpuRozklad.Telegram
             if (string.IsNullOrWhiteSpace(botApiToken))
                 throw new ArgumentNullException(nameof(botApiToken));
             
-            var telegramBotService = new TelegramBotService(botApiToken);
-            
-            services.AddSingleton<ITelegramBotService>(telegramBotService);
+            services.AddSingleton<ITelegramBotService>(provider =>
+            {
+                var externalServiceProvider = provider.GetService<IExternalServiceProvider>();
+                return new TelegramBotService(botApiToken, externalServiceProvider);
+            });
         }
 
         private static void AddTelegramDbContext(this IServiceCollection services, 
