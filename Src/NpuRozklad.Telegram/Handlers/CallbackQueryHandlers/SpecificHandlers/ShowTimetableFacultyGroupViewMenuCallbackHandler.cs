@@ -60,7 +60,7 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
         {
             var values = _callbackQueryData.Values;
 
-            _isNextWeek = Convert.ToBoolean(values[0]);
+            _isNextWeek = values[0] == "1";
             _dayOfWeek = (DayOfWeek) Convert.ToInt32(values[1]);
             _facultyGroupTypeId = values[2];
             _facultyTypeId = values[3];
