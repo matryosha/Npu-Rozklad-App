@@ -7,8 +7,11 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
 {
     public class InlineKeyboardButtonsCreator
     {
-        public InlineKeyboardButton[][] Create(InlineKeyboardButtonsCreatorOptions options)
+        public InlineKeyboardButton[][] Create(Action<InlineKeyboardButtonsCreatorOptions> optionsBuilder)
         {
+            var options = new InlineKeyboardButtonsCreatorOptions();
+            optionsBuilder(options);
+            
             var itemsNumber = options.ItemsNumber;
             var callbackDataFunc = options.CallbackDataFunc;
             var buttonTextFunc = options.ButtonTextFunc;

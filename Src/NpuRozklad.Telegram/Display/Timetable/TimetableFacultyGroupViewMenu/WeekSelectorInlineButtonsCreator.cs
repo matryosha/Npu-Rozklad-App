@@ -32,11 +32,12 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
             var facultyGroup = options.FacultyGroup;
             var buttonsText = GetButtonsText();
 
-            var buttons = _inlineKeyboardButtonsCreator.Create(new InlineKeyboardButtonsCreatorOptions
+            var buttons = _inlineKeyboardButtonsCreator.Create( o =>
             {
-                ItemsNumber = 2,
-                ButtonTextFunc = i => buttonsText[i],
-                CallbackDataFunc = i => ToCallbackData(i == 0 ? false : true, (DayOfWeek) activeDayOfWeek, facultyGroup)
+                o.ItemsNumber = 2;
+                o.ButtonTextFunc = i => buttonsText[i];
+                o.CallbackDataFunc = i =>
+                    ToCallbackData(i == 0 ? false : true, (DayOfWeek) activeDayOfWeek, facultyGroup);
             })[0];
 
             var buttonIndexToChange = isNextWeekActive ? 1 : 0;

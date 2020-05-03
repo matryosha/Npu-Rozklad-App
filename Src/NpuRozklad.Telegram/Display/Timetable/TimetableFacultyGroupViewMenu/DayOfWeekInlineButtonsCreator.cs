@@ -35,12 +35,12 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
             var dayOfWeekToMark = options.DayOfWeekToMark;
             var facultyGroup = options.FacultyGroup;
 
-            var result = _inlineKeyboardButtonsCreator.Create(new InlineKeyboardButtonsCreatorOptions
+            var result = _inlineKeyboardButtonsCreator.Create(o =>
             {
-                ItemsNumber = 5,
-                ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)],
-                CallbackDataFunc = i =>
-                    ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup)
+                o.ItemsNumber = 5;
+                o.ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)];
+                o.CallbackDataFunc = i =>
+                    ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup);
             })[0];
 
             if (shouldMarkDayOfWeek)
