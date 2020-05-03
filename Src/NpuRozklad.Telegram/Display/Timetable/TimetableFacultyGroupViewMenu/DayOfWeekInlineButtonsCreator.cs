@@ -44,8 +44,11 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
 
             if (shouldMarkDayOfWeek)
             {
-                var button = result[(int) dayOfWeekToMark];
-                button.Text = $"{ActiveMark} {button.Text}";
+                if (dayOfWeekToMark != DayOfWeek.Saturday && dayOfWeekToMark != DayOfWeek.Sunday)
+                {
+                    var button = result[(int) dayOfWeekToMark];
+                    button.Text = $"{ActiveMark} {button.Text}";
+                }
             }
 
             return result;
