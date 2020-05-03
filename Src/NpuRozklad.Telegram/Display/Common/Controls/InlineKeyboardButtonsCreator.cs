@@ -5,15 +5,35 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
 {
     public class InlineKeyboardButtonsCreator
     {
-        public InlineKeyboardButton[] Create(InlineKeyboardButtonsCreatorOptions options)
+        public InlineKeyboardButton[][] Create(InlineKeyboardButtonsCreatorOptions options)
         {
-            var numberOfButtons = options.NumberOfButtons;
+            var itemsNumber = options.ItemsNumber;
             var callbackDataFunc = options.CallbackDataFunc;
             var buttonTextFunc = options.ButtonTextFunc;
-            var result = new InlineKeyboardButton[numberOfButtons];
+            var maxButtonsInRow = options.MaxButtonsInRow;
+            var rowsCount = (int) Math.Ceiling((double) itemsNumber / maxButtonsInRow);
 
-            for (int i = 0; i < numberOfButtons; i++)
-                result[i] = new InlineKeyboardButton {Text = buttonTextFunc(i), CallbackData = callbackDataFunc(i)};
+            var result = new InlineKeyboardButton[rowsCount][];
+            var loopsIteration = 0;
+
+            for (var rowNumber = 0; rowNumber < rowsCount; rowNumber++)
+            {
+                var numberOfItemsInCurrentRow = maxButtonsInRow > itemsNumber
+                    ? itemsNumber
+                    : maxButtonsInRow;
+                
+                result[rowNumber] = new InlineKeyboardButton[numberOfItemsInCurrentRow];
+                
+                for (var rowItemNumber = 0; rowItemNumber < numberOfItemsInCurrentRow; rowItemNumber++)
+                {
+                    result[rowNumber][rowItemNumber] = new InlineKeyboardButton
+                    {
+                        Text = buttonTextFunc(loopsIteration),
+                        CallbackData = callbackDataFunc(loopsIteration)
+                    };
+                    loopsIteration++;
+                }
+            }
 
             return result;
         }
@@ -21,7 +41,8 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
 
     public class InlineKeyboardButtonsCreatorOptions
     {
-        public int NumberOfButtons { get; set; }
+        public int ItemsNumber { get; set; }
+        public int MaxButtonsInRow { get; set; } = 10;
 
         /// <summary>
         /// Takes iteration returns callback data string

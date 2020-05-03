@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls;
@@ -36,11 +37,11 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
 
             var result = _inlineKeyboardButtonsCreator.Create(new InlineKeyboardButtonsCreatorOptions
             {
-                NumberOfButtons = 5,
+                ItemsNumber = 5,
                 ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)],
                 CallbackDataFunc = i =>
                     ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup)
-            });
+            })[0];
 
             if (shouldMarkDayOfWeek)
             {
