@@ -10,6 +10,7 @@
       "no-groups-for-faculty-message":"На жаль, для цього факультету груп не має :(",
       "add-group":"Додати групу",
       "remove-group":"Видалити групу",
+      "select-group-to-remove":"Вибери групу для видалення:",
       "monday":"Понеділок",
       "tuesday":"Вівторок",
       "wednesday":"Середа",
