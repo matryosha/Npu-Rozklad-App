@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace NpuRozklad.Telegram.Display.Common.Controls
@@ -11,7 +13,12 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
             var callbackDataFunc = options.CallbackDataFunc;
             var buttonTextFunc = options.ButtonTextFunc;
             var maxButtonsInRow = options.MaxButtonsInRow;
+            var additionalButtons = options.AdditionalButtons;
+
+            var isShouldAppendAdditionalButtons = additionalButtons.Any();
+            
             var rowsCount = (int) Math.Ceiling((double) itemsNumber / maxButtonsInRow);
+            if (isShouldAppendAdditionalButtons) rowsCount++;
 
             var result = new InlineKeyboardButton[rowsCount][];
             var loopsIteration = 0;
@@ -34,6 +41,9 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
                     loopsIteration++;
                 }
             }
+            
+            if(isShouldAppendAdditionalButtons)
+                result[result.Length - 1] = additionalButtons.ToArray();
 
             return result;
         }
@@ -50,5 +60,6 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
         public Func<int, string> CallbackDataFunc { get; set; }
 
         public Func<int, string> ButtonTextFunc { get; set; }
+        public ICollection<InlineKeyboardButton> AdditionalButtons { get; set; }
     }
 }
