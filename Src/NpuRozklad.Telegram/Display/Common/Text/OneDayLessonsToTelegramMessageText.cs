@@ -40,7 +40,7 @@ namespace NpuRozklad.Telegram.Display.Common.Text
         {
             var currentDate = _localDateService.LocalDateTime;
             var message = new StringBuilder();
-            message.AppendLine($"<b>--{facultyGroup.TypeId}--</b>");
+            message.AppendLine($"<b>--{facultyGroup.Name}--</b>");
             
             message.AppendLine(
                 $"{_localizationService[UserLang, "classes-on"]} " +
