@@ -5,6 +5,7 @@
         AddGroup,
         ShowTimetableFacultyGroupViewMenu,
         ShowTimetableFacultyGroupsMenu,
+        TimetableFacultyGroupsMenuGroupSelected,
         ShowScheduleMenu,
         DeleteGroup,
         ShowNotificationMenuForGroup,
