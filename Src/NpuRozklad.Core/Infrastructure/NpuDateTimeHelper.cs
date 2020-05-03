@@ -19,9 +19,9 @@ namespace NpuRozklad.Core.Infrastructure
         /// </returns>
         public static DayOfWeek DayOfWeekNumberToLocalDayOfWeek(int dayOfWeekNumber)
         {
-            return dayOfWeekNumber == 0
+            return dayOfWeekNumber == 6
                 ? DayOfWeek.Sunday
-                : (DayOfWeek) (dayOfWeekNumber - 1);
+                : (DayOfWeek) (dayOfWeekNumber + 1);
         }
     }
 }
