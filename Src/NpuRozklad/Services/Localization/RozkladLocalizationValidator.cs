@@ -17,6 +17,7 @@ namespace NpuRozklad.Services.Localization
             "choose-faculty-message",
             "no-groups-for-faculty-message",
             "add-group",
+            "remove-group",
             "monday",
             "tuesday",
             "wednesday",
