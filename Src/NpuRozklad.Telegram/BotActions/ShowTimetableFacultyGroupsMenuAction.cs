@@ -34,7 +34,6 @@ namespace NpuRozklad.Telegram.BotActions
             var textMessage = _localizationService[_currentTelegramUserService.Language, "choose-group-message"];
 
             return _telegramBotService.SendOrEditMessageAsync(
-                _currentTelegramUserService.ChatId,
                 textMessage,
                 ParseMode.Markdown,
                 replyMarkup: inlineMenu

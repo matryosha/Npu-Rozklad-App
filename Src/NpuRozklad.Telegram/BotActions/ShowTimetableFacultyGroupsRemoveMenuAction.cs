@@ -30,7 +30,6 @@ namespace NpuRozklad.Telegram.BotActions
             var messageText = _localizationService[_currentTelegramUserService.Language, "select-group-to-remove"];
 
             return _telegramBotService.SendOrEditMessageAsync(
-                _currentTelegramUserService.ChatId,
                 messageText,
                 replyMarkup: inlineMenu);
         }

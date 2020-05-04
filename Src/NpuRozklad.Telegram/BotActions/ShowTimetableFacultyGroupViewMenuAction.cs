@@ -61,7 +61,6 @@ namespace NpuRozklad.Telegram.BotActions
                 });
 
             await _telegramBotService.SendOrEditMessageAsync(
-                _currentUserService.ChatId,
                 messageText,
                 ParseMode.Html,
                 replyMarkup: inlineKeyboard);

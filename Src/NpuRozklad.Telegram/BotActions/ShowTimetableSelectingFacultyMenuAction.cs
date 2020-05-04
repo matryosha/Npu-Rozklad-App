@@ -47,7 +47,6 @@ namespace NpuRozklad.Telegram.BotActions
                 _keyboardCreator.CreateMarkup(new TimetableFacultyListKeyboardOptions {Faculties = faculties});
 
             await _telegramBotService.SendOrEditMessageAsync(
-                _currentUserService.ChatId,
                 _localizationService[_currentUserService.Language, "choose-faculty-message"],
                 replyMarkup: replyKeyboard);
         }
