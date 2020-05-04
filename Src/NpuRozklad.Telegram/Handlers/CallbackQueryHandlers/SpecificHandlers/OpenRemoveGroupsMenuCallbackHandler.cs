@@ -1,16 +1,19 @@
 using System.Threading.Tasks;
+using NpuRozklad.Telegram.Services.Interfaces;
 
 namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
 {
-    public class OpenRemoveGroupsMenuCallbackHandler : ISpecificCallbackQueryHandler
+    public class OpenRemoveGroupsMenuCallbackHandler : SpecificHandlerBase
     {
         private readonly ITelegramBotActions _botActions;
 
-        public OpenRemoveGroupsMenuCallbackHandler(ITelegramBotActions botActions)
+        public OpenRemoveGroupsMenuCallbackHandler(ITelegramBotActions botActions, ITelegramBotService telegramBotService)
+         : base(telegramBotService)
         {
             _botActions = botActions;
         }
-        public Task Handle(CallbackQueryData callbackQueryData)
+        
+        protected override Task HandleImplementation(CallbackQueryData callbackQueryData)
         {
             return _botActions.ShowTimetableFacultyGroupsRemoveMenu();
         }

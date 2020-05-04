@@ -5,7 +5,7 @@ using NpuRozklad.Telegram.Services.Interfaces;
 
 namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
 {
-    public class RemoveGroupCallbackHandler : ISpecificCallbackQueryHandler
+    public class RemoveGroupCallbackHandler : SpecificHandlerBase
     {
         private readonly ITelegramBotActions _botActions;
         private readonly ITelegramRozkladUserDao _telegramRozkladUserDao;
@@ -16,14 +16,15 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
 
         public RemoveGroupCallbackHandler(ITelegramBotActions botActions,
             ITelegramRozkladUserDao telegramRozkladUserDao,
-            ICurrentTelegramUserService currentTelegramUserService)
+            ICurrentTelegramUserService currentTelegramUserService,
+            ITelegramBotService telegramBotService) : base(telegramBotService)
         {
             _botActions = botActions;
             _telegramRozkladUserDao = telegramRozkladUserDao;
             _currentTelegramUserService = currentTelegramUserService;
         }
         
-        public async Task Handle(CallbackQueryData callbackQueryData)
+        protected override async Task HandleImplementation(CallbackQueryData callbackQueryData)
         {
             _callbackQueryData = callbackQueryData;
             ProcessCallbackQueryData();

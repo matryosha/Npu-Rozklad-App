@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.BotActions;
+using NpuRozklad.Telegram.Services.Interfaces;
 
 namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
 {
-    public class TimetableFacultyGroupsMenuGroupSelectedHandler : ISpecificCallbackQueryHandler
+    public class TimetableFacultyGroupsMenuGroupSelectedHandler : SpecificHandlerBase
     {
         private readonly ITelegramBotActions _telegramBotActions;
         private readonly IFacultiesProvider _facultiesProvider;
@@ -23,15 +24,17 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
             ITelegramBotActions telegramBotActions,
             IFacultiesProvider facultiesProvider,
             IFacultyGroupsProvider facultyGroupsProvider,
-            ILocalDateService localDateService)
+            ILocalDateService localDateService,
+            ITelegramBotService telegramBotService)
+            : base(telegramBotService)
         {
             _telegramBotActions = telegramBotActions;
             _facultiesProvider = facultiesProvider;
             _facultyGroupsProvider = facultyGroupsProvider;
             _localDateService = localDateService;
         }
-
-        public async Task Handle(CallbackQueryData callbackQueryData)
+        
+        protected override async Task HandleImplementation(CallbackQueryData callbackQueryData)
         {
             _callbackQueryData = callbackQueryData;
             ProcessCallbackQueryData();
