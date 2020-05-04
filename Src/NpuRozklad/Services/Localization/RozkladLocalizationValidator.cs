@@ -19,6 +19,7 @@ namespace NpuRozklad.Services.Localization
             "add-group",
             "remove-group",
             "select-group-to-remove",
+            "select-group-to-show-timetable",
             "monday",
             "tuesday",
             "wednesday",

@@ -31,7 +31,7 @@ namespace NpuRozklad.Telegram.BotActions
         {
             var facultyGroups = GetFacultyGroups(options);
             var inlineMenu = _timetableFacultyGroupsMenu.CreateInlineMenu(facultyGroups);
-            var textMessage = _currentUserLocalizationService["choose-group-message"];
+            var textMessage = _currentUserLocalizationService["select-group-to-show-timetable"];
 
             return _telegramBotService.SendOrEditMessageAsync(
                 textMessage,
