@@ -12,7 +12,6 @@ namespace NpuRozklad.Telegram.Services.Interfaces
         ITelegramBotClient Client { get; }
 
         Task<Message> SendOrEditMessageAsync(
-            ChatId chatId,
             string text,
             ParseMode parseMode = ParseMode.Default,
             bool disableWebPagePreview = false,

@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NpuRozklad.Telegram.Interfaces;
@@ -15,6 +14,9 @@ namespace NpuRozklad.Telegram.Services
     {
         private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
+        private ChatId CurrentUserChatId => 
+            _currentScopeServiceProvider.GetService<ICurrentTelegramUserService>().ChatId;
+
         public TelegramBotService(string botApiToken,
             ICurrentScopeServiceProvider currentScopeServiceProvider)
         {
@@ -24,10 +26,12 @@ namespace NpuRozklad.Telegram.Services
 
         public ITelegramBotClient Client { get; }
 
-        public async Task<Message> SendOrEditMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default,
+        public async Task<Message> SendOrEditMessageAsync(string text, ParseMode parseMode = ParseMode.Default,
             bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default, bool forceNewMessage = false)
         {
+            var chatId = CurrentUserChatId;
+            
             if (forceNewMessage)
                 return await SendMessage();
 
