@@ -12,7 +12,7 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly IFacultiesProvider _facultiesProvider;
         private readonly ITelegramBotService _telegramBotService;
         private readonly ICurrentTelegramUserService _currentUserService;
-        private readonly ILocalizationService _localizationService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
 
         public ShowTimetableSelectingFacultyMenuAction(
@@ -20,14 +20,14 @@ namespace NpuRozklad.Telegram.BotActions
             IFacultiesProvider facultiesProvider,
             ITelegramBotService telegramBotService,
             ICurrentTelegramUserService currentUserService,
-            ILocalizationService localizationService,
+            ICurrentUserLocalizationService currentUserLocalizationService,
             ILongLastingUserActionManager longLastingUserActionManager)
         {
             _keyboardCreator = keyboardCreator;
             _facultiesProvider = facultiesProvider;
             _telegramBotService = telegramBotService;
             _currentUserService = currentUserService;
-            _localizationService = localizationService;
+            _currentUserLocalizationService = currentUserLocalizationService;
             _longLastingUserActionManager = longLastingUserActionManager;
         }
 
@@ -47,7 +47,7 @@ namespace NpuRozklad.Telegram.BotActions
                 _keyboardCreator.CreateMarkup(new TimetableFacultyListKeyboardOptions {Faculties = faculties});
 
             await _telegramBotService.SendOrEditMessageAsync(
-                _localizationService[_currentUserService.Language, "choose-faculty-message"],
+                _currentUserLocalizationService["choose-faculty-message"],
                 replyMarkup: replyKeyboard);
         }
     }
