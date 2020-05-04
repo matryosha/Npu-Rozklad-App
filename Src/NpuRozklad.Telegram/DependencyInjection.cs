@@ -53,6 +53,7 @@ namespace NpuRozklad.Telegram
             services.AddScoped<TimetableFacultyGroupViewInlineMenuCreator>();
             services.AddScoped<WeekSelectorInlineButtonsCreator>();
             services.AddScoped<TimetableFacultyGroupsMenu>();
+            services.AddTransient<TimetableFacultyGroupsRemoveMenu>();
 
             services.AddSingleton<ICallbackQueryHandler, CallbackQueryGlobalHandler>();
             services.AddScoped<ITelegramMessageHandler, TelegramMessageGlobalHandler>();
@@ -78,6 +79,7 @@ namespace NpuRozklad.Telegram
             services.AddTransient<TimetableSelectingFacultyGroupToAddActionHandler>();
             services.AddTransient<TimetableFacultyGroupsMenuGroupSelectedHandler>();
             services.AddTransient<OpenRemoveGroupsMenuCallbackHandler>();
+            services.AddTransient<RemoveGroupCallbackHandler>();
 
             services.AddTelegramDbContext(options.ConnectionString);
 
