@@ -1,4 +1,3 @@
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Helpers;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,14 +6,11 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
 {
     public class BackInlineButtonCreator
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
-        public BackInlineButtonCreator(ILocalizationService localizationService,
-            ICurrentTelegramUserService currentUserService)
+        public BackInlineButtonCreator(ICurrentUserLocalizationService currentUserLocalizationService)
         {
-            _localizationService = localizationService;
-            _currentUserService = currentUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
 
         public InlineKeyboardButton Create(CallbackQueryActionType backActionCallBack, string callbackData = null)
@@ -25,7 +21,7 @@ namespace NpuRozklad.Telegram.Display.Common.Controls
             
             return new InlineKeyboardButton
             {
-                Text = _localizationService[_currentUserService.Language, "back"],
+                Text = _currentUserLocalizationService["back"],
                 CallbackData = callbackDataText
             };
         }
