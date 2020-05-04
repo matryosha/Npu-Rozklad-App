@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using NpuRozklad.Core.Entities;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls.FacultyGroupsInlineMenu;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -12,16 +11,14 @@ namespace NpuRozklad.Telegram.Display.Timetable
 {
     public class TimetableFacultyGroupsMenu
     {
-        private readonly ICurrentTelegramUserService _currentTelegramUser;
-        private readonly ILocalizationService _localizationService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly IFacultyGroupsInlineMenuCreator _facultyGroupsInlineMenuCreator;
 
-        public TimetableFacultyGroupsMenu(ICurrentTelegramUserService currentTelegramUser,
-            ILocalizationService localizationService,
+        public TimetableFacultyGroupsMenu(
+            ICurrentUserLocalizationService currentUserLocalizationService,
             IFacultyGroupsInlineMenuCreator facultyGroupsInlineMenuCreator)
         {
-            this._currentTelegramUser = currentTelegramUser;
-            _localizationService = localizationService;
+            _currentUserLocalizationService = currentUserLocalizationService;
             _facultyGroupsInlineMenuCreator = facultyGroupsInlineMenuCreator;
         }
         
@@ -41,7 +38,7 @@ namespace NpuRozklad.Telegram.Display.Timetable
         {
             return new InlineKeyboardButton
             {
-                Text = _localizationService[_currentTelegramUser.Language, "add-group"],
+                Text = _currentUserLocalizationService["add-group"],
                 CallbackData = ToCallBackData(AddGroup)
             };
         }
@@ -50,7 +47,7 @@ namespace NpuRozklad.Telegram.Display.Timetable
         {
             return new InlineKeyboardButton()
             {
-                Text = _localizationService[_currentTelegramUser.Language, "remove-group"],
+                Text = _currentUserLocalizationService["remove-group"],
                 CallbackData = ToCallBackData(OpenRemoveGroupsMenu)
             };
         }
