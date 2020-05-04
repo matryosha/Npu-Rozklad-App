@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Timetable;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.Enums;
@@ -12,18 +11,18 @@ namespace NpuRozklad.Telegram.BotActions
     {
         private readonly ITelegramBotService _telegramBotService;
         private readonly TimetableFacultyGroupsMenu _timetableFacultyGroupsMenu;
-        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
+        private readonly ICurrentTelegramUserProvider _currentTelegramUserProvider;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public ShowTimetableFacultyGroupsMenuAction(
             ITelegramBotService telegramBotService,
             TimetableFacultyGroupsMenu timetableFacultyGroupsMenu,
-            ICurrentTelegramUserContext currentTelegramUserContext,
+            ICurrentTelegramUserProvider currentTelegramUserProvider,
             ICurrentUserLocalizationService currentUserLocalizationService)
         {
             _telegramBotService = telegramBotService;
             _timetableFacultyGroupsMenu = timetableFacultyGroupsMenu;
-            _currentTelegramUserContext = currentTelegramUserContext;
+            _currentTelegramUserProvider = currentTelegramUserProvider;
             _currentUserLocalizationService = currentUserLocalizationService;
         }
 
@@ -43,7 +42,7 @@ namespace NpuRozklad.Telegram.BotActions
         private ICollection<Group> GetFacultyGroups(ShowTimetableFacultyGroupsMenuOptions options)
         {
             var facultyGroups = options?.FacultyGroups;
-            return facultyGroups ?? _currentTelegramUserContext.TelegramRozkladUser.FacultyGroups;
+            return facultyGroups ?? _currentTelegramUserProvider.GetCurrentTelegramRozkladUser().FacultyGroups;
         }
     }
     

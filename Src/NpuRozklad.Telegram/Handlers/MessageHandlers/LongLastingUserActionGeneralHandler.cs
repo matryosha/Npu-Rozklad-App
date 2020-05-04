@@ -8,24 +8,25 @@ namespace NpuRozklad.Telegram.Handlers.MessageHandlers
     public class LongLastingUserActionGeneralHandler
     {
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
-        private readonly ICurrentTelegramUserContext _currentUserContext;
+        private readonly ICurrentTelegramUserProvider _currentTelegramUserProvider;
         private readonly ILongLastingUserActionHandlerFactory _longLastingUserActionHandlerFactory;
 
         public LongLastingUserActionGeneralHandler(
             ILongLastingUserActionManager longLastingUserActionManager,
-            ICurrentTelegramUserContext currentUserContext,
+            ICurrentTelegramUserProvider currentTelegramUserProvider,
             ILongLastingUserActionHandlerFactory longLastingUserActionHandlerFactory)
         {
             _longLastingUserActionManager = longLastingUserActionManager;
-            _currentUserContext = currentUserContext;
+            _currentTelegramUserProvider = currentTelegramUserProvider;
             _longLastingUserActionHandlerFactory = longLastingUserActionHandlerFactory;
         }
 
         public async Task<bool> Handle(Message message)
         {
             bool isHandled = false;
+            var currentUser = _currentTelegramUserProvider.GetCurrentTelegramRozkladUser();
             var userLongLastingActionArguments =
-                await _longLastingUserActionManager.GetUserLongLastingAction(_currentUserContext.TelegramRozkladUser);
+                await _longLastingUserActionManager.GetUserLongLastingAction(currentUser);
 
             if (userLongLastingActionArguments == null) return isHandled;
             

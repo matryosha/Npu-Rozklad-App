@@ -11,7 +11,7 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly TimetableFacultyListKeyboardCreator _keyboardCreator;
         private readonly IFacultiesProvider _facultiesProvider;
         private readonly ITelegramBotService _telegramBotService;
-        private readonly ICurrentTelegramUserContext _currentUserContext;
+        private readonly ICurrentTelegramUserProvider _currentTelegramUserProvider;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
 
@@ -19,14 +19,14 @@ namespace NpuRozklad.Telegram.BotActions
             TimetableFacultyListKeyboardCreator keyboardCreator,
             IFacultiesProvider facultiesProvider,
             ITelegramBotService telegramBotService,
-            ICurrentTelegramUserContext currentUserContext,
+            ICurrentTelegramUserProvider currentTelegramUserProvider,
             ICurrentUserLocalizationService currentUserLocalizationService,
             ILongLastingUserActionManager longLastingUserActionManager)
         {
             _keyboardCreator = keyboardCreator;
             _facultiesProvider = facultiesProvider;
             _telegramBotService = telegramBotService;
-            _currentUserContext = currentUserContext;
+            _currentTelegramUserProvider = currentTelegramUserProvider;
             _currentUserLocalizationService = currentUserLocalizationService;
             _longLastingUserActionManager = longLastingUserActionManager;
         }
@@ -34,11 +34,12 @@ namespace NpuRozklad.Telegram.BotActions
         public async Task Execute(ShowTimetableSelectingFacultyMenuOptions menuOptions)
         {
             var faculties = await _facultiesProvider.GetFaculties().ConfigureAwait(false);
-
+            var currentUser = _currentTelegramUserProvider.GetCurrentTelegramRozkladUser();
+            
             await _longLastingUserActionManager.UpsertUserAction(
                     new LongLastingUserActionArguments
                     {
-                        TelegramRozkladUser = _currentUserContext.TelegramRozkladUser,
+                        TelegramRozkladUser = currentUser,
                         UserActionType = LongLastingUserActionType.TimetableSelectingFaculty
                     })
                 .ConfigureAwait(false);
