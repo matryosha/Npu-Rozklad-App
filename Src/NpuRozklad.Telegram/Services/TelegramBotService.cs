@@ -13,12 +13,12 @@ namespace NpuRozklad.Telegram.Services
 {
     public class TelegramBotService : ITelegramBotService
     {
-        private readonly IExternalServiceProvider _externalServiceProvider;
+        private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
         public TelegramBotService(string botApiToken,
-            IExternalServiceProvider externalServiceProvider)
+            ICurrentScopeServiceProvider currentScopeServiceProvider)
         {
-            _externalServiceProvider = externalServiceProvider;
+            _currentScopeServiceProvider = currentScopeServiceProvider;
             Client = new TelegramBotClient(botApiToken);
         }
 
@@ -31,7 +31,7 @@ namespace NpuRozklad.Telegram.Services
             if (forceNewMessage)
                 return await SendMessage();
 
-            var currentScopeMessageIdProvider = _externalServiceProvider.GetService<ICurrentScopeMessageIdProvider>();
+            var currentScopeMessageIdProvider = _currentScopeServiceProvider.GetService<ICurrentScopeMessageIdProvider>();
             var currentMessageId = currentScopeMessageIdProvider.MessageId;
             if (currentMessageId == null) return await SendMessage();
 

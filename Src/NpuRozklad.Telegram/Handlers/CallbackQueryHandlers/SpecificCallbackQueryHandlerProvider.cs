@@ -6,9 +6,9 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
 {
     internal class SpecificCallbackQueryHandlerProvider
     {
-        private readonly IExternalServiceProvider _serviceProvider;
+        private readonly ICurrentScopeServiceProvider _serviceProvider;
 
-        public SpecificCallbackQueryHandlerProvider(IExternalServiceProvider serviceProvider)
+        public SpecificCallbackQueryHandlerProvider(ICurrentScopeServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

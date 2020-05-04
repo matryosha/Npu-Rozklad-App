@@ -5,9 +5,9 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 {
     public class LongLastingUserActionHandlerFactory : ILongLastingUserActionHandlerFactory
     {
-        private readonly IExternalServiceProvider _serviceProvider;
+        private readonly ICurrentScopeServiceProvider _serviceProvider;
 
-        public LongLastingUserActionHandlerFactory(IExternalServiceProvider serviceProvider)
+        public LongLastingUserActionHandlerFactory(ICurrentScopeServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

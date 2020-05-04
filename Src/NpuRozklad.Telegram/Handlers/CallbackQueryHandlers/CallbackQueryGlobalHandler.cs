@@ -9,13 +9,13 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
     internal class CallbackQueryGlobalHandler : ICallbackQueryHandler
     {
         private readonly SpecificCallbackQueryHandlerProvider _queryHandlerProvider;
-        private readonly IExternalServiceProvider _externalServiceProvider;
+        private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
         public CallbackQueryGlobalHandler(SpecificCallbackQueryHandlerProvider queryHandlerProvider,
-            IExternalServiceProvider externalServiceProvider)
+            ICurrentScopeServiceProvider currentScopeServiceProvider)
         {
             _queryHandlerProvider = queryHandlerProvider;
-            _externalServiceProvider = externalServiceProvider;
+            _currentScopeServiceProvider = currentScopeServiceProvider;
         }
         
         public Task Handle(CallbackQuery callbackQuery)
@@ -40,7 +40,7 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
 
         private void StoreMessageId(CallbackQuery callbackQuery)
         {
-            var scopeMessageIdProvider = _externalServiceProvider.GetService<ICurrentScopeMessageIdProvider>();
+            var scopeMessageIdProvider = _currentScopeServiceProvider.GetService<ICurrentScopeMessageIdProvider>();
             scopeMessageIdProvider.MessageId = callbackQuery.Message?.MessageId;
         }
     }

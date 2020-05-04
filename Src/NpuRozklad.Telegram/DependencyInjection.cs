@@ -93,7 +93,7 @@ namespace NpuRozklad.Telegram
             
             services.AddSingleton<ITelegramBotService>(provider =>
             {
-                var externalServiceProvider = provider.GetService<IExternalServiceProvider>();
+                var externalServiceProvider = provider.GetService<ICurrentScopeServiceProvider>();
                 return new TelegramBotService(botApiToken, externalServiceProvider);
             });
         }

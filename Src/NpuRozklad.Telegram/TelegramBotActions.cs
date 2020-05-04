@@ -6,65 +6,65 @@ namespace NpuRozklad.Telegram
 {
     public class TelegramBotActions : ITelegramBotActions
     {
-        private readonly IExternalServiceProvider _externalServiceProvider;
+        private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
-        public TelegramBotActions(IExternalServiceProvider externalServiceProvider)
+        public TelegramBotActions(ICurrentScopeServiceProvider currentScopeServiceProvider)
         {
-            _externalServiceProvider = externalServiceProvider;
+            _currentScopeServiceProvider = currentScopeServiceProvider;
         }
 
         public Task ShowTimetableSelectingFacultyGroupToAddMenu(
             ShowTimetableSelectingFacultyGroupToAddMenuOptions options)
         {
-            return _externalServiceProvider.GetService<ShowTimetableSelectingFacultyGroupToAddMenuAction>()
+            return _currentScopeServiceProvider.GetService<ShowTimetableSelectingFacultyGroupToAddMenuAction>()
                 .Execute(options);
         }
 
         public Task ShowTimetableFacultyGroupViewMenu(ShowTimetableFacultyGroupViewMenuOptions options)
         {
-            return _externalServiceProvider.GetService<ShowTimetableFacultyGroupViewMenuAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowTimetableFacultyGroupViewMenuAction>().Execute(options);
         }
 
         public Task ShowTimetableFacultyGroupsMenu(ShowTimetableFacultyGroupsMenuOptions options = null)
         {
-            return _externalServiceProvider.GetService<ShowTimetableFacultyGroupsMenuAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowTimetableFacultyGroupsMenuAction>().Execute(options);
         }
 
         public Task ShowTimetableSelectingFacultyMenu(ShowTimetableSelectingFacultyMenuOptions options = null)
         {
-            return _externalServiceProvider.GetService<ShowTimetableSelectingFacultyMenuAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowTimetableSelectingFacultyMenuAction>().Execute(options);
         }
 
         public Task ShowMainMenu(ShowMainMenuOptions options = null)
         {
-            return _externalServiceProvider.GetService<ShowMainMenuAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowMainMenuAction>().Execute(options);
         }
 
         public Task ResetCurrentUser(ResetCurrentUserOptions options = null)
         {
-            return _externalServiceProvider.GetService<ResetCurrentUserAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ResetCurrentUserAction>().Execute(options);
         }
 
         public Task ShowIncorrectInputMessage(ShowIncorrectInputMessageOptions options = null)
         {
-            return _externalServiceProvider.GetService<ShowIncorrectInputMessageAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowIncorrectInputMessageAction>().Execute(options);
         }
 
         public Task ShowFacultyGroupsForFacultyDoesNotExistMessage(
             ShowFacultyGroupsForFacultyDoesNotExistMessageOptions options = null)
         {
-            return _externalServiceProvider.GetService<ShowFacultyGroupsForFacultyDoesNotExistMessageAction>()
+            return _currentScopeServiceProvider.GetService<ShowFacultyGroupsForFacultyDoesNotExistMessageAction>()
                 .Execute(options);
         }
 
         public Task ShowApplicationVersion()
         {
-            return _externalServiceProvider.GetService<ShowApplicationVersionAction>().Execute();
+            return _currentScopeServiceProvider.GetService<ShowApplicationVersionAction>().Execute();
         }
 
         public Task ShowTimetableFacultyGroupsRemoveMenu()
         {
-            return _externalServiceProvider.GetService<ShowTimetableFacultyGroupsRemoveMenuAction>().Execute();
+            return _currentScopeServiceProvider.GetService<ShowTimetableFacultyGroupsRemoveMenuAction>().Execute();
         }
     }
 }
