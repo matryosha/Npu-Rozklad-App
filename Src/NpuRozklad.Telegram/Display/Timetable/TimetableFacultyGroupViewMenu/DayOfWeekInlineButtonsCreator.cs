@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using NpuRozklad.Core.Entities;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -13,19 +11,14 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
 {
     public class DayOfWeekInlineButtonsCreator
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentUserService;
         private readonly InlineKeyboardButtonsCreator _inlineKeyboardButtonsCreator;
-        private string Lang => _currentUserService.Language;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
-        public DayOfWeekInlineButtonsCreator(
-            ILocalizationService localizationService,
-            ICurrentTelegramUserService currentUserService,
-            InlineKeyboardButtonsCreator inlineKeyboardButtonsCreator)
+        public DayOfWeekInlineButtonsCreator(InlineKeyboardButtonsCreator inlineKeyboardButtonsCreator,
+            ICurrentUserLocalizationService currentUserLocalizationService)
         {
-            _localizationService = localizationService;
-            _currentUserService = currentUserService;
             _inlineKeyboardButtonsCreator = inlineKeyboardButtonsCreator;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
         
         public InlineKeyboardButton[] Create(DayOfWeekInlineButtonsCreatorOptions options)
@@ -38,7 +31,7 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
             var result = _inlineKeyboardButtonsCreator.Create(o =>
             {
                 o.ItemsNumber = 5;
-                o.ButtonTextFunc = i => _localizationService[Lang, DayOfWeekNumberToLocalDayOfWeek(i)];
+                o.ButtonTextFunc = i => _currentUserLocalizationService[DayOfWeekNumberToLocalDayOfWeek(i)];
                 o.CallbackDataFunc = i =>
                     ToCallbackData(isNextWeek, DayOfWeekNumberToLocalDayOfWeek(i), facultyGroup);
             })[0];
