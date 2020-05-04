@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls;
 using NpuRozklad.Telegram.Services.Interfaces;
 
@@ -8,18 +7,15 @@ namespace NpuRozklad.Telegram.BotActions
     public class ShowMainMenuAction
     {
         private readonly MainMenuCreator _mainMenuCreator;
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly ITelegramBotService _telegramBotService;
 
         public ShowMainMenuAction(MainMenuCreator mainMenuCreator,
-            ILocalizationService localizationService,
-            ICurrentTelegramUserService currentTelegramUserService,
+            ICurrentUserLocalizationService currentUserLocalizationService,
             ITelegramBotService telegramBotService)
         {
             _mainMenuCreator = mainMenuCreator;
-            _localizationService = localizationService;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
             _telegramBotService = telegramBotService;
         }
 
@@ -40,11 +36,11 @@ namespace NpuRozklad.Telegram.BotActions
             
             return string.IsNullOrWhiteSpace(optionLocalizationValue)
                 ? MessageDefaultText()
-                : _localizationService[_currentTelegramUserService.Language, optionLocalizationValue];
+                : _currentUserLocalizationService[optionLocalizationValue];
         }
 
         private string MessageDefaultText() =>
-            _localizationService[_currentTelegramUserService.Language, "choose-action-message"];
+            _currentUserLocalizationService["choose-action-message"];
     }
 
     public class ShowMainMenuOptions
