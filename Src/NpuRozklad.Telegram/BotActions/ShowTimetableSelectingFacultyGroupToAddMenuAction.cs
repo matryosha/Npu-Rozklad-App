@@ -35,10 +35,10 @@ namespace NpuRozklad.Telegram.BotActions
             var keyboardMarkup = _keyboardCreator.CreateMarkup(new TimetableFacultyGroupsKeyboardOptions
                 {FacultyGroups = facultyGroups});
 
-            await _telegramBotService.Client.SendTextMessageAsync(
-                _currentUserService.ChatId,
+            await _telegramBotService.SendOrEditMessageAsync(
                 messageText,
-                replyMarkup: keyboardMarkup);
+                replyMarkup: keyboardMarkup,
+                forceNewMessage: true);
         }
     }
     

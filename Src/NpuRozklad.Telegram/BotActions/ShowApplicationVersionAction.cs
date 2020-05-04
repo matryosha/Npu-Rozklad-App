@@ -27,10 +27,10 @@ namespace NpuRozklad.Telegram.BotActions
             var replyKeyboard = _mainMenuCreator.CreateMenu();
             var versionText = _applicationVersionProvider.GetApplicationVersion();
 
-            return _telegramBotService.Client.SendTextMessageAsync(
-                _currentTelegramUserService.ChatId,
+            return _telegramBotService.SendOrEditMessageAsync(
                 versionText,
-                replyMarkup: replyKeyboard);
+                replyMarkup: replyKeyboard,
+                forceNewMessage: true);
         }
     }
 }

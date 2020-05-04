@@ -24,9 +24,9 @@ namespace NpuRozklad.Telegram.BotActions
         {
             var messageText = _localizationService[_currentUserService.Language, "incorrect-input"];
 
-            return _telegramBotService.Client.SendTextMessageAsync(
-                _currentUserService.ChatId,
-                messageText);        
+            return _telegramBotService.SendOrEditMessageAsync(
+                messageText,
+                forceNewMessage: true);        
         }
     }
 

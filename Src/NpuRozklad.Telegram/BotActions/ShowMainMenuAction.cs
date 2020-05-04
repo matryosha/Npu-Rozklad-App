@@ -28,10 +28,10 @@ namespace NpuRozklad.Telegram.BotActions
             var replyKeyboard = _mainMenuCreator.CreateMenu();
             var messageText = GetMessageText(options);
 
-            return _telegramBotService.Client.SendTextMessageAsync(
-                _currentTelegramUserService.ChatId,
+            return _telegramBotService.SendOrEditMessageAsync(
                 messageText,
-                replyMarkup: replyKeyboard);
+                replyMarkup: replyKeyboard,
+                forceNewMessage: true);
         }
 
         private string GetMessageText(ShowMainMenuOptions options)

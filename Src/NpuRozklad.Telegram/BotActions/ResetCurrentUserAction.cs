@@ -30,10 +30,10 @@ namespace NpuRozklad.Telegram.BotActions
 
             await _telegramRozkladUserDao.Delete(_currentTelegramUserService.TelegramRozkladUser);
 
-            await _telegramBotService.Client.SendTextMessageAsync(
-                _currentTelegramUserService.ChatId,
+            await _telegramBotService.SendOrEditMessageAsync(
                 messageText,
-                replyMarkup: replyKeyboard);
+                replyMarkup: replyKeyboard,
+                forceNewMessage: true);
         }
     }
 
