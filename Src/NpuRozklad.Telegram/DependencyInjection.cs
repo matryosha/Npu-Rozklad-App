@@ -42,10 +42,10 @@ namespace NpuRozklad.Telegram
             services.AddScoped<ShowTimetableFacultyGroupsRemoveMenuAction>();
 
             services.AddSingleton<IFacultyGroupsInlineMenuCreator, FacultyGroupsInlineMenuCreator>();
-            services.AddScoped<KeyboardMarkupMenuCreator>();
-            services.AddScoped<BackInlineButtonCreator>();
+            services.AddSingleton<KeyboardMarkupMenuCreator>();
+            services.AddSingleton<BackInlineButtonCreator>();
             services.AddSingleton<InlineKeyboardButtonsCreator>();
-            services.AddScoped<MainMenuCreator>();
+            services.AddSingleton<MainMenuCreator>();
             services.AddScoped<OneDayLessonsToTelegramMessageText>();
             services.AddScoped<TimetableFacultyGroupsKeyboardCreator>();
             services.AddScoped<TimetableFacultyListKeyboardCreator>();
@@ -56,14 +56,14 @@ namespace NpuRozklad.Telegram
             services.AddTransient<TimetableFacultyGroupsRemoveMenu>();
 
             services.AddSingleton<ICallbackQueryHandler, CallbackQueryGlobalHandler>();
-            services.AddScoped<ITelegramMessageHandler, TelegramMessageGlobalHandler>();
+            services.AddSingleton<ITelegramMessageHandler, TelegramMessageGlobalHandler>();
             services.AddSingleton<AddGroupCallbackHandler>();
             services.AddSingleton<ShowTimetableFacultyGroupsMenuCallbackHandler>();
             services.AddTransient<ShowTimetableFacultyGroupViewMenuCallbackHandler>();
             services.AddSingleton<SpecificCallbackQueryHandlerProvider>();
-            services.AddScoped<CommandHandler>();
-            services.AddScoped<LongLastingUserActionGeneralHandler>();
-            services.AddScoped<MessageTextHandler>();
+            services.AddSingleton<CommandHandler>();
+            services.AddSingleton<LongLastingUserActionGeneralHandler>();
+            services.AddSingleton<MessageTextHandler>();
 
             services.AddSingleton<ILongLastingUserActionHandlerFactory, LongLastingUserActionHandlerFactory>();
             services.AddSingleton<ILongLastingUserActionManager, LongLastingUserActionManager>();
