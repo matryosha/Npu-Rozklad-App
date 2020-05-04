@@ -10,17 +10,14 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly ITelegramBotService _telegramBotService;
         private readonly IApplicationVersionProvider _applicationVersionProvider;
         private readonly MainMenuCreator _mainMenuCreator;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
 
         public ShowApplicationVersionAction(ITelegramBotService telegramBotService,
             IApplicationVersionProvider applicationVersionProvider,
-            MainMenuCreator mainMenuCreator,
-            ICurrentTelegramUserService currentTelegramUserService)
+            MainMenuCreator mainMenuCreator)
         {
             _telegramBotService = telegramBotService;
             _applicationVersionProvider = applicationVersionProvider;
             _mainMenuCreator = mainMenuCreator;
-            _currentTelegramUserService = currentTelegramUserService;
         }
         public Task Execute()
         {
