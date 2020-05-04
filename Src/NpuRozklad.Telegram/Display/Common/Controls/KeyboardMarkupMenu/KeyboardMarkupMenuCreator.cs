@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -8,14 +7,11 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
 {
     public class KeyboardMarkupMenuCreator
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
-        public KeyboardMarkupMenuCreator(ILocalizationService localizationService,
-            ICurrentTelegramUserService currentTelegramUserService)
+        public KeyboardMarkupMenuCreator(ICurrentUserLocalizationService currentUserLocalizationService)
         {
-            _localizationService = localizationService;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
         public ReplyKeyboardMarkup CreateMenu(KeyboardMarkupMenuOptions options)
         {
@@ -47,7 +43,7 @@ namespace NpuRozklad.Telegram.Display.Common.Controls.KeyboardMarkupMenu
         
         public KeyboardButton CreateBackButton() => new KeyboardButton
         {
-            Text = _localizationService[_currentTelegramUserService.Language, "back"]
+            Text = _currentUserLocalizationService["back"]
         };
         private static KeyboardButton CreateButton(string text) => new KeyboardButton {Text = text};
     }
