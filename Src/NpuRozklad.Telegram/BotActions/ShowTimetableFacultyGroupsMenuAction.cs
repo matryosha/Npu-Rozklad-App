@@ -13,25 +13,25 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly ITelegramBotService _telegramBotService;
         private readonly TimetableFacultyGroupsMenu _timetableFacultyGroupsMenu;
         private readonly ICurrentTelegramUserService _currentTelegramUserService;
-        private readonly ILocalizationService _localizationService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public ShowTimetableFacultyGroupsMenuAction(
             ITelegramBotService telegramBotService,
             TimetableFacultyGroupsMenu timetableFacultyGroupsMenu,
             ICurrentTelegramUserService currentTelegramUserService,
-            ILocalizationService localizationService)
+            ICurrentUserLocalizationService currentUserLocalizationService)
         {
             _telegramBotService = telegramBotService;
             _timetableFacultyGroupsMenu = timetableFacultyGroupsMenu;
             _currentTelegramUserService = currentTelegramUserService;
-            _localizationService = localizationService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
 
         public Task Execute(ShowTimetableFacultyGroupsMenuOptions options)
         {
             var facultyGroups = GetFacultyGroups(options);
             var inlineMenu = _timetableFacultyGroupsMenu.CreateInlineMenu(facultyGroups);
-            var textMessage = _localizationService[_currentTelegramUserService.Language, "choose-group-message"];
+            var textMessage = _currentUserLocalizationService["choose-group-message"];
 
             return _telegramBotService.SendOrEditMessageAsync(
                 textMessage,
