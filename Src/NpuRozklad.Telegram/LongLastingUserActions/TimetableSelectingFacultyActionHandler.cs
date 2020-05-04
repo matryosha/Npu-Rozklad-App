@@ -16,24 +16,20 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
         private readonly IFacultiesProvider _facultiesProvider;
         private readonly IFacultyGroupsProvider _facultyGroupsProvider;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
-        private readonly ILocalizationService _localizationService;
-        private string UserLang => _currentTelegramUserService.Language;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public TimetableSelectingFacultyActionHandler(
             ITelegramBotActions botActions,
             IFacultiesProvider facultiesProvider,
             IFacultyGroupsProvider facultyGroupsProvider,
             ILongLastingUserActionManager longLastingUserActionManager,
-            ICurrentTelegramUserService currentTelegramUserService,
-            ILocalizationService localizationService)
+            ICurrentUserLocalizationService currentUserLocalizationService)
         {
             _botActions = botActions;
             _facultiesProvider = facultiesProvider;
             _facultyGroupsProvider = facultyGroupsProvider;
             _longLastingUserActionManager = longLastingUserActionManager;
-            _currentTelegramUserService = currentTelegramUserService;
-            _localizationService = localizationService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
 
         public async Task<bool> Handle(LongLastingUserActionArguments userActionArguments)
@@ -48,7 +44,7 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
                 return isHandled;
             }
 
-            if (userInput == _localizationService[UserLang, "back"])
+            if (userInput == _currentUserLocalizationService["back"])
             {
                 await _longLastingUserActionManager.ClearUserAction(userActionArguments.TelegramRozkladUser);
                 await _botActions.ShowMainMenu();
