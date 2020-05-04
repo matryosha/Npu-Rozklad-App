@@ -10,18 +10,15 @@ namespace NpuRozklad.Telegram.Display.Common.Text
 {
     public class OneDayLessonsToTelegramMessageText
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentUserService;
         private readonly ILocalDateService _localDateService;
+        private readonly ICurrentUserLocalizationService _localizationService;
 
-        private string UserLang => _currentUserService.Language;
-
-        public OneDayLessonsToTelegramMessageText(ILocalizationService localizationService,
-            ICurrentTelegramUserService currentUserService, ILocalDateService localDateService)
+        public OneDayLessonsToTelegramMessageText(
+            ILocalDateService localDateService,
+            ICurrentUserLocalizationService localizationService)
         {
-            _localizationService = localizationService;
-            _currentUserService = currentUserService;
             _localDateService = localDateService;
+            _localizationService = localizationService;
         }
 
         public string CreateMessage(OneDayLessonsToTelegramMessageTextOptions options)
@@ -43,11 +40,11 @@ namespace NpuRozklad.Telegram.Display.Common.Text
             message.AppendLine($"<b>--{facultyGroup.Name}--</b>");
             
             message.AppendLine(
-                $"{_localizationService[UserLang, "classes-on"]} " +
-                $"<b>{_localizationService[UserLang, date.DayOfWeek, asFullDayName: true]}</b> " +
+                $"{_localizationService["classes-on"]} " +
+                $"<b>{_localizationService[date.DayOfWeek, asFullDayName: true]}</b> " +
                 $"<code>{date:dd/MM}</code>");
             
-            message.AppendLine($"{_localizationService[UserLang, "updated-on"]} {currentDate:HH:mm:ss}");
+            message.AppendLine($"{_localizationService["updated-on"]} {currentDate:HH:mm:ss}");
             message.AppendLine(Environment.NewLine);
 
             foreach (var lesson in lessons)
@@ -63,9 +60,9 @@ namespace NpuRozklad.Telegram.Display.Common.Text
         {
             var result = new StringBuilder();
             var subgroupInfo = lesson.SubGroup == SubGroup.First
-                ? $"1 {_localizationService[UserLang, "group"]}"
+                ? $"1 {_localizationService["group"]}"
                 : lesson.SubGroup == SubGroup.Second
-                    ? $"2 {_localizationService[UserLang, "group"]}"
+                    ? $"2 {_localizationService["group"]}"
                     : "";
 
             result.AppendLine(GetLessonNumber(lesson.LessonNumber));
