@@ -16,22 +16,19 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly ILessonsProvider _lessonsProvider;
         private readonly OneDayLessonsToTelegramMessageText _lessonsToTelegramMessageText;
         private readonly ITelegramBotService _telegramBotService;
-        private readonly ICurrentTelegramUserService _currentUserService;
 
         public ShowTimetableFacultyGroupViewMenuAction(
             TimetableFacultyGroupViewInlineMenuCreator menuCreator,
             IDayOfWeekToDateTimeConverter dayOfWeekToDateTimeConverter,
             ILessonsProvider lessonsProvider,
             OneDayLessonsToTelegramMessageText lessonsToTelegramMessageText,
-            ITelegramBotService telegramBotService,
-            ICurrentTelegramUserService currentUserService)
+            ITelegramBotService telegramBotService)
         {
             _menuCreator = menuCreator;
             _dayOfWeekToDateTimeConverter = dayOfWeekToDateTimeConverter;
             _lessonsProvider = lessonsProvider;
             _lessonsToTelegramMessageText = lessonsToTelegramMessageText;
             _telegramBotService = telegramBotService;
-            _currentUserService = currentUserService;
         }
 
         public async Task Execute(ShowTimetableFacultyGroupViewMenuOptions options)
