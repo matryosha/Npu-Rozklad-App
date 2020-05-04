@@ -32,6 +32,8 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers
              */
             StoreMessageId(callbackQuery);
             var callbackQueryData = CallbackDataFormatter.DeserializeCallbackQueryData(callbackQuery.Data);
+            callbackQueryData.CallbackQueryId = callbackQuery.Id;
+            
             var handler = _queryHandlerProvider.GetHandler(callbackQueryData.CallbackQueryActionType);
             return handler.Handle(callbackQueryData);
         }
