@@ -15,7 +15,7 @@ namespace NpuRozklad.Telegram.Services
         {
             get
             {
-                var currentTelegramUserService = _currentScopeServiceProvider.GetService<ICurrentTelegramUserService>();
+                var currentTelegramUserService = _currentScopeServiceProvider.GetService<ICurrentTelegramUserContext>();
                 return currentTelegramUserService.Language;
             }
         }

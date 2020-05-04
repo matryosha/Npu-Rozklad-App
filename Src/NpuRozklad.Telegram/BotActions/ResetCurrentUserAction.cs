@@ -8,17 +8,17 @@ namespace NpuRozklad.Telegram.BotActions
     public class ResetCurrentUserAction
     {
         private readonly MainMenuCreator _mainMenuCreator;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private readonly ITelegramRozkladUserDao _telegramRozkladUserDao;
         private readonly ITelegramBotService _telegramBotService;
 
         public ResetCurrentUserAction(MainMenuCreator mainMenuCreator,
-            ICurrentTelegramUserService currentTelegramUserService,
+            ICurrentTelegramUserContext currentTelegramUserContext,
             ITelegramRozkladUserDao telegramRozkladUserDao,
             ITelegramBotService telegramBotService)
         {
             _mainMenuCreator = mainMenuCreator;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentTelegramUserContext = currentTelegramUserContext;
             _telegramRozkladUserDao = telegramRozkladUserDao;
             _telegramBotService = telegramBotService;
         }
@@ -28,7 +28,7 @@ namespace NpuRozklad.Telegram.BotActions
             var replyKeyboard = _mainMenuCreator.CreateMenu();
             const string messageText = "Reset";
 
-            await _telegramRozkladUserDao.Delete(_currentTelegramUserService.TelegramRozkladUser);
+            await _telegramRozkladUserDao.Delete(_currentTelegramUserContext.TelegramRozkladUser);
 
             await _telegramBotService.SendOrEditMessageAsync(
                 messageText,

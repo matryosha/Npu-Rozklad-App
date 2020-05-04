@@ -70,7 +70,7 @@ namespace NpuRozklad.Telegram
             
             services.AddScoped<ITelegramRozkladUserDao, TelegramRozkladUserDao>();
 
-            services.AddScoped<ICurrentTelegramUserService, CurrentTelegramUserService>();
+            services.AddScoped<ICurrentTelegramUserContext, CurrentTelegramUserContext>();
             services.AddTransient<ICurrentUserInitializerService, CurrentUserInitializerService>();
             services.AddScoped<ICurrentScopeMessageIdProvider, CurrentScopeMessageIdProvider>();
             services.AddSingleton<ICurrentUserLocalizationService, CurrentUserLocalizationService>();

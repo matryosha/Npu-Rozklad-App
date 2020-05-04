@@ -9,19 +9,19 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
     {
         private readonly ITelegramBotActions _botActions;
         private readonly ITelegramRozkladUserDao _telegramRozkladUserDao;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private CallbackQueryData _callbackQueryData;
         private string _facultyGroupTypeId;
         private string _facultyTypeId;
 
         public RemoveGroupCallbackHandler(ITelegramBotActions botActions,
             ITelegramRozkladUserDao telegramRozkladUserDao,
-            ICurrentTelegramUserService currentTelegramUserService,
+            ICurrentTelegramUserContext currentTelegramUserContext,
             ITelegramBotService telegramBotService) : base(telegramBotService)
         {
             _botActions = botActions;
             _telegramRozkladUserDao = telegramRozkladUserDao;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentTelegramUserContext = currentTelegramUserContext;
         }
         
         protected override async Task HandleImplementation(CallbackQueryData callbackQueryData)
@@ -29,7 +29,7 @@ namespace NpuRozklad.Telegram.Handlers.CallbackQueryHandlers.SpecificHandlers
             _callbackQueryData = callbackQueryData;
             ProcessCallbackQueryData();
 
-            var currentUser = _currentTelegramUserService.TelegramRozkladUser;
+            var currentUser = _currentTelegramUserContext.TelegramRozkladUser;
             var facultyGroupToRemove =
                 currentUser.FacultyGroups
                     .FirstOrDefault(g => 

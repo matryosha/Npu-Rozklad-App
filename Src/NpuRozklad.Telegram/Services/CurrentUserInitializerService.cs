@@ -10,15 +10,15 @@ namespace NpuRozklad.Telegram.Services
 {
     public class CurrentUserInitializerService : ICurrentUserInitializerService
     {
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private readonly ITelegramRozkladUserDao _telegramRozkladUserDao;
         private readonly ILocalizationService _localizationService;
 
-        public CurrentUserInitializerService(ICurrentTelegramUserService currentTelegramUserService,
+        public CurrentUserInitializerService(ICurrentTelegramUserContext currentTelegramUserContext,
             ITelegramRozkladUserDao telegramRozkladUserDao,
             ILocalizationService localizationService)
         {
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentTelegramUserContext = currentTelegramUserContext;
             _telegramRozkladUserDao = telegramRozkladUserDao;
             _localizationService = localizationService;
         }
@@ -61,8 +61,8 @@ namespace NpuRozklad.Telegram.Services
                 await _telegramRozkladUserDao.Update(telegramRozkladUser);
             }
 
-            _currentTelegramUserService.TelegramRozkladUser = telegramRozkladUser;
-            _currentTelegramUserService.ChatId = chatId;
+            _currentTelegramUserContext.TelegramRozkladUser = telegramRozkladUser;
+            _currentTelegramUserContext.ChatId = chatId;
         }
     }
 }

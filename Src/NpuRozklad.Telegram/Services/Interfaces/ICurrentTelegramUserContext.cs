@@ -2,7 +2,7 @@ using Telegram.Bot.Types;
 
 namespace NpuRozklad.Telegram.Services.Interfaces
 {
-    public interface ICurrentTelegramUserService
+    public interface ICurrentTelegramUserContext
     {
         TelegramRozkladUser TelegramRozkladUser { get; set; }
         string Language { get; }

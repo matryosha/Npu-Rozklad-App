@@ -8,23 +8,23 @@ namespace NpuRozklad.Telegram.BotActions
     {
         private readonly ITelegramBotService _telegramBotService;
         private readonly TimetableFacultyGroupsRemoveMenu _timetableFacultyGroupsRemoveMenu;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public ShowTimetableFacultyGroupsRemoveMenuAction(
             ITelegramBotService telegramBotService,
             TimetableFacultyGroupsRemoveMenu timetableFacultyGroupsRemoveMenu,
-            ICurrentTelegramUserService currentTelegramUserService,
+            ICurrentTelegramUserContext currentTelegramUserContext,
             ICurrentUserLocalizationService currentUserLocalizationService)
         {
             _telegramBotService = telegramBotService;
             _timetableFacultyGroupsRemoveMenu = timetableFacultyGroupsRemoveMenu;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentTelegramUserContext = currentTelegramUserContext;
             _currentUserLocalizationService = currentUserLocalizationService;
         }
         public Task Execute()
         {
-            var facultyGroups = _currentTelegramUserService.TelegramRozkladUser.FacultyGroups;
+            var facultyGroups = _currentTelegramUserContext.TelegramRozkladUser.FacultyGroups;
             var inlineMenu = _timetableFacultyGroupsRemoveMenu.CreateInlineMenu(facultyGroups);
             var messageText = _currentUserLocalizationService["select-group-to-remove"];
 

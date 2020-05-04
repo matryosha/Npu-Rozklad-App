@@ -11,7 +11,7 @@ namespace NpuRozklad.Telegram.BotActions
         private readonly TimetableFacultyListKeyboardCreator _keyboardCreator;
         private readonly IFacultiesProvider _facultiesProvider;
         private readonly ITelegramBotService _telegramBotService;
-        private readonly ICurrentTelegramUserService _currentUserService;
+        private readonly ICurrentTelegramUserContext _currentUserContext;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
 
@@ -19,14 +19,14 @@ namespace NpuRozklad.Telegram.BotActions
             TimetableFacultyListKeyboardCreator keyboardCreator,
             IFacultiesProvider facultiesProvider,
             ITelegramBotService telegramBotService,
-            ICurrentTelegramUserService currentUserService,
+            ICurrentTelegramUserContext currentUserContext,
             ICurrentUserLocalizationService currentUserLocalizationService,
             ILongLastingUserActionManager longLastingUserActionManager)
         {
             _keyboardCreator = keyboardCreator;
             _facultiesProvider = facultiesProvider;
             _telegramBotService = telegramBotService;
-            _currentUserService = currentUserService;
+            _currentUserContext = currentUserContext;
             _currentUserLocalizationService = currentUserLocalizationService;
             _longLastingUserActionManager = longLastingUserActionManager;
         }
@@ -38,7 +38,7 @@ namespace NpuRozklad.Telegram.BotActions
             await _longLastingUserActionManager.UpsertUserAction(
                     new LongLastingUserActionArguments
                     {
-                        TelegramRozkladUser = _currentUserService.TelegramRozkladUser,
+                        TelegramRozkladUser = _currentUserContext.TelegramRozkladUser,
                         UserActionType = LongLastingUserActionType.TimetableSelectingFaculty
                     })
                 .ConfigureAwait(false);

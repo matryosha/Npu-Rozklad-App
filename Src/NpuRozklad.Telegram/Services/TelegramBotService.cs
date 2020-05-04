@@ -15,7 +15,7 @@ namespace NpuRozklad.Telegram.Services
         private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
         private ChatId CurrentUserChatId => 
-            _currentScopeServiceProvider.GetService<ICurrentTelegramUserService>().ChatId;
+            _currentScopeServiceProvider.GetService<ICurrentTelegramUserContext>().ChatId;
 
         public TelegramBotService(string botApiToken,
             ICurrentScopeServiceProvider currentScopeServiceProvider)

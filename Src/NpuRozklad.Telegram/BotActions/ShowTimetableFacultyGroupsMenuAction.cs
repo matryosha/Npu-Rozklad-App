@@ -12,18 +12,18 @@ namespace NpuRozklad.Telegram.BotActions
     {
         private readonly ITelegramBotService _telegramBotService;
         private readonly TimetableFacultyGroupsMenu _timetableFacultyGroupsMenu;
-        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public ShowTimetableFacultyGroupsMenuAction(
             ITelegramBotService telegramBotService,
             TimetableFacultyGroupsMenu timetableFacultyGroupsMenu,
-            ICurrentTelegramUserService currentTelegramUserService,
+            ICurrentTelegramUserContext currentTelegramUserContext,
             ICurrentUserLocalizationService currentUserLocalizationService)
         {
             _telegramBotService = telegramBotService;
             _timetableFacultyGroupsMenu = timetableFacultyGroupsMenu;
-            _currentTelegramUserService = currentTelegramUserService;
+            _currentTelegramUserContext = currentTelegramUserContext;
             _currentUserLocalizationService = currentUserLocalizationService;
         }
 
@@ -43,7 +43,7 @@ namespace NpuRozklad.Telegram.BotActions
         private ICollection<Group> GetFacultyGroups(ShowTimetableFacultyGroupsMenuOptions options)
         {
             var facultyGroups = options?.FacultyGroups;
-            return facultyGroups ?? _currentTelegramUserService.TelegramRozkladUser.FacultyGroups;
+            return facultyGroups ?? _currentTelegramUserContext.TelegramRozkladUser.FacultyGroups;
         }
     }
     

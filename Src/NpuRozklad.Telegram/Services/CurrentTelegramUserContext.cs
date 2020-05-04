@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace NpuRozklad.Telegram.Services
 {
-    public class CurrentTelegramUserService : ICurrentTelegramUserService
+    public class CurrentTelegramUserContext : ICurrentTelegramUserContext
     {
         public TelegramRozkladUser TelegramRozkladUser { get; set; }
         public string Language => TelegramRozkladUser.Language;
