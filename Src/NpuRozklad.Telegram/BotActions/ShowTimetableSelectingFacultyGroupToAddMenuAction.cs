@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Timetable.SelectingFacultyGroupToAddMenu;
 using NpuRozklad.Telegram.Services.Interfaces;
 
@@ -9,29 +8,24 @@ namespace NpuRozklad.Telegram.BotActions
 {
     public class ShowTimetableSelectingFacultyGroupToAddMenuAction
     {
-        private readonly IFacultyGroupsProvider _facultyGroupsProvider;
         private readonly TimetableFacultyGroupsKeyboardCreator _keyboardCreator;
-        private readonly ILocalizationService _localizationService;
         private readonly ITelegramBotService _telegramBotService;
-        private readonly ICurrentTelegramUserService _currentUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
-        public ShowTimetableSelectingFacultyGroupToAddMenuAction(IFacultyGroupsProvider facultyGroupsProvider,
+        public ShowTimetableSelectingFacultyGroupToAddMenuAction(
             TimetableFacultyGroupsKeyboardCreator keyboardCreator,
-            ILocalizationService localizationService,
             ITelegramBotService telegramBotService,
-            ICurrentTelegramUserService currentUserService)
+            ICurrentUserLocalizationService currentUserLocalizationService)
         {
-            _facultyGroupsProvider = facultyGroupsProvider;
             _keyboardCreator = keyboardCreator;
-            _localizationService = localizationService;
             _telegramBotService = telegramBotService;
-            _currentUserService = currentUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
 
         public async Task Execute(ShowTimetableSelectingFacultyGroupToAddMenuOptions options)
         {
             var facultyGroups = options.FacultyGroups;
-            var messageText = _localizationService[_currentUserService.Language, "choose-group-message"];
+            var messageText = _currentUserLocalizationService["choose-group-message"];
             var keyboardMarkup = _keyboardCreator.CreateMarkup(new TimetableFacultyGroupsKeyboardOptions
                 {FacultyGroups = facultyGroups});
 
