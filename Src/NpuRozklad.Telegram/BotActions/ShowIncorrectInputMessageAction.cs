@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Services.Interfaces;
 
 namespace NpuRozklad.Telegram.BotActions
@@ -7,22 +6,19 @@ namespace NpuRozklad.Telegram.BotActions
     public class ShowIncorrectInputMessageAction
     {
         private readonly ITelegramBotService _telegramBotService;
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
 
         public ShowIncorrectInputMessageAction(ITelegramBotService telegramBotService,
-            ILocalizationService localizationService,
-            ICurrentTelegramUserService currentUserService
+            ICurrentUserLocalizationService currentUserLocalizationService
             )
         {
             _telegramBotService = telegramBotService;
-            _localizationService = localizationService;
-            _currentUserService = currentUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
         }
         
         public Task Execute(ShowIncorrectInputMessageOptions options = null)
         {
-            var messageText = _localizationService[_currentUserService.Language, "incorrect-input"];
+            var messageText = _currentUserLocalizationService["incorrect-input"];
 
             return _telegramBotService.SendOrEditMessageAsync(
                 messageText,
