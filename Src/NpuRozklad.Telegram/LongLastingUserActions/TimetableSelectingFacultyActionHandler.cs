@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.BotActions;
+using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types;
 
 namespace NpuRozklad.Telegram.LongLastingUserActions
@@ -15,33 +16,47 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
         private readonly IFacultiesProvider _facultiesProvider;
         private readonly IFacultyGroupsProvider _facultyGroupsProvider;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
+        private readonly ICurrentTelegramUserService _currentTelegramUserService;
+        private readonly ILocalizationService _localizationService;
+        private string UserLang => _currentTelegramUserService.Language;
 
         public TimetableSelectingFacultyActionHandler(
             ITelegramBotActions botActions,
             IFacultiesProvider facultiesProvider,
             IFacultyGroupsProvider facultyGroupsProvider,
-            ILongLastingUserActionManager longLastingUserActionManager)
+            ILongLastingUserActionManager longLastingUserActionManager,
+            ICurrentTelegramUserService currentTelegramUserService,
+            ILocalizationService localizationService)
         {
             _botActions = botActions;
             _facultiesProvider = facultiesProvider;
             _facultyGroupsProvider = facultyGroupsProvider;
             _longLastingUserActionManager = longLastingUserActionManager;
+            _currentTelegramUserService = currentTelegramUserService;
+            _localizationService = localizationService;
         }
 
         public async Task<bool> Handle(LongLastingUserActionArguments userActionArguments)
         {
             var isHandled = true;
 
-            var selectedFacultyFullName = (userActionArguments.Parameters[typeof(Message)] as Message)?.Text;
+            var userInput = (userActionArguments.Parameters[typeof(Message)] as Message)?.Text;
 
-            if (string.IsNullOrWhiteSpace(selectedFacultyFullName))
+            if (string.IsNullOrWhiteSpace(userInput))
             {
                 await _botActions.ShowIncorrectInputMessage();
                 return isHandled;
             }
 
+            if (userInput == _localizationService[UserLang, "back"])
+            {
+                await _longLastingUserActionManager.ClearUserAction(userActionArguments.TelegramRozkladUser);
+                await _botActions.ShowMainMenu();
+                return true;
+            }
+
             var faculties = await _facultiesProvider.GetFaculties();
-            var selectedFaculty = faculties.FirstOrDefault(f => f.FullName == selectedFacultyFullName);
+            var selectedFaculty = faculties.FirstOrDefault(f => f.FullName == userInput);
 
             if (selectedFaculty == null)
             {
