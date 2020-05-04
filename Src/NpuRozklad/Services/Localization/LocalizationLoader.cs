@@ -35,7 +35,7 @@ namespace NpuRozklad.Services.Localization
 
         private void CheckLocalizationPath(string optionPath)
         {
-            _localizationFilesPath = Path.Combine(Directory.GetCurrentDirectory(), optionPath);
+            _localizationFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, optionPath);
             if (!Directory.Exists(_localizationFilesPath))
                 throw new ArgumentException("Localizations directory doesn't exist");
         }
