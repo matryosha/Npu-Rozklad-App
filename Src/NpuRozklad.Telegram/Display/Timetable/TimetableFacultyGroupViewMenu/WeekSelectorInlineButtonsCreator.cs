@@ -1,6 +1,5 @@
 using System;
 using NpuRozklad.Core.Entities;
-using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Display.Common.Controls;
 using NpuRozklad.Telegram.Display.Common.Text;
 using NpuRozklad.Telegram.Services.Interfaces;
@@ -11,17 +10,14 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
 {
     public class WeekSelectorInlineButtonsCreator
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly ICurrentTelegramUserService _currentUserService;
+        private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
         private readonly InlineKeyboardButtonsCreator _inlineKeyboardButtonsCreator;
 
         public WeekSelectorInlineButtonsCreator(
-            ILocalizationService localizationService,
-            ICurrentTelegramUserService currentUserService,
+            ICurrentUserLocalizationService currentUserLocalizationService,
             InlineKeyboardButtonsCreator inlineKeyboardButtonsCreator)
         {
-            _localizationService = localizationService;
-            _currentUserService = currentUserService;
+            _currentUserLocalizationService = currentUserLocalizationService;
             _inlineKeyboardButtonsCreator = inlineKeyboardButtonsCreator;
         }
 
@@ -51,8 +47,8 @@ namespace NpuRozklad.Telegram.Display.Timetable.TimetableFacultyGroupViewMenu
         {
             var result = new string[2];
 
-            result[0] = _localizationService[_currentUserService.Language, "this-week"];
-            result[1] = _localizationService[_currentUserService.Language, "next-week"];
+            result[0] = _currentUserLocalizationService["this-week"];
+            result[1] = _currentUserLocalizationService["next-week"];
 
             return result;
         }
