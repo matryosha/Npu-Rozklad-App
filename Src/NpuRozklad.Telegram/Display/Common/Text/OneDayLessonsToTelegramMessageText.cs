@@ -18,7 +18,7 @@ namespace NpuRozklad.Telegram.Display.Common.Text
             ICurrentUserLocalizationService localizationService)
         {
             _localDateService = localDateService;
-            _localizationService = localizationService;
+            _localizationService = localizationService.GetWithBoundUserLanguage();
         }
 
         public string CreateMessage(OneDayLessonsToTelegramMessageTextOptions options)
