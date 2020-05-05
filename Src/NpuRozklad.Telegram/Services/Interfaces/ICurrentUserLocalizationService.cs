@@ -8,5 +8,6 @@ namespace NpuRozklad.Telegram.Services.Interfaces
     {
         LocalizationValue this[string text] { get; }
         LocalizationValue this[DayOfWeek dayOfWeek, bool asFullDayName = false] { get; }
+        ICurrentUserLocalizationService GetWithBoundUserLanguage();
     }
 }

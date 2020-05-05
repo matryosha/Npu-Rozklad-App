@@ -11,20 +11,16 @@ namespace NpuRozklad.Telegram.Services
         private readonly ILocalizationService _localizationService;
         private readonly ICurrentScopeServiceProvider _currentScopeServiceProvider;
 
-        private string CurrentUserLanguage
-        {
-            get
-            {
-                var currentTelegramUserService = _currentScopeServiceProvider.GetService<ICurrentTelegramUserContext>();
-                return currentTelegramUserService.Language;
-            }
-        }
+        private Func<string> _getUserLang;
+        private string CurrentUserLanguage => _getUserLang();
 
         public CurrentUserLocalizationService(ILocalizationService localizationService,
             ICurrentScopeServiceProvider currentScopeServiceProvider)
         {
             _localizationService = localizationService;
             _currentScopeServiceProvider = currentScopeServiceProvider;
+
+            _getUserLang = () => _currentScopeServiceProvider.GetService<ICurrentTelegramUserContext>().Language;
         }
 
         public LocalizationValue this[string language, string text] => _localizationService[language, text];
@@ -38,5 +34,14 @@ namespace NpuRozklad.Telegram.Services
 
         public LocalizationValue this[DayOfWeek dayOfWeek, bool asFullDayName] => 
             _localizationService[CurrentUserLanguage, dayOfWeek, asFullDayName];
+
+        public ICurrentUserLocalizationService GetWithBoundUserLanguage()
+        {
+            var localizationService =
+                new CurrentUserLocalizationService(_localizationService, _currentScopeServiceProvider);
+            var userLanguage = CurrentUserLanguage;
+            localizationService._getUserLang = () => userLanguage;
+            return localizationService;
+        }
     }
 }
