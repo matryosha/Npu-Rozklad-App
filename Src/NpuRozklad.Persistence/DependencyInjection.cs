@@ -25,7 +25,9 @@ namespace NpuRozklad.Persistence
         private static void AddNpuRozkladContext(this IServiceCollection services,
             string connectionString)
         {
-            services.AddDbContext<NpuRozkladContext>(builder => builder.UseMySql(connectionString));
+            services.AddDbContext<NpuRozkladContext>(builder => 
+                builder.UseMySql(connectionString, optionsBuilder => 
+                    optionsBuilder.EnableRetryOnFailure(10)));
             var dbContext = services.BuildServiceProvider().GetService<NpuRozkladContext>();
             dbContext.Database.Migrate();
         }

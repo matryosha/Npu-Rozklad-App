@@ -103,7 +103,9 @@ namespace NpuRozklad.Telegram
         private static void AddTelegramDbContext(this IServiceCollection services, 
             string connectionString)
         {
-            services.AddDbContext<TelegramDbContext>(builder => builder.UseMySql(connectionString));
+            services.AddDbContext<TelegramDbContext>(builder => 
+                builder.UseMySql(connectionString, optionsBuilder => 
+                    optionsBuilder.EnableRetryOnFailure(10)));
 
             var provider = services.BuildServiceProvider();
             var dbContext = provider.GetService<TelegramDbContext>();
