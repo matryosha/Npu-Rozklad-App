@@ -55,6 +55,7 @@ namespace NpuRozklad.Telegram
             services.AddScoped<TimetableFacultyGroupsMenu>();
             services.AddTransient<TimetableFacultyGroupsRemoveMenu>();
 
+            services.AddScoped<ITelegramUpdateHandler, TelegramUpdateHandler>();
             services.AddSingleton<ICallbackQueryHandler, CallbackQueryGlobalHandler>();
             services.AddSingleton<ITelegramMessageHandler, TelegramMessageGlobalHandler>();
             services.AddSingleton<AddGroupCallbackHandler>();
