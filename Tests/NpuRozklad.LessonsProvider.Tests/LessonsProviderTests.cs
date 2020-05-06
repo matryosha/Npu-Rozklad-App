@@ -43,11 +43,12 @@ namespace NpuRozklad.LessonsProvider.Tests
         {
             var facultyGroups = await groupsHolder.GetFacultiesGroups();
             var facultyGroup = facultyGroups.FirstOrDefault(g => g.Name == "11 І");
-            
+
             //act
-            ICollection<Lesson> testLessonsList =
-                await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 2));
-            
+            var testLessonsList = new List<Lesson>(
+                (await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 2)))
+                .Lessons);
+
             //assert
             Assert.AreEqual(4, testLessonsList.Count);
             
@@ -87,10 +88,12 @@ namespace NpuRozklad.LessonsProvider.Tests
         {
             var facultyGroups = await groupsHolder.GetFacultiesGroups();
             var facultyGroup = facultyGroups.FirstOrDefault(g => g.Name == "11 ІПЗ");
-            
+
             //act
-            ICollection<Lesson> testLessonsList =
-                await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 9, 30));
+            var testLessonsList =
+                new List<Lesson>((await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 9, 30)))
+                    .Lessons);
+                
             
             //assert
             Assert.AreEqual(2, testLessonsList.Count);
@@ -104,10 +107,11 @@ namespace NpuRozklad.LessonsProvider.Tests
         {
             var facultyGroups = await groupsHolder.GetFacultiesGroups();
             var facultyGroup = facultyGroups.FirstOrDefault(g => g.Name == "11 І");
-            
-            ICollection<Lesson> numeratorLessons =
-                await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 3));
-            
+
+            var numeratorLessons =
+                new List<Lesson>((await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 3)))
+                    .Lessons);
+
             //assert
             Assert.AreEqual(2, numeratorLessons.Count);
             
@@ -118,9 +122,10 @@ namespace NpuRozklad.LessonsProvider.Tests
             Assert.AreEqual(
                 Fraction.Numerator,
                 numeratorLessons.FirstOrDefault(l => l.LessonNumber == 3).Fraction);
-            
-            ICollection<Lesson> denominatorLessons =
-                await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 10));
+
+            var denominatorLessons =
+                new List<Lesson>((await _lessonProvider.GetLessonsOnDate(facultyGroup, new DateTime(2019, 10, 10)))
+                    .Lessons);
             
             Assert.AreEqual(1, denominatorLessons.Count);
             

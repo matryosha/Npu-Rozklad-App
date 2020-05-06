@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
@@ -47,14 +48,14 @@ namespace NpuRozklad.Telegram.BotActions
 
             var lessonsDateTime = _dayOfWeekToDateTimeConverter.Convert(dayOfWeek, isNextWeekSelected);
 
-            var lessons = await _lessonsProvider.GetLessonsOnDate(facultyGroup, lessonsDateTime);
+            var lessons = (await _lessonsProvider.GetLessonsOnDate(facultyGroup, lessonsDateTime)).Lessons;
 
             var messageText = _lessonsToTelegramMessageText.CreateMessage(
                 new OneDayLessonsToTelegramMessageTextOptions
                 {
                     FacultyGroup = facultyGroup,
                     LessonsDate = lessonsDateTime,
-                    OneDayLessons = lessons
+                    OneDayLessons = new List<Lesson>(lessons)
                 });
 
             await _telegramBotService.SendOrEditMessageAsync(

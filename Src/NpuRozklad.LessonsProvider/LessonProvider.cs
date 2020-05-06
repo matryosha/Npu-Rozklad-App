@@ -24,7 +24,7 @@ namespace NpuRozklad.LessonsProvider
             _oddDayWeekChecker = oddDayWeekChecker;
         }
 
-        public async Task<ICollection<Lesson>> GetLessonsOnDate(Group facultyGroup, DateTime date)
+        public async Task<LessonsProviderResult> GetLessonsOnDate(Group facultyGroup, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, 0,0,0);
             var rawLessons =
@@ -85,17 +85,17 @@ namespace NpuRozklad.LessonsProvider
 
             if (currentWeek == Fraction.Numerator)
             {
-                return deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
+                deleteOldLessons = deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
                     .OrderBy(l => l.LessonNumber).ToList();
             }
 
             if (currentWeek == Fraction.Denominator)
             {
-                return deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
+                deleteOldLessons = deleteOldLessons.Where(l => l.Fraction == Fraction.None || l.Fraction == currentWeek)
                     .OrderBy(l => l.LessonNumber).ToList();
             }
 
-            return deleteOldLessons;
+            return new LessonsProviderResult(deleteOldLessons);
         }
     }
 }
