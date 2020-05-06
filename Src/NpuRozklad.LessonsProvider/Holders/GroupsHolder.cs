@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,22 +31,28 @@ namespace NpuRozklad.LessonsProvider.Holders
         public async Task<ICollection<Group>> GetFacultiesGroups()
         {
             // Todo holder for every faculty
-            
-            _cacheLock.Enter(false);
-            if (!_groupsCache.Any())
+
+            try
             {
-                _cacheLock.Leave();
-                _cacheLock.Enter(true);
+                _cacheLock.Enter(false);
                 if (!_groupsCache.Any())
                 {
-                    var facultiesGroups = await GetFacultiesGroupsInternal();
+                    _cacheLock.Leave();
+                    _cacheLock.Enter(true);
+                    if (!_groupsCache.Any())
+                    {
+                        var facultiesGroups = await GetFacultiesGroupsInternal();
 
-                    _groupsCache.AddRange(facultiesGroups);
+                        _groupsCache.AddRange(facultiesGroups);
+                    }
                 }
+                var result = new List<Group>(_groupsCache);
+                return result;
             }
-            var result = new List<Group>(_groupsCache);
-            _cacheLock.Leave();
-            return result;
+            finally
+            {
+                _cacheLock.Leave();
+            }
         }
 
         private async Task<List<Group>> GetFacultiesGroupsInternal()
@@ -65,7 +72,19 @@ namespace NpuRozklad.LessonsProvider.Holders
 
         private async Task UpdateCache()
         {
-            var facultiesGroups = await GetFacultiesGroupsInternal();
+            List<Group> facultiesGroups;
+
+            try
+            {
+                facultiesGroups = await GetFacultiesGroupsInternal();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            
+            if (!facultiesGroups.Any()) return;
+            
             _cacheLock.Enter(true);
             _groupsCache.Clear();
             _groupsCache.AddRange(facultiesGroups);
