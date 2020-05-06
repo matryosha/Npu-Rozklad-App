@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,23 +36,29 @@ namespace NpuRozklad.LessonsProvider
         /// <returns>Collection of <see cref="NpuRozklad.Core.Entities.Faculty"/></returns>
         public async Task<ICollection<Faculty>> GetFaculties()
         {
-            _cacheLock.Enter(false);
-
-            if (!_facultiesCache.Any())
+            try
             {
-                _cacheLock.Leave();
-                _cacheLock.Enter(true);
+                _cacheLock.Enter(false);
 
                 if (!_facultiesCache.Any())
                 {
-                    var faculties = await GetFacultiesInternal();
-                    _facultiesCache.AddRange(faculties);
-                }
-            }
+                    _cacheLock.Leave();
+                    _cacheLock.Enter(true);
 
-            var result = new List<Faculty>(_facultiesCache);
-            _cacheLock.Leave();
-            return result;
+                    if (!_facultiesCache.Any())
+                    {
+                        var faculties = await GetFacultiesInternal();
+                        _facultiesCache.AddRange(faculties);
+                    }
+                }
+
+                var result = new List<Faculty>(_facultiesCache);
+                return result;
+            }
+            finally
+            {
+                _cacheLock.Leave();
+            }
         }
 
         private async Task<List<Faculty>> GetFacultiesInternal()
@@ -63,7 +70,18 @@ namespace NpuRozklad.LessonsProvider
 
         private async Task UpdateCache()
         {
-            var faculties = await GetFacultiesInternal();
+            List<Faculty> faculties;
+            try
+            {
+                faculties = await GetFacultiesInternal();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            
+            if (!faculties.Any()) return;
+            
             _cacheLock.Enter(true);
             _facultiesCache.Clear();
             _facultiesCache.AddRange(faculties);
