@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Infrastructure;
 using NpuRozklad.LessonsProvider.Fetcher;
 using NpuRozklad.LessonsProvider.Holders.Interfaces;
+using static NpuRozklad.LessonsProvider.Exceptions.ExceptionFilters;
 
 namespace NpuRozklad.LessonsProvider.Holders
 {
@@ -12,6 +14,8 @@ namespace NpuRozklad.LessonsProvider.Holders
     {
         private readonly INpuServerFetcher _fetcher;
         private readonly Dictionary<Faculty, List<Classroom>> _classroomsCache =
+            new Dictionary<Faculty, List<Classroom>>();
+        private readonly Dictionary<Faculty, List<Classroom>> _classroomsBackCache =
             new Dictionary<Faculty, List<Classroom>>();
         private readonly ConcurrentDictionary<Faculty, OneManyLock> _facultyLocks =
             new ConcurrentDictionary<Faculty, OneManyLock>();
@@ -29,35 +33,59 @@ namespace NpuRozklad.LessonsProvider.Holders
         
         public async Task<ICollection<Classroom>> GetClassrooms(Faculty faculty)
         {
-
             var facultyLock = _facultyLocks.GetOrAdd(faculty, new OneManyLock());
-            facultyLock.Enter(false);
-            _cacheLock.Enter(false);
 
-            if (!_classroomsCache.ContainsKey(faculty))
+            try
             {
-                facultyLock.Leave();
-                _cacheLock.Leave();
-                facultyLock.Enter(true);
+                facultyLock.Enter(false);
                 _cacheLock.Enter(false);
 
                 if (!_classroomsCache.ContainsKey(faculty))
                 {
+                    facultyLock.Leave();
                     _cacheLock.Leave();
-                    
-                    var facultyClassroomsString = await _fetcher.FetchClassroom(faculty.TypeId);
-                    var facultyClassrooms = RawStringParser.DeserializeClassrooms(facultyClassroomsString);
-                    
-                    _cacheLock.Enter(true);
-                    _classroomsCache[faculty] = facultyClassrooms;
-                }
-            }
-            
-            var result = new List<Classroom>(_classroomsCache[faculty]);
-            _cacheLock.Leave();
-            facultyLock.Leave();
+                    facultyLock.Enter(true);
+                    _cacheLock.Enter(false);
 
-            return result;
+                    if (!_classroomsCache.ContainsKey(faculty))
+                    {
+                        _cacheLock.Leave();
+                    
+                        var facultyClassrooms = await GetClassroomsForFaculty(faculty);
+
+                        _cacheLock.Enter(true);
+                        _classroomsCache[faculty] = facultyClassrooms;
+                        _classroomsBackCache[faculty] = facultyClassrooms;
+                    }
+                }
+            
+                var result = new List<Classroom>(_classroomsCache[faculty]);
+                return result;
+            }
+            finally
+            {
+                _cacheLock.Leave();
+                facultyLock.Leave();
+            }
+        }
+
+        private async Task<List<Classroom>> GetClassroomsForFaculty(Faculty faculty)
+        {
+            try
+            {
+                var facultyClassroomsString = await _fetcher.FetchClassroom(faculty.TypeId);
+                var facultyClassrooms = RawStringParser.DeserializeClassrooms(facultyClassroomsString);
+                return facultyClassrooms;
+            }
+            catch (Exception e) when (DeserializationOrFetchException(e))
+            {
+                if (_classroomsBackCache.TryGetValue(faculty, out var backCacheClassrooms))
+                {
+                    return backCacheClassrooms;
+                }
+
+                throw;
+            }
         }
 
         private Task ClearCache()
