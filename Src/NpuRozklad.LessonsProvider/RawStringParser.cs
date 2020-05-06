@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.LessonsProvider.Entities;
+using NpuRozklad.LessonsProvider.Exceptions;
 using Group = NpuRozklad.Core.Entities.Group;
 
 namespace NpuRozklad.LessonsProvider
@@ -18,124 +19,165 @@ namespace NpuRozklad.LessonsProvider
 
         public static List<CalendarRawItem> DeserializeCalendar(string rawString)
         {
-            var result = new List<CalendarRawItem>();
-            
-            var jArrayWithCalendarValues = (JArray) JObject.Parse(rawString)["response"][0];
-            var jTokenList = jArrayWithCalendarValues.Skip(jArrayWithCalendarValues.Count - NumberOfCalendarItemsToTake);
-            
-            foreach (var token in jTokenList)
+            try
             {
-                if (!token.HasValues) continue;
-                var tokenAsJArray = token as JArray;
-                CalendarRawItem item;
-                try
+                var result = new List<CalendarRawItem>();
+            
+                var jArrayWithCalendarValues = (JArray) JObject.Parse(rawString)["response"][0];
+                var jTokenList = jArrayWithCalendarValues.Skip(jArrayWithCalendarValues.Count - NumberOfCalendarItemsToTake);
+            
+                foreach (var token in jTokenList)
                 {
-                    item = new CalendarRawItem
+                    if (!token.HasValues) continue;
+                    var tokenAsJArray = token as JArray;
+                    CalendarRawItem item;
+                    try
                     {
-                        GroupId = tokenAsJArray[0].Value<string>(),
-                        LecturerId = tokenAsJArray[2].Value<string>(),
-                        ClassroomId = tokenAsJArray[3].Value<string>(),
-                        LessonCount = tokenAsJArray[5].Value<string>(),
-                        LessonNumber = tokenAsJArray[6].Value<string>(),
-                        Fraction = tokenAsJArray[7].Value<int>(),
-                        SubGroup = tokenAsJArray[8].Value<int>(),
-                        SubjectName = tokenAsJArray[1].Value<string>(),
-                        LessonSetDate = DateTime.ParseExact(tokenAsJArray[4].Value<string>(), NpuDateFormat, null)
-                    };
+                        item = new CalendarRawItem
+                        {
+                            GroupId = tokenAsJArray[0].Value<string>(),
+                            LecturerId = tokenAsJArray[2].Value<string>(),
+                            ClassroomId = tokenAsJArray[3].Value<string>(),
+                            LessonCount = tokenAsJArray[5].Value<string>(),
+                            LessonNumber = tokenAsJArray[6].Value<string>(),
+                            Fraction = tokenAsJArray[7].Value<int>(),
+                            SubGroup = tokenAsJArray[8].Value<int>(),
+                            SubjectName = tokenAsJArray[1].Value<string>(),
+                            LessonSetDate = DateTime.ParseExact(tokenAsJArray[4].Value<string>(), NpuDateFormat, null)
+                        };
+
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+
+                    result.Add(item);
 
                 }
-                catch (Exception _)
-                {
-                    // ignored
-                    continue;
-                }
-
-                result.Add(item);
-
+                return result;
             }
-            return result;
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing calendar error", e);
+            }
         }
 
         public static List<Group> DeserializeGroups(string rawString, Faculty groupFaculty)
         {
-            var result = new List<Group>();
-            
-            if (rawString == null) return result;
-            
-            var rawValues = GetValues(rawString);
-
-            foreach (var rawValue in rawValues)
+            try
             {
-                var typeId = rawValue[0];
-                var name = Regex.Unescape(rawValue[1]);
+                var result = new List<Group>();
+            
+                if (rawString == null) return result;
+            
+                var rawValues = GetValues(rawString);
 
-                result.Add(new Group(typeId,
-                    string.IsNullOrWhiteSpace(name) ? "No name group" : name,
-                    groupFaculty));
+                foreach (var rawValue in rawValues)
+                {
+                    var typeId = rawValue[0];
+                    var name = Regex.Unescape(rawValue[1]);
+
+                    result.Add(new Group(typeId,
+                        string.IsNullOrWhiteSpace(name) ? "No name group" : name,
+                        groupFaculty));
+                }
+
+                return result;
             }
-
-            return result;
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing groups error", e);
+            }
         }
 
         public static List<Lecturer> DeserializeLecturers(string rawString)
         {
-            var result = new List<Lecturer>();
-            var rawValues = GetValues(rawString);
-
-            foreach (var rawValue in rawValues)
+            try
             {
-                var typeId = rawValue[0];
-                var name = Regex.Unescape(rawValue[1]);
+                var result = new List<Lecturer>();
+                var rawValues = GetValues(rawString);
 
-                result.Add(new Lecturer(typeId, name));
+                foreach (var rawValue in rawValues)
+                {
+                    var typeId = rawValue[0];
+                    var name = Regex.Unescape(rawValue[1]);
+
+                    result.Add(new Lecturer(typeId, name));
+                }
+
+                return result;
             }
-
-            return result;
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing lecturers error", e);
+            }
         }
 
         public static List<Classroom> DeserializeClassrooms(string rawString)
         {
-            var result = new List<Classroom>();
-            var rawValues = GetValues(rawString);
-
-            foreach (var rawValue in rawValues)
+            try
             {
-                var typeId = rawValue[0];
-                var name = Regex.Unescape(rawValue[1]);
+                var result = new List<Classroom>();
+                var rawValues = GetValues(rawString);
 
-                result.Add(new Classroom(typeId, name));
+                foreach (var rawValue in rawValues)
+                {
+                    var typeId = rawValue[0];
+                    var name = Regex.Unescape(rawValue[1]);
+
+                    result.Add(new Classroom(typeId, name));
+                }
+
+                return result;
             }
-
-            return result;
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing classrooms error", e);
+            }
         }
 
         public static List<Faculty> DeserializeFaculties(string rawString)
         {
-            var result = new List<Faculty>();
-            var rawValues = GetValues(rawString);
-
-            foreach (var rawValue in rawValues)
+            try
             {
-                var shortName = Regex.Unescape(rawValue[0]);
-                var fullName = Regex.Unescape(rawValue[1]);
+                var result = new List<Faculty>();
+                var rawValues = GetValues(rawString);
 
-                result.Add(new Faculty(shortName, fullName));
+                foreach (var rawValue in rawValues)
+                {
+                    var shortName = Regex.Unescape(rawValue[0]);
+                    var fullName = Regex.Unescape(rawValue[1]);
+
+                    result.Add(new Faculty(shortName, fullName));
+                }
+
+                return result;
             }
-
-            return result;
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing faculties error", e);
+            }
         }
 
         public static (DateTime date, bool IsOddDay) DeserializeSettings(string rawString)
         {
-            var rawValues = JsonConvert.DeserializeObject(rawString) as JObject;
+            try
+            {
+                var rawValues = JsonConvert.DeserializeObject(rawString) as JObject;
 
-            var oddEvenDaySettingItemAsString = rawValues["response"][4].ToString();
-            var separatedStringValues = oddEvenDaySettingItemAsString.Split('|');
+                var oddEvenDaySettingItemAsString = rawValues["response"][4].ToString();
+                var separatedStringValues = oddEvenDaySettingItemAsString.Split('|');
 
-            var dateValue = DateTime.Parse(separatedStringValues[0]);
-            var boolValue = bool.Parse(separatedStringValues[1]);
+                var dateValue = DateTime.Parse(separatedStringValues[0]);
+                var boolValue = bool.Parse(separatedStringValues[1]);
 
-            return (dateValue, boolValue);
+                return (dateValue, boolValue);
+            }
+            catch (Exception e)
+            {
+                throw new DeserializationException("Deserializing settings error", e);
+            }
         }
 
         // Start using JObject?
