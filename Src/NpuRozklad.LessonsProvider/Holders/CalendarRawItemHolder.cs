@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,23 +26,29 @@ namespace NpuRozklad.LessonsProvider.Holders
 
         public async Task<ICollection<CalendarRawItem>> GetCalendarItems()
         {
-            ICollection<CalendarRawItem> result;
-            _cacheLock.Enter(false);
-            
-            if (!_calendarRawItemsCache.Any())
+            try
             {
-                _cacheLock.Leave();
-                _cacheLock.Enter(true);
+                ICollection<CalendarRawItem> result;
+                _cacheLock.Enter(false);
+            
                 if (!_calendarRawItemsCache.Any())
                 {
-                    var calendarItems = await GetCalendarRawItemsInternal();
-                    _calendarRawItemsCache = calendarItems;
+                    _cacheLock.Leave();
+                    _cacheLock.Enter(true);
+                    if (!_calendarRawItemsCache.Any())
+                    {
+                        var calendarItems = await GetCalendarRawItemsInternal();
+                        _calendarRawItemsCache = calendarItems;
+                    }
                 }
-            }
 
-            result = new List<CalendarRawItem>(_calendarRawItemsCache);
-            _cacheLock.Leave();
-            return result;
+                result = new List<CalendarRawItem>(_calendarRawItemsCache);
+                return result;
+            }
+            finally
+            {
+                _cacheLock.Leave();
+            }
         }
 
         private async Task<List<CalendarRawItem>> GetCalendarRawItemsInternal()
@@ -53,8 +60,19 @@ namespace NpuRozklad.LessonsProvider.Holders
 
         private async Task UpdateCache()
         {
-            // what if exception?
-            var calendarItems = await GetCalendarRawItemsInternal();
+            List<CalendarRawItem> calendarItems;
+            
+            try
+            {
+                calendarItems = await GetCalendarRawItemsInternal();
+            }
+            catch (Exception)
+            {
+                // log
+                return;
+            }
+            
+            if(!calendarItems.Any()) return;
             
             _cacheLock.Enter(true);
             _calendarRawItemsCache = calendarItems;
