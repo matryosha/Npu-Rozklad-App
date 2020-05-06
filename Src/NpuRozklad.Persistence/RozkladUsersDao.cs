@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
 
@@ -11,11 +13,14 @@ namespace NpuRozklad.Persistence
     {
         private readonly NpuRozkladContext _dbContext;
         private readonly IFacultyGroupsProvider _facultyGroupsProvider;
+        private readonly IMemoryCache _memoryCache;
 
-        public RozkladUsersDao(NpuRozkladContext dbContext, IFacultyGroupsProvider facultyGroupsProvider)
+        public RozkladUsersDao(NpuRozkladContext dbContext, IFacultyGroupsProvider facultyGroupsProvider,
+            IMemoryCache memoryCache)
         {
             _dbContext = dbContext;
             _facultyGroupsProvider = facultyGroupsProvider;
+            _memoryCache = memoryCache;
         }
 
         public async Task Add(RozkladUser rozkladUser)
@@ -29,14 +34,15 @@ namespace NpuRozklad.Persistence
             if (alreadyExistedUser == null)
             {
                 var wrapper = new RozkladUserWrapper(rozkladUser);
+                _memoryCache.Set(wrapper.Guid, wrapper);
                 await _dbContext.RozkladUserWrappers.AddAsync(wrapper);
             }
             else
             {
                 alreadyExistedUser.IsDeleted = false;
+                _memoryCache.Set(alreadyExistedUser.Guid, alreadyExistedUser);
                 _dbContext.RozkladUserWrappers.Update(alreadyExistedUser);
             }
-            
             await _dbContext.SaveChangesAsync();
         }
 
@@ -44,6 +50,7 @@ namespace NpuRozklad.Persistence
         {
             var wrapper = new RozkladUserWrapper(rozkladUser);
             _dbContext.RozkladUserWrappers.Update(wrapper);
+            _memoryCache.Set(wrapper.Guid, wrapper);
             return _dbContext.SaveChangesAsync();
         }
 
@@ -53,25 +60,32 @@ namespace NpuRozklad.Persistence
             rozkladUser.FacultyGroups.Clear();
             var wrapper = new RozkladUserWrapper(rozkladUser);
             _dbContext.RozkladUserWrappers.Update(wrapper);
+            _memoryCache.Remove(wrapper.Guid);
             return _dbContext.SaveChangesAsync();
         }
 
         public async Task<RozkladUser> Find(string guid)
         {
-            var rozkladUserWrapper =
-                await _dbContext.RozkladUserWrappers
-                    .AsNoTracking()
-                    .Where(u => u.Guid == guid)
-                    .FirstOrDefaultAsync();
-
-            if (rozkladUserWrapper == null) return null;
-            var facultyGroups = await _facultyGroupsProvider.GetFacultyGroups();
-
-            foreach (var groupTypeId in rozkladUserWrapper.FacultyGroupsTypeIds)
+            if(!_memoryCache.TryGetValue(guid, out RozkladUserWrapper rozkladUserWrapper))
             {
-                rozkladUserWrapper.FacultyGroups.Add(facultyGroups
-                    .FirstOrDefault(g => g.TypeId == groupTypeId));
+                rozkladUserWrapper =
+                    await _dbContext.RozkladUserWrappers
+                        .AsNoTracking()
+                        .Where(u => u.Guid == guid)
+                        .FirstOrDefaultAsync();
+
+                if (rozkladUserWrapper == null) return null;
+                var facultyGroups = await _facultyGroupsProvider.GetFacultyGroups();
+
+                foreach (var groupTypeId in rozkladUserWrapper.FacultyGroupsTypeIds)
+                {
+                    rozkladUserWrapper.FacultyGroups.Add(facultyGroups
+                        .FirstOrDefault(g => g.TypeId == groupTypeId));
+                }
+
+                _memoryCache.Set(guid, rozkladUserWrapper, absoluteExpirationRelativeToNow: TimeSpan.FromHours(1));
             }
+            
 
             return rozkladUserWrapper;
         }
