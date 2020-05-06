@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
@@ -11,6 +12,7 @@ namespace NpuRozklad.Persistence.Tests
 {
     public class RozkladUserRepositoryTests
     {
+        private static readonly IMemoryCache StubCache = GetStubCache();
         [Test]
         public async Task Add__Adding_Not_Existed_RozkladUser()
         {
@@ -21,7 +23,7 @@ namespace NpuRozklad.Persistence.Tests
 
             await using (var context = new NpuRozkladContext(GetContextOptions("add1")))
             {
-                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>());
+                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>(), StubCache);
 
                 await repo.Add(expectedRozkladUser);
             }
@@ -59,7 +61,7 @@ namespace NpuRozklad.Persistence.Tests
 
             await using (var context = new NpuRozkladContext(GetContextOptions("add2")))
             {
-                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>());
+                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>(), StubCache);
 
                 await repo.Add(expectedRozkladUser);
             }
@@ -98,7 +100,7 @@ namespace NpuRozklad.Persistence.Tests
 
             await using (var context = new NpuRozkladContext(GetContextOptions("update1")))
             {
-                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>());
+                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>(), StubCache);
 
                 expectedRozkladUser.FacultyGroups.Add(new Group("c", "C", expectedRozkladUser.FacultyGroups.First().Faculty));
                 await repo.Update(expectedRozkladUser);
@@ -137,7 +139,7 @@ namespace NpuRozklad.Persistence.Tests
 
             await using (var context = new NpuRozkladContext(GetContextOptions("delete1")))
             {
-                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>());
+                var repo = new RozkladUsersDao(context, Mock.Of<IFacultyGroupsProvider>(), StubCache);
                 await repo.Delete(expectedRozkladUser);
             }
 
@@ -174,7 +176,7 @@ namespace NpuRozklad.Persistence.Tests
             RozkladUser actualRozkladUser = null;
             await using (var context = new NpuRozkladContext(GetContextOptions("find1")))
             {
-                var repo = new RozkladUsersDao(context, providerMock.Object);
+                var repo = new RozkladUsersDao(context, providerMock.Object, StubCache);
                 actualRozkladUser = await repo.Find(expectedRozkladUser.Guid);
             }
 
@@ -207,5 +209,13 @@ namespace NpuRozklad.Persistence.Tests
             new DbContextOptionsBuilder<NpuRozkladContext>()
                 .UseInMemoryDatabase(dbName)
                 .Options;
+
+        private static IMemoryCache GetStubCache()
+        {
+            var mock = new Mock<IMemoryCache>();
+            
+            mock.Setup(cache => cache.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
+            return mock.Object;
+        }
     }
 }
