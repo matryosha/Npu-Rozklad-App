@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NpuRozklad.LessonsProvider.Exceptions;
 
 namespace NpuRozklad.LessonsProvider.Fetcher
 {
@@ -54,7 +55,20 @@ namespace NpuRozklad.LessonsProvider.Fetcher
         private async Task<string> SendPost(NpuRequestType requestType, string faculty = "fi")
         {
             var content = GetDefaultContent(NpuRequestTypeToCode(requestType), faculty);
-            var response = await _httpClient.PostAsync(CallEndPoint, content).ConfigureAwait(false);
+            HttpResponseMessage response;
+            
+            try
+            {
+                response = await _httpClient.PostAsync(CallEndPoint, content).ConfigureAwait(false);
+            }
+            catch (HttpRequestException e)
+            {
+                throw new NpuServerFetchException("Cannot fetch npu server", e);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                throw new NpuServerFetchException($"Fetch npu response status is {response.StatusCode}");
+            
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
