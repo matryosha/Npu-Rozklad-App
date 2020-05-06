@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using NpuRozklad.Core.Interfaces;
 
 namespace NpuRozklad.Telegram.Persistence
@@ -9,21 +10,30 @@ namespace NpuRozklad.Telegram.Persistence
     {
         private readonly TelegramDbContext _dbContext;
         private readonly IRozkladUsersDao _rozkladUsersDao;
+        private readonly IMemoryCache _memoryCache;
 
         public TelegramRozkladUserDao(TelegramDbContext dbContext,
-            IRozkladUsersDao rozkladUsersDao)
+            IRozkladUsersDao rozkladUsersDao,
+            IMemoryCache memoryCache)
         {
             _dbContext = dbContext;
             _rozkladUsersDao = rozkladUsersDao;
+            _memoryCache = memoryCache;
         }
         
         public async Task<TelegramRozkladUser> FindByTelegramId(int telegramId)
         {
-            var telegramRozkladUser =
-                await _dbContext.TelegramRozkladUsers
-                    .AsNoTracking()
-                    .Where(r => r.TelegramId == telegramId)
-                    .FirstOrDefaultAsync();
+            if (!_memoryCache.TryGetValue(telegramId, out TelegramRozkladUser telegramRozkladUser))
+            {
+                telegramRozkladUser =
+                    await _dbContext.TelegramRozkladUsers
+                        .AsNoTracking()
+                        .Where(r => r.TelegramId == telegramId)
+                        .FirstOrDefaultAsync();
+
+                _memoryCache.Set(telegramId, telegramRozkladUser);
+            }
+            
 
             if (telegramRozkladUser == null) return null;
 
@@ -44,17 +54,20 @@ namespace NpuRozklad.Telegram.Persistence
             {
                 await _dbContext.TelegramRozkladUsers.AddAsync(telegramRozkladUser);
                 await _rozkladUsersDao.Add(telegramRozkladUser);
+                _memoryCache.Set(telegramRozkladUser.TelegramId, telegramRozkladUser);
             }
             else
             {
                 _dbContext.TelegramRozkladUsers.Update(telegramRozkladUser);
                 await _rozkladUsersDao.Update(telegramRozkladUser);
+                _memoryCache.Set(telegramRozkladUser.TelegramId, telegramRozkladUser);
             }
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task Delete(TelegramRozkladUser telegramRozkladUser)
         {
+            _memoryCache.Remove(telegramRozkladUser.TelegramId);
             await _rozkladUsersDao.Delete(telegramRozkladUser);
             _dbContext.TelegramRozkladUsers.Update(telegramRozkladUser);
             await _dbContext.SaveChangesAsync();
@@ -65,6 +78,7 @@ namespace NpuRozklad.Telegram.Persistence
             _dbContext.Update(telegramRozkladUser);
             await _rozkladUsersDao.Update(telegramRozkladUser);
             await _dbContext.SaveChangesAsync();
+            _memoryCache.Set(telegramRozkladUser.TelegramId, telegramRozkladUser);
         }
     }
 }
