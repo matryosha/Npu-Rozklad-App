@@ -7,19 +7,12 @@ namespace NpuRozklad.Telegram
         public int TelegramId { get; set; }
         public string Language { get; set; }
 
-        public TelegramRozkladUser()
-        {
-            
-        }
-
-        public TelegramRozkladUser(RozkladUser user)
-        :base(user)
-        {
-            
-        }
+        public TelegramRozkladUser(string guid = null) : base(guid)
+        { }
+        
         public TelegramRozkladUser FillFromRozkladUser(RozkladUser user)
         {
-            FacultyGroups.AddRange(user.FacultyGroups);
+            FacultyGroups = user.FacultyGroups;
             return this;
         }
     }
