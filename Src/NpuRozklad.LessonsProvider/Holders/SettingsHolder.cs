@@ -25,24 +25,30 @@ namespace NpuRozklad.LessonsProvider.Holders
         
         public async Task<(DateTime date, bool IsOddDay)> GetSettings()
         {
-            _cacheLock.Enter(false);
-            if (!_isSettingsFetched)
+            try
             {
-                _cacheLock.Leave();
-                _cacheLock.Enter(true);
-
+                _cacheLock.Enter(false);
                 if (!_isSettingsFetched)
                 {
-                    var settings = await GetSettingsInternal();
+                    _cacheLock.Leave();
+                    _cacheLock.Enter(true);
 
-                    _settingsCache = settings;
-                    _isSettingsFetched = true;
+                    if (!_isSettingsFetched)
+                    {
+                        var settings = await GetSettingsInternal();
+
+                        _settingsCache = settings;
+                        _isSettingsFetched = true;
+                    }
                 }
-            }
 
-            var result = _settingsCache;
-            _cacheLock.Leave();
-            return result;
+                var result = _settingsCache;
+                return result;
+            }
+            finally
+            {
+                _cacheLock.Leave();
+            }
         }
 
         private async Task<(DateTime date, bool IsOddDay)> GetSettingsInternal()
@@ -54,7 +60,16 @@ namespace NpuRozklad.LessonsProvider.Holders
 
         private async Task UpdateCache()
         {
-            var updatedSettings = await GetSettingsInternal();
+            (DateTime date, bool IsOddDay) updatedSettings;
+            try
+            {
+                updatedSettings = await GetSettingsInternal();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            
             _cacheLock.Enter(true);
             _settingsCache = updatedSettings;
             _cacheLock.Leave();
