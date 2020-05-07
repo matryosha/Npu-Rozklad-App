@@ -10,9 +10,17 @@
                 Condition="'$(LocalizationOutDir)' == ''" />
         
         <Copy SourceFiles="@(LocalizationsFiles)"
-              DestinationFiles="@(LocalizationsFiles->'$(LocalizationOutDir)\%(Filename)%(Extension)')"
+              DestinationFiles="@(LocalizationsFiles->'$(OutputPath)\$(LocalizationOutDir)\%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"
               OverwriteReadOnlyFiles="true"
               Retries="3"/>
+
+        <Copy SourceFiles="@(LocalizationsFiles)"
+              DestinationFiles="@(LocalizationsFiles->'$(PublishDir)\$(LocalizationOutDir)\%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true"
+              Condition="'$(PublishDir)' != ''"
+              Retries="3"/>
+
     </Target>
 </Project>
