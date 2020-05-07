@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using NpuRozklad.Core.Interfaces;
+using NpuRozklad.Telegram.Exceptions;
 using NpuRozklad.Telegram.Persistence;
 using NpuRozklad.Telegram.Services.Interfaces;
 using Telegram.Bot.Types;
@@ -38,31 +39,38 @@ namespace NpuRozklad.Telegram.Services
                     chatId = update.CallbackQuery.Message.Chat.Id;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new CurrentUserInitializationException($"Unknown telegram update type: {update.Type}");
             }
 
-            var telegramRozkladUser = await _telegramRozkladUserDao.FindByTelegramId(userTelegramId);
-
-            if (telegramRozkladUser == null)
+            try
             {
-                telegramRozkladUser = new TelegramRozkladUser
+                var telegramRozkladUser = await _telegramRozkladUserDao.FindByTelegramId(userTelegramId);
+
+                if (telegramRozkladUser == null)
                 {
-                    TelegramId = userTelegramId,
-                    Language = _localizationService.DefaultLanguage
-                };
+                    telegramRozkladUser = new TelegramRozkladUser
+                    {
+                        TelegramId = userTelegramId,
+                        Language = _localizationService.DefaultLanguage
+                    };
 
-                await _telegramRozkladUserDao.Add(telegramRozkladUser);
+                    await _telegramRozkladUserDao.Add(telegramRozkladUser);
+                }
+
+                if (telegramRozkladUser.IsDeleted)
+                {
+                    telegramRozkladUser.IsDeleted = false;
+
+                    await _telegramRozkladUserDao.Update(telegramRozkladUser);
+                }
+
+                _currentTelegramUserContext.TelegramRozkladUser = telegramRozkladUser;
+                _currentTelegramUserContext.ChatId = chatId;
             }
-
-            if (telegramRozkladUser.IsDeleted)
+            catch (Exception e)
             {
-                telegramRozkladUser.IsDeleted = false;
-
-                await _telegramRozkladUserDao.Update(telegramRozkladUser);
+                throw new CurrentUserInitializationException("Error when getting user", e);
             }
-
-            _currentTelegramUserContext.TelegramRozkladUser = telegramRozkladUser;
-            _currentTelegramUserContext.ChatId = chatId;
         }
     }
 }
