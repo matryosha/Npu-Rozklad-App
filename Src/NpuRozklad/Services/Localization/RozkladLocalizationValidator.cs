@@ -17,6 +17,7 @@ namespace NpuRozklad.Services.Localization
             "choose-faculty-message",
             "no-groups-for-faculty-message",
             "such-faculty-was-not-found",
+            "such-faculty-group-was-not-found",
             "add-group",
             "remove-group",
             "select-group-to-remove",
