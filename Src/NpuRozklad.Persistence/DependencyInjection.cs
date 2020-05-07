@@ -34,7 +34,9 @@ namespace NpuRozklad.Persistence
             {
                 services.AddDbContext<NpuRozkladContext>(builder => 
                     builder.UseMySql(options.ConnectionString, optionsBuilder => 
-                        optionsBuilder.EnableRetryOnFailure(10)));
+                        optionsBuilder
+                            .EnableRetryOnFailure(10)
+                            .MigrationsHistoryTable("core-migrations")));
                 var dbContext = services.BuildServiceProvider().GetService<NpuRozkladContext>();
                 dbContext.Database.Migrate();
             }

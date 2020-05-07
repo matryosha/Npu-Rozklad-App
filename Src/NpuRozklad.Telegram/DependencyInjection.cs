@@ -114,7 +114,9 @@ namespace NpuRozklad.Telegram
             {
                 services.AddDbContext<TelegramDbContext>(builder => 
                     builder.UseMySql(options.ConnectionString, optionsBuilder => 
-                        optionsBuilder.EnableRetryOnFailure(10)));
+                        optionsBuilder
+                            .EnableRetryOnFailure(10)
+                            .MigrationsHistoryTable("telegram-migrations")));
 
                 var provider = services.BuildServiceProvider();
                 var dbContext = provider.GetService<TelegramDbContext>();
