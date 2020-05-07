@@ -38,6 +38,10 @@ namespace NpuRozklad.Telegram.Services
                     userTelegramId = update.CallbackQuery.From.Id;
                     chatId = update.CallbackQuery.Message.Chat.Id;
                     break;
+                case UpdateType.EditedMessage:
+                    userTelegramId = update.EditedMessage.From.Id;
+                    chatId = update.EditedMessage.Chat.Id;
+                    break;
                 default:
                     throw new CurrentUserInitializationException($"Unknown telegram update type: {update.Type}");
             }
