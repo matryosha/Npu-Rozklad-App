@@ -17,24 +17,33 @@ namespace NpuRozklad.Persistence
             optionsBuilder(options);
 
             services.AddScoped<IRozkladUsersDao, RozkladUsersDao>();
-            services.AddNpuRozkladContext(options.ConnectionString);
+            services.AddNpuRozkladContext(options);
 
             return services;
         }
 
         private static void AddNpuRozkladContext(this IServiceCollection services,
-            string connectionString)
+            CorePersistenceOptions options)
         {
-            services.AddDbContext<NpuRozkladContext>(builder => 
-                builder.UseMySql(connectionString, optionsBuilder => 
-                    optionsBuilder.EnableRetryOnFailure(10)));
-            var dbContext = services.BuildServiceProvider().GetService<NpuRozkladContext>();
-            dbContext.Database.Migrate();
+            if (options.UseInMemoryDb)
+            {
+                services.AddDbContext<NpuRozkladContext>(builder => 
+                    builder.UseInMemoryDatabase("npurozklad"));
+            }
+            else
+            {
+                services.AddDbContext<NpuRozkladContext>(builder => 
+                    builder.UseMySql(options.ConnectionString, optionsBuilder => 
+                        optionsBuilder.EnableRetryOnFailure(10)));
+                var dbContext = services.BuildServiceProvider().GetService<NpuRozkladContext>();
+                dbContext.Database.Migrate();
+            }
         }
     }
 
     public class CorePersistenceOptions
     {
         public string ConnectionString { get; set; }
+        public bool UseInMemoryDb { get; set; }
     }
 }
