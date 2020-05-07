@@ -85,7 +85,7 @@ namespace NpuRozklad.Telegram
             services.AddTransient<OpenRemoveGroupsMenuCallbackHandler>();
             services.AddTransient<RemoveGroupCallbackHandler>();
 
-            services.AddTelegramDbContext(options.ConnectionString);
+            services.AddTelegramDbContext(options);
 
             return services;
         }
@@ -103,22 +103,31 @@ namespace NpuRozklad.Telegram
         }
 
         private static void AddTelegramDbContext(this IServiceCollection services, 
-            string connectionString)
+            TelegramNpuOptions options)
         {
-            services.AddDbContext<TelegramDbContext>(builder => 
-                builder.UseMySql(connectionString, optionsBuilder => 
-                    optionsBuilder.EnableRetryOnFailure(10)));
+            if (options.UseInMemoryDb)
+            {
+                services.AddDbContext<TelegramDbContext>(builder =>
+                    builder.UseInMemoryDatabase("npurozklad"));
+            }
+            else
+            {
+                services.AddDbContext<TelegramDbContext>(builder => 
+                    builder.UseMySql(options.ConnectionString, optionsBuilder => 
+                        optionsBuilder.EnableRetryOnFailure(10)));
 
-            var provider = services.BuildServiceProvider();
-            var dbContext = provider.GetService<TelegramDbContext>();
+                var provider = services.BuildServiceProvider();
+                var dbContext = provider.GetService<TelegramDbContext>();
             
-            dbContext.Database.Migrate();
+                dbContext.Database.Migrate();
+            }
         }
     }
 
     public class TelegramNpuOptions
     {
         public string BotApiToken { get; set; }
-        public string ConnectionString { get; set; } 
+        public string ConnectionString { get; set; }
+        public bool UseInMemoryDb { get; set; }
     }
 }
