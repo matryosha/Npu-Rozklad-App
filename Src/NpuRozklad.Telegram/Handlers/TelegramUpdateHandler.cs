@@ -30,6 +30,9 @@ namespace NpuRozklad.Telegram.Handlers
                 case UpdateType.Message:
                     await _telegramMessageHandler.Handle(update.Message);
                     break;
+                case UpdateType.EditedMessage:
+                    await _telegramMessageHandler.Handle(update.EditedMessage);
+                    break;
                 case UpdateType.CallbackQuery:
                     await _callbackQueryHandler.Handle(update.CallbackQuery);
                     break;
