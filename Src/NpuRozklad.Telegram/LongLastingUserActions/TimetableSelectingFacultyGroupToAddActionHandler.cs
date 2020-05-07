@@ -36,7 +36,7 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
             
             if (string.IsNullOrWhiteSpace(userInput))
             {
-                await _telegramBotActions.ShowIncorrectInputMessage();
+                await _telegramBotActions.ShowMessage(o => o.ShowIncorrectInputMessage = true);
                 return true;
             }
 
@@ -51,7 +51,8 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 
             if (facultyGroup == null)
             {
-                await _telegramBotActions.ShowIncorrectInputMessage();
+                await _telegramBotActions.ShowMessage(o => 
+                    o.MessageTextLocalizationValue = "such-faculty-group-was-not-found");
                 return true;
             }
 
