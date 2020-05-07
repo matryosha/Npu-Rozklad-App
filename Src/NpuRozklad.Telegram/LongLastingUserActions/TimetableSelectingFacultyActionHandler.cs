@@ -40,7 +40,7 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 
             if (string.IsNullOrWhiteSpace(userInput))
             {
-                await _botActions.ShowIncorrectInputMessage();
+                await _botActions.ShowMessage(o => o.ShowIncorrectInputMessage = true);
                 return isHandled;
             }
 
@@ -56,7 +56,8 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
 
             if (selectedFaculty == null)
             {
-                // Inform that faculty with such name wasn't found
+                await _botActions.ShowMessage(o =>
+                    o.MessageTextLocalizationValue = "such-faculty-was-not-found");
                 return isHandled;
             }
 
