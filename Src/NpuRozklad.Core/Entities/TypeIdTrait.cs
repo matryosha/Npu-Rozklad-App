@@ -25,5 +25,29 @@ namespace NpuRozklad.Core.Entities
         {
             return TypeId.GetHashCode();
         }
+        
+        public static bool operator == (TypeIdTrait obj1, TypeIdTrait obj2)
+        {
+            if (ReferenceEquals(obj1, obj2))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(obj1, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(obj2, null))
+            {
+                return false;
+            }
+
+            return obj1.TypeId == obj2.TypeId;
+        }
+
+        public static bool operator !=(TypeIdTrait obj1, TypeIdTrait obj2)
+        {
+            return !(obj1 == obj2);
+        }
     }
 }
