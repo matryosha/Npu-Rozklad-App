@@ -33,7 +33,7 @@ namespace NpuRozklad.Telegram
             services.AddScoped<ResetCurrentUserAction>();
             services.AddScoped<ShowApplicationVersionAction>();
             services.AddScoped<ShowFacultyGroupsForFacultyDoesNotExistMessageAction>();
-            services.AddScoped<ShowIncorrectInputMessageAction>();
+            services.AddScoped<ShowMessageAction>();
             services.AddScoped<ShowMainMenuAction>();
             services.AddScoped<ShowTimetableFacultyGroupsMenuAction>();
             services.AddScoped<ShowTimetableFacultyGroupViewMenuAction>();

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using NpuRozklad.Telegram.BotActions;
 using NpuRozklad.Telegram.Interfaces;
@@ -45,9 +46,9 @@ namespace NpuRozklad.Telegram
             return _currentScopeServiceProvider.GetService<ResetCurrentUserAction>().Execute(options);
         }
 
-        public Task ShowIncorrectInputMessage(ShowIncorrectInputMessageOptions options = null)
+        public Task ShowMessage(Action<ShowMessageOptions> options)
         {
-            return _currentScopeServiceProvider.GetService<ShowIncorrectInputMessageAction>().Execute(options);
+            return _currentScopeServiceProvider.GetService<ShowMessageAction>().Execute(options);
         }
 
         public Task ShowFacultyGroupsForFacultyDoesNotExistMessage(
