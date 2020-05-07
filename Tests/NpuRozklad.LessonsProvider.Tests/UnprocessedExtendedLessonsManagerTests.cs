@@ -21,7 +21,6 @@ namespace NpuRozklad.LessonsProvider.Tests
         {
             var random = new Random();
             var getCalendarItemsCallCount = 0;
-            var resultGotCount = 0;
             var calendarRawItemHolderStub = new Mock<ICalendarRawItemHolder>();
             calendarRawItemHolderStub.Setup(g => g.GetCalendarItems())
                 .Callback(() => ++getCalendarItemsCallCount)
@@ -63,7 +62,6 @@ namespace NpuRozklad.LessonsProvider.Tests
         public async Task MultipleSeveralFacultyLessonsRequests_FirstRun_ShouldFetchCalendarItemsOnlyOnce(int taskCount)
         {
             var getCalendarItemsCallCount = 0;
-            var resultGotCount = 0;
             var calendarRawItemHolderStub = new Mock<ICalendarRawItemHolder>();
             calendarRawItemHolderStub.Setup(g => g.GetCalendarItems())
                 .Callback(() => ++getCalendarItemsCallCount)
