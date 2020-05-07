@@ -10,19 +10,24 @@ namespace NpuRozklad.Telegram.Handlers
         private readonly ICallbackQueryHandler _callbackQueryHandler;
         private readonly ITelegramMessageHandler _telegramMessageHandler;
         private readonly ICurrentUserInitializerService _userInitializerService;
+        private readonly ITelegramUserThrottle _telegramUserThrottle;
 
         public TelegramUpdateHandler(
             ICallbackQueryHandler callbackQueryHandler,
             ITelegramMessageHandler telegramMessageHandler,
-            ICurrentUserInitializerService userInitializerService)
+            ICurrentUserInitializerService userInitializerService,
+            ITelegramUserThrottle telegramUserThrottle)
         {
             _callbackQueryHandler = callbackQueryHandler;
             _telegramMessageHandler = telegramMessageHandler;
             _userInitializerService = userInitializerService;
+            _telegramUserThrottle = telegramUserThrottle;
         }
 
         public async Task Handle(Update update)
         {
+            if(_telegramUserThrottle.ShouldSkipProcessing(update)) return;
+            
             await _userInitializerService.InitializeCurrentUser(update);
 
             switch (update.Type)
