@@ -8,6 +8,7 @@
       "menu-reply-keyboard":"Меню",
       "choose-faculty-message":"Обери факультет:",
       "no-groups-for-faculty-message":"На жаль, для цього факультету груп не має :(",
+      "such-faculty-was-not-found":"Такого факультету не знайдено",
       "add-group":"Додати групу",
       "remove-group":"Видалити групу",
       "select-group-to-remove":"Обери групу для видалення",

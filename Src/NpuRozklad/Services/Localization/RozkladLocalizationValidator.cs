@@ -16,6 +16,7 @@ namespace NpuRozklad.Services.Localization
             "menu-reply-keyboard",
             "choose-faculty-message",
             "no-groups-for-faculty-message",
+            "such-faculty-was-not-found",
             "add-group",
             "remove-group",
             "select-group-to-remove",
