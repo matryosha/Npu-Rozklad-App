@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.Exceptions;
 using NpuRozklad.Telegram.Persistence;
@@ -14,14 +15,17 @@ namespace NpuRozklad.Telegram.Services
         private readonly ICurrentTelegramUserContext _currentTelegramUserContext;
         private readonly ITelegramRozkladUserDao _telegramRozkladUserDao;
         private readonly ILocalizationService _localizationService;
+        private readonly ILogger<CurrentUserInitializerService> _logger;
 
         public CurrentUserInitializerService(ICurrentTelegramUserContext currentTelegramUserContext,
             ITelegramRozkladUserDao telegramRozkladUserDao,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            ILogger<CurrentUserInitializerService> logger)
         {
             _currentTelegramUserContext = currentTelegramUserContext;
             _telegramRozkladUserDao = telegramRozkladUserDao;
             _localizationService = localizationService;
+            _logger = logger;
         }
         
         public async Task InitializeCurrentUser(Update update)
@@ -46,9 +50,10 @@ namespace NpuRozklad.Telegram.Services
                     throw new CurrentUserInitializationException($"Unknown telegram update type: {update.Type}");
             }
 
+            TelegramRozkladUser telegramRozkladUser = null;
             try
             {
-                var telegramRozkladUser = await _telegramRozkladUserDao.FindByTelegramId(userTelegramId);
+                telegramRozkladUser = await _telegramRozkladUserDao.FindByTelegramId(userTelegramId);
 
                 if (telegramRozkladUser == null)
                 {
@@ -73,7 +78,16 @@ namespace NpuRozklad.Telegram.Services
             }
             catch (Exception e)
             {
-                throw new CurrentUserInitializationException("Error when getting user", e);
+                var outE =  new CurrentUserInitializationException("Error when getting user", e);
+
+                var telegramRozkladUserId = telegramRozkladUser?.TelegramId;
+                _logger.LogError(TelegramLogEvents.UserInitializationError, outE,
+                    "userTelegramId = {userTelegramId}. " +
+                    "chatId = {chatId}. " + 
+                    "TelegramRozkladUser telegram id = {telegramRozkladUserId}", 
+                    userTelegramId, chatId, telegramRozkladUserId);
+                
+                throw outE;
             }
         }
     }

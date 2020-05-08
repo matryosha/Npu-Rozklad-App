@@ -30,17 +30,20 @@ namespace NpuRozklad.Telegram.Handlers.MessageHandlers
         public async Task<bool> Handle(Message message)
         {
             var currentUser = _currentTelegramUserProvider.GetCurrentTelegramRozkladUser();
+
+            LongLastingUserActionArguments userLongLastingActionArguments = null;
+            ILongLastingUserActionHandler handler = null;
+            
             try
             {
                 bool isHandled = false;
                 
-                var userLongLastingActionArguments =
-                    await _longLastingUserActionManager.GetUserLongLastingAction(currentUser);
+                userLongLastingActionArguments = await _longLastingUserActionManager.GetUserLongLastingAction(currentUser);
 
                 if (userLongLastingActionArguments == null) return isHandled;
             
                 userLongLastingActionArguments.Parameters[typeof(Message)] = message;
-                var handler = _longLastingUserActionHandlerFactory.GetHandler(userLongLastingActionArguments);
+                handler = _longLastingUserActionHandlerFactory.GetHandler(userLongLastingActionArguments);
                 isHandled = await handler.Handle(userLongLastingActionArguments);
             
                 return isHandled;
@@ -48,8 +51,23 @@ namespace NpuRozklad.Telegram.Handlers.MessageHandlers
             catch (Exception e)
             {
                 await _longLastingUserActionManager.ClearUserAction(currentUser);
-                var outException = new LongLastingUserActionHandlerException(currentUser.TelegramId, e);
-                _logger.LogError(outException, outException.Message);
+
+                var currentUserTelegramId = currentUser.TelegramId;
+                var outException = new LongLastingUserActionHandlerException(currentUserTelegramId, e);
+
+                var messageId = message.MessageId;
+                var messageFromUser = message.From;
+                var messageText = message.Text;
+
+                _logger.LogError(TelegramLogEvents.LongLastingUserActionError, outException,
+                    "Current user telegram id: {currentUserTelegramId}. " +
+                    "userLongLastingActionArguments: {userLongLastingActionArguments}. " +
+                    "handler: {handler}. " +
+                    "Telegram message id : {messageId}. " +
+                    "Message from user: {messageFromUser}. " +
+                    "Message text: {messageText}",
+                    currentUserTelegramId, userLongLastingActionArguments, handler, messageId, messageFromUser,
+                    messageText);
                 
                 return false;
             }

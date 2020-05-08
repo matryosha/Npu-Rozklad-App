@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NpuRozklad.Core.Entities;
 using NpuRozklad.Core.Interfaces;
 using NpuRozklad.Telegram.BotActions;
@@ -18,56 +19,82 @@ namespace NpuRozklad.Telegram.LongLastingUserActions
         private readonly IFacultyGroupsProvider _facultyGroupsProvider;
         private readonly ILongLastingUserActionManager _longLastingUserActionManager;
         private readonly ICurrentUserLocalizationService _currentUserLocalizationService;
+        private readonly ILogger<TimetableSelectingFacultyGroupToAddActionHandler> _logger;
 
         public TimetableSelectingFacultyGroupToAddActionHandler(ITelegramRozkladUserDao telegramRozkladUserDao,
             ITelegramBotActions telegramBotActions, IFacultyGroupsProvider facultyGroupsProvider,
             ILongLastingUserActionManager longLastingUserActionManager,
-            ICurrentUserLocalizationService currentUserLocalizationService)
+            ICurrentUserLocalizationService currentUserLocalizationService,
+            ILogger<TimetableSelectingFacultyGroupToAddActionHandler> logger)
         {
             _telegramRozkladUserDao = telegramRozkladUserDao;
             _telegramBotActions = telegramBotActions;
             _facultyGroupsProvider = facultyGroupsProvider;
             _longLastingUserActionManager = longLastingUserActionManager;
             _currentUserLocalizationService = currentUserLocalizationService;
+            _logger = logger;
         }
         public async Task<bool> Handle(LongLastingUserActionArguments userActionArguments)
         {
-            var userInput = (userActionArguments.Parameters[typeof(Message)] as Message)?.Text;
+            string userInput = null;
+            ICollection<Group> facultyGroups = null;
+            Group facultyGroup = null;
             
-            if (string.IsNullOrWhiteSpace(userInput))
+            try
             {
-                await _telegramBotActions.ShowMessage(o => o.ShowIncorrectInputMessage = true);
-                return true;
-            }
+                userInput = (userActionArguments.Parameters[typeof(Message)] as Message)?.Text;
+            
+                if (string.IsNullOrWhiteSpace(userInput))
+                {
+                    await _telegramBotActions.ShowMessage(o => o.ShowIncorrectInputMessage = true);
+                    return true;
+                }
 
-            if (userInput == _currentUserLocalizationService["back"])
-            {
-                await _telegramBotActions.ShowTimetableSelectingFacultyMenu();
-                return true;
-            }
+                if (userInput == _currentUserLocalizationService["back"])
+                {
+                    await _telegramBotActions.ShowTimetableSelectingFacultyMenu();
+                    return true;
+                }
           
-            var facultyGroups = await GetFacultyGroups(userActionArguments);
-            var facultyGroup = facultyGroups.FirstOrDefault(f => f.Name == userInput);
+                facultyGroups = await GetFacultyGroups(userActionArguments);
+                facultyGroup = facultyGroups.FirstOrDefault(f => f.Name == userInput);
 
-            if (facultyGroup == null)
-            {
-                await _telegramBotActions.ShowMessage(o => 
-                    o.MessageTextLocalizationValue = "such-faculty-group-was-not-found");
+                if (facultyGroup == null)
+                {
+                    await _telegramBotActions.ShowMessage(o => 
+                        o.MessageTextLocalizationValue = "such-faculty-group-was-not-found");
+                    return true;
+                }
+
+                var currentTelegramUser = userActionArguments.TelegramRozkladUser;
+            
+                currentTelegramUser.FacultyGroups.Add(facultyGroup);
+                await _telegramRozkladUserDao.Update(currentTelegramUser);
+                await _longLastingUserActionManager.ClearUserAction(currentTelegramUser);
+
+                await _telegramBotActions.ShowMainMenu(new ShowMainMenuOptions
+                {
+                    LocalizationValueToShow = "faculty-group-has-been-added"
+                });
+
                 return true;
             }
-
-            var currentTelegramUser = userActionArguments.TelegramRozkladUser;
-            
-            currentTelegramUser.FacultyGroups.Add(facultyGroup);
-            await _telegramRozkladUserDao.Update(currentTelegramUser);
-            await _longLastingUserActionManager.ClearUserAction(currentTelegramUser);
-
-            await _telegramBotActions.ShowMainMenu(new ShowMainMenuOptions
+            catch (Exception e)
             {
-                LocalizationValueToShow = "faculty-group-has-been-added"
-            });
-
-            return true;
+                var facultyGroupsString = string.Empty;
+                
+                if(facultyGroups != null)
+                    facultyGroupsString = string.Join(",", facultyGroups.Select(f => f.ToString()));
+                
+                _logger.LogError(TelegramLogEvents.TimetableSelectingFacultyGroupToAddError, e,
+                    "userInput: {userInput}. " +
+                    "facultyGroups: {facultyGroupsString}. " +
+                    "facultyGroup: {facultyGroup}. " +
+                    "userActionArguments: {userActionArguments}",
+                    userInput, facultyGroupsString, facultyGroup, userActionArguments);
+                
+                throw;
+            }
         }
 
         private async Task<ICollection<Group>> GetFacultyGroups(LongLastingUserActionArguments userActionArguments)
