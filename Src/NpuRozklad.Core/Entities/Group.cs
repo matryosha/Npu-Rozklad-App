@@ -9,7 +9,7 @@ namespace NpuRozklad.Core.Entities
 
         public override string ToString()
         {
-            return Name;
+            return $"{TypeId};{Name}";
         }
 
         public Group(string typeId, string name, Faculty faculty) : base(typeId)
