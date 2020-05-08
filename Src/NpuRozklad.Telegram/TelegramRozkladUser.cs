@@ -15,5 +15,10 @@ namespace NpuRozklad.Telegram
             FacultyGroups = user.FacultyGroups;
             return this;
         }
+
+        public override string ToString()
+        {
+            return $"Telegram id: {TelegramId}. {base.ToString()}";
+        }
     }
 }
