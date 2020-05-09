@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using NpuRozklad.Core.Interfaces;
 
 namespace NpuRozklad.Services.Localization
 {
     public class LocalizationLoader
     {
+        private readonly IAppWorkingDirectory _appWorkingDirectory;
         private string _localizationFilesPath;
 
-        public LocalizationLoader(LocalizationLoaderOptions options)
+        public LocalizationLoader(LocalizationLoaderOptions options, IAppWorkingDirectory appWorkingDirectory)
         {
+            _appWorkingDirectory = appWorkingDirectory;
             Init(options);
         }
 
@@ -35,7 +38,7 @@ namespace NpuRozklad.Services.Localization
 
         private void CheckLocalizationPath(string optionPath)
         {
-            _localizationFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, optionPath);
+            _localizationFilesPath = Path.Combine(_appWorkingDirectory.GetAppDirectory(), optionPath);
             if (!Directory.Exists(_localizationFilesPath))
                 throw new ArgumentException($"Localizations directory doesn't exist. Path: {_localizationFilesPath}");
         }
