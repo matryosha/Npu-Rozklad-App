@@ -1,7 +1,0 @@
-version: "3.7"
-services:
-  rozklad-app:
-    build: ../RozkladNpuBot.WebApi/
-      
-  web:
-    build: ./nginx/nginx-build/
