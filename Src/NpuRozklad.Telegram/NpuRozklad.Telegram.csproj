@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>NpuRozklad.Telegram</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\NpuRozklad.Core\NpuRozklad.Core.csproj" />
+      <ProjectReference Include="..\NpuRozklad.Subscribtion.Core\NpuRozklad.Subscribtion.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.3" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.3" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
+      <PackageReference Include="Telegram.Bot" Version="15.5.1" />
+    </ItemGroup>
+
+</Project>

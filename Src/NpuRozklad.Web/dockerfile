@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+
+ENV ASPNETCORE_URLS=http://*:5000
+
+COPY ./bin/Docker /app
+COPY ./bootstrap.sh /app
+WORKDIR /app
+
+RUN chmod +x /app/bootstrap.sh
+CMD /bin/bash /app/bootstrap.sh
