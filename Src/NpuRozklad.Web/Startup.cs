@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using NpuRozklad.Core.Interfaces;
+using NpuRozklad.LessonsProvider;
+using NpuRozklad.Persistence;
+using NpuRozklad.Telegram;
+using NpuRozklad.Telegram.Interfaces;
 
 namespace NpuRozklad.Web
 {
@@ -22,26 +20,56 @@ namespace NpuRozklad.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            var connectionString = Configuration["MySqlConnectionString"];
+            
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddHttpContextAccessor();
+            services.AddMemoryCache();
+            services.AddSingleton<ICurrentScopeServiceProvider, ScopeServiceProvider>();
+            services.AddSingleton<IAppWorkingDirectory, AppWorkingDirectoryProvider>();
+
+            services.AddNpuCore(npuOptions =>
+            {
+                npuOptions.AppVersion = Configuration["AppVersion"];
+                npuOptions.LocalizationLoaderOptions = loaderOptions =>
+                {
+                    loaderOptions.PathToLocalizationsFiles =
+                        Path.Combine("Properties", "localizations");
+                };
+            });
+            services.AddCorePersistence(coreOptions =>
+            {
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    coreOptions.UseInMemoryDb = true;
+                else
+                    coreOptions.ConnectionString = connectionString;
+
+            });
+            services.AddLessonsProvider(providerOptions =>
+            {
+                providerOptions.FetcherOptions = fetcherOptions =>
+                {
+                    fetcherOptions.BaseAddress = Configuration["LessonsProvider:BaseAddress"];
+                    fetcherOptions.CallEndPoint = Configuration["LessonsProvider:CallEndPoint"];
+                };
+            });
+            services.AddTelegramNpu(telegramOptions =>
+            {
+                telegramOptions.BotApiToken = Configuration["BotToken"];
+                if(string.IsNullOrWhiteSpace(connectionString))
+                    telegramOptions.UseInMemoryDb = true;
+                else
+                    telegramOptions.ConnectionString = connectionString;
+            });
+            
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
