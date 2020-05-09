@@ -43,4 +43,4 @@ build/
 build.spec
 docker-build/build
 docker-build/config.yaml
-appsettings.Release.json
+appsettings.Production.json
