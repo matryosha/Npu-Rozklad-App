@@ -1,0 +1,5 @@
+image: gitpod/workspace-dotnet
+vscode:
+  extensions:
+    - ms-dotnettools.csharp@1.21.18:6N7t3wCNyGM4rJ6pP2Njfw==
+    - ms-vscode.csharp@1.21.12:kw8SkO8+aVTSFug281WfQQ==
