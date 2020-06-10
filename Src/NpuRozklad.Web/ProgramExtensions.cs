@@ -27,12 +27,15 @@ namespace NpuRozklad.Web
                 ? $"nlog.{hostEnvironment.EnvironmentName}.config"
                 : "nlog.config";
 
-            if (!File.Exists(nlogConfigFileName))
+            var nlogConfigFilePath = Path.Combine(workingDirectory, nlogConfigFileName);
+            
+            if (!File.Exists(nlogConfigFilePath))
             {
                 nlogConfigFileName = "nlog.default.config";
+                nlogConfigFilePath = Path.Combine(workingDirectory, nlogConfigFileName);
             }
             
-            var logger = NLogBuilder.ConfigureNLog(nlogConfigFileName).GetCurrentClassLogger();
+            var logger = NLogBuilder.ConfigureNLog(nlogConfigFilePath).GetCurrentClassLogger();
             logger.Log(LogLevel.Info, "Application version: {appVersion}", appVersion);
             logger.Log(LogLevel.Info, "Using {nlogConfigFileName} as nlog config", nlogConfigFileName);
             logger.Log(LogLevel.Info, "Log dir path: {logDir}", logDir);
