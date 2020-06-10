@@ -1,12 +1,8 @@
 #!/bin/bash
 
-bot_token="$1"
-connection_string="$2"
-db_pass="$3"
-
-echo "$bot_token" \
-"$connection_string" \
-"$db_pass"
+bot_token=$BOT_TOKEN
+connection_string=$CONNECTION_STRING
+db_pass=$DB_PASS
 
 cat <<EOF > compose-override.yml
 version: "3.8"
