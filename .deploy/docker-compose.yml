@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  backend:
+    image: matryoshka/npu-rozklad-backend
+    restart: always
+    volumes:
+      - "backend-logs:/app/logs"
+    depends_on:
+      - db
+    networks:
+      - share-network
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes: 
+      - "mysql-db:/var/lib/mysql"
+    networks:
+      - share-network   
+ 
+  reverse-proxy:
+    image: matryoshka/npu-rozklad-reverse-proxy
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - share-network
+    depends_on: 
+      - backend
+    volumes:
+      - "nginx-certs:/certs/"
+
+networks:
+  share-network:
+    attachable: true
+
+volumes:
+  backend-logs:
+  mysql-db:
+  nginx-certs:

@@ -44,3 +44,4 @@ build.spec
 docker-build/build
 docker-build/config.yaml
 appsettings.Production.json
+compose-override.yml
