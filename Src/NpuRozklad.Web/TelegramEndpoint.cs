@@ -25,14 +25,7 @@ namespace NpuRozklad.Web
         [HttpPost]
         public async Task<IActionResult> TelegramUpdate(Update update)
         {
-            try
-            {
-                await _telegramUpdateHandler.Handle(update);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "блядь");
-            }
+            await _telegramUpdateHandler.Handle(update);
 
             return Ok();
         }
