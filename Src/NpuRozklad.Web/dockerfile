@@ -7,4 +7,6 @@ COPY ./bootstrap.sh /app
 WORKDIR /app
 
 RUN chmod +x /app/bootstrap.sh
+RUN chmod +x NpuRozklad.Web
+
 CMD /bin/bash /app/bootstrap.sh
